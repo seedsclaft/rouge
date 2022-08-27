@@ -13,7 +13,6 @@ Scene_Base.prototype.update = function() {
         this.updateSwip();
     }
     this.updatePause();
-    this.updateConsole();
 };
 
 Scene_Base.prototype.convertRect = function(x,y,width,height) {
@@ -62,9 +61,6 @@ Scene_Base.prototype.updatePause = function() {
     if (PopupInputManager.busy()){
         return;
     }
-    if (PopupInputMessageManager.busy()){
-        return;
-    }
     if (Input.isTriggered("pause")){
         if ($gamePause == false){
             gsap.globalTimeline.pause();
@@ -78,29 +74,6 @@ Scene_Base.prototype.updatePause = function() {
             Presenter_Pause.close();
         }
     }
-}
-
-Scene_Base.prototype.updateConsole = function() {
-    if (PopupInputMessageManager.busy()){
-        return;
-    }
-    if ($gamePause == true){
-        if (Input.isPressed("pageup")){
-            if (Input.isPressed("pagedown")){
-                PopupInputMessageManager.inputStart(this.evalCommand.bind(this));
-                //$gamePause = false;
-            }
-        }
-    }
-};
-
-Scene_Base.prototype.evalCommand = function() {
-    let command = PopupInputMessageManager.getInputText();
-    command = command.split(";");
-    command.forEach(c => {
-        eval(c);
-    });
-    $gamePause = false;
 }
 
 Scene_Base.prototype.isBusy = function() {
@@ -129,6 +102,7 @@ Scene_Base.prototype.hideMenuPlate = function(duration) {
  * @memberof Scene_Base
  */
 Scene_Base.prototype.terminate = function() {
+    gsap.globalTimeline.clear();
     if (this._windowLayer){
         this._windowLayer.destroy();
     }
@@ -145,7 +119,6 @@ Scene_Base.prototype.terminate = function() {
     }
     if (this._menuSprite){
         this._menuSprite.destroy();
-        gsap.killTweensOf(this._menuSprite);
     }
     if (this._menuBack){
         this._menuBack.terminate();

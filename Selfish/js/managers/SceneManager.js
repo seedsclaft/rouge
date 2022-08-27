@@ -64,7 +64,6 @@ SceneManager.updateManagers = function() {
     EventManager.update();
     FilterMzUtility.update();
     PopupInputManager.update();
-    PopupInputMessageManager.update();
     Scene_Option.update();
 };
 
@@ -104,28 +103,6 @@ SceneManager.determineRepeatNumber = function(deltaTime) {
     }
 };
 
-SceneManager.onError = function(event) {
-    console.error(event.message);
-    console.error(event.filename, event.lineno);
-    try {
-        this.stop();
-        Graphics.printError("Error", event.message, event);
-        AudioManager.stopAll();
-    } catch (e) {
-        //
-    }
-};
-
-SceneManager.catchNormalError = function(e) {
-    Graphics.printError(e.name, e.message, e);
-    AudioManager.stopAll();
-    console.error(e.stack);
-};
-
-SceneManager.catchUnknownError = function(e) {
-    Graphics.printError("UnknownError", String(e));
-    AudioManager.stopAll();
-};
 
 SceneManager.catchException = function(e) {
     if (e instanceof Error) {

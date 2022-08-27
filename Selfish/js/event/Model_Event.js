@@ -3,15 +3,6 @@ class Model_Event extends Model_Base {
         super();
     }
 
-    endStage(){
-        const stageData = this.stageData();
-        ResourceLoadManager.releaseBattleResource(stageData.id);
-        $gamePlayer.resetStepSound();
-        $gameParty.setStagePhase('clear');
-        $gameParty._stageStepCount = 0;
-        $gameSystem.setResume("endEvent");
-    }
-
     gainCommonEventFlag (eventName) {
         // イベント単位での話した回数
         if (!$gameParty._commonEventNum[eventName]){

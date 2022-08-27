@@ -90,32 +90,6 @@ class PopupManager {
         this.open();
     }
 
-    static openDataTransport(okHandler,cancelHandler){
-        const mainText = TextManager.getText(210300);
-        const text1 = TextManager.getDecideText();
-        const text2 = TextManager.getCancelText();
-        const subText = TextManager.getText(210301);
-        this.setPopup(mainText,{select:1,subText:subText});
-        this.setHandler(text1,'ok',() => {
-            if (okHandler) okHandler();
-        });
-        this.setHandler(text2,'cancel',() => {
-            if (cancelHandler) cancelHandler();
-        });
-        this.open();
-    }
-
-    static failDataTransport(okHandler){
-        const mainText = TextManager.getText(210500);
-        const text1 = TextManager.getDecideText();
-        const subText = TextManager.getText(210501);
-        this.setPopup(mainText,{subText : subText});
-        this.setHandler(text1,'ok',() => {
-            if (okHandler) okHandler();
-        });
-        this.open();
-    }
-
     static openPopupSupport(okHandler,cancelHandler){
         const mainText = TextManager.getText(210700);
         const text1 = TextManager.getDecideText();
@@ -158,20 +132,6 @@ class PopupManager {
         const text2 = TextManager.getCancelText();
         //const subText = TextManager.getText(210301);
         this.setPopup(mainText,{select:1});
-        this.setHandler(text1,'ok',() => {
-            if (okHandler) okHandler();
-        });
-        this.setHandler(text2,'cancel',() => {
-            if (cancelHandler) cancelHandler();
-        });
-        this.open();
-    }
-
-    static openEndGame(okHandler,cancelHandler){
-        const mainText = TextManager.getText(201900);
-        const text1 = TextManager.getDecideText();
-        const text2 = TextManager.getCancelText();
-        this.setPopup(mainText,{select:0});
         this.setHandler(text1,'ok',() => {
             if (okHandler) okHandler();
         });

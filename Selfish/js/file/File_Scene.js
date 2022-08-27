@@ -293,12 +293,6 @@ class Load_Scene extends File_Scene {
     }
 
     onFileDownLoad(){
-        this._listWindow.deactivate();
-        PopupManager.openDataTransport(() => {
-            this.inputFileName();
-        },() => {
-            this._listWindow.activate();
-        });
     }
 
 }

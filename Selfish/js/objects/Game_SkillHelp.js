@@ -2,7 +2,6 @@ class Game_SkillHelp{
     constructor(battler,skillId,awakeFlag){
         this._damageRateUp = false;
         skillId = this.changeExpSkill(battler,skillId);
-        this._elementId = this.skillElement(battler,skillId);
         this._power = this.evalDamage(battler,skillId);
         this._hit = $dataSkills[skillId].repeats;
         if ($dataSkills[skillId].damage.type == 0){
@@ -32,21 +31,10 @@ class Game_SkillHelp{
     }
 
     changeExpSkill(battler,skillId){
-        if (battler instanceof Game_Battler && battler.isActor()){
-            const skill = battler.getSkillData(skillId,battler.skillLevel(skillId));
-            return skill.id;
-        }
+
         return skillId;
     }
 
-    skillElement(battler,skillId){
-        const skill = $dataSkills[skillId];
-        if (skill.damage.elementId == -1 || skill.damage.elementId == 0){
-            if (battler.elementId) return battler.elementId;
-            return battler._selfElement;
-        }
-        return skill.damage.elementId;
-    }
 
     replaceText(battler,skillId){
         const scopeType = $dataSkills[skillId].scope;
@@ -63,11 +51,8 @@ class Game_SkillHelp{
         const skill = $dataSkills[skillId];
         let value;
         if (_.find(skill.effects,(a) => a.code == 21)){
-            if (battler instanceof Game_Battler && battler.isActor()){
-                value = ((8 + battler.skillLevel(skillId) * 2) * 1).padZero(1);
-            } else{
-                value = 20;
-            }
+
+            value = 20;
             text = text.replace(/\x1bE/gi, value);
         } else{
             value = skill.stateEffect;

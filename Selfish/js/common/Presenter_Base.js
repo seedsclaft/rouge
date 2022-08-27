@@ -9,9 +9,6 @@ class Presenter_Base {
         if (Presenter_Loading.busy()){
             return;
         }
-        if (PopupInputMessageManager.busy()){
-            return;
-        }
     }
     
     async commandContinue () {
@@ -39,7 +36,6 @@ class Presenter_Base {
             case 'Scene_Battle':
                 const stageEvent = $gameParty.stageEvent();
 
-                $gameSystem._battleCalledMenu = false;
                 SceneManager.push(Battle_Scene);
                 break;
             case 'endEvent':

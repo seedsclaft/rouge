@@ -1,25 +1,16 @@
-Graphics._onTickSkipFlag = false;
 Graphics._onTick = function(deltaTime) {
     this._fpsCounter.startTick();
     if (this._tickHandler) {
         this._tickHandler(deltaTime);
     }
     if (this._canRender()) {
-        // フレームレートを落とす区間を作る
-        if (Graphics._onTickSkipFlag == true && Utils.isMobileDevice()){
-            //if (this.frameCount % 4 == 0){
-                this._app.render();
-                this._fpsCounter.endTick();
-            //}
-        } else{
-            if ($dataOption && $dataOption.getUserData("refreshRate") == 1){
-                if (this.frameCount % 2 > 0){
-                    return;
-                }
+        if ($dataOption && $dataOption.getUserData("refreshRate") == 1){
+            if (this.frameCount % 2 > 0){
+                return;
             }
-            this._app.render();
-            this._fpsCounter.endTick();
         }
+        this._app.render();
+        this._fpsCounter.endTick();
     }
 };
 
@@ -321,9 +312,6 @@ Input._shouldPreventDefault = function(keyCode) {
     if (PopupInputManager.busy()){
         return false;
     }
-    if (PopupInputMessageManager.busy()){
-        return false;
-    }
     switch (keyCode) {
         case 8: // backspace
         case 9: // tab
@@ -339,7 +327,7 @@ Input._shouldPreventDefault = function(keyCode) {
 };
 
 Input._shouldPreventInput = function(key) {
-    if (PopupInputManager.busy() || PopupInputMessageManager.busy()){
+    if (PopupInputManager.busy()){
         if (key === "Enter"){
             return true;
         }
@@ -428,18 +416,12 @@ TouchInput.isCancelled = function() {
     if (PopupInputManager.busy()){
         PopupInputManager.setFocus();
     }
-    if (PopupInputMessageManager.busy()){
-        PopupInputMessageManager.setFocus();
-    }
     return this._currentState.cancelled;
 };
 
 TouchInput.isReleased = function() {
     if (PopupInputManager.busy()){
         PopupInputManager.setFocus();
-    }
-    if (PopupInputMessageManager.busy()){
-        PopupInputMessageManager.setFocus();
     }
     return this._currentState.released;
 };

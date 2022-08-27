@@ -118,8 +118,7 @@ Game_BattlerBase.prototype.initialize = function() {
 Game_BattlerBase.prototype.initMembers = function() {
     this._hp = 1;
     this._mp = 0;
-    this._tp = 100;
-    this._ap = 400;
+    this._tp = 1;
     this._bindBatllers = [];
     this._hidden = false;
     this.clearParamPlus();
@@ -511,11 +510,6 @@ Game_BattlerBase.prototype.maxTp = function() {
     return this.luk;
 };
 
-Game_BattlerBase.prototype.setAp = function(ap) {
-    this._ap = ap;
-    this.refresh();
-};
-
 Game_BattlerBase.prototype.refresh = function() {
     this.stateResistSet().forEach(function(stateId) {
         this.eraseState(stateId);
@@ -695,10 +689,6 @@ Game_BattlerBase.prototype.paySkillCost = function(skill) {
         this._mp -= this.skillMpCost(skill);
     }
     this._tp -= this.skillTpCost(skill);
-    // 覚醒スキル使用後はtpを0に
-    if (skill.id > 1000){
-        this._tp = 0;
-    }
 };
 
 Game_BattlerBase.prototype.isOccasionOk = function(item) {
@@ -846,15 +836,8 @@ Game_Battler.prototype.battleOrder = function() {
     return this._battleOrder;
 };
 
-Game_Battler.prototype.resetApParam = function() {
-    this._ap = 400 - this.agi * 4;
-};
-
 Game_Battler.prototype.stratDashApParam = function() {
-    // スタートダッシュ
-    if (this._turnCount == 1 && this.isStateAffected($gameStateInfo.getStateId(StateType.START_DASH))){
-        this._ap = 3;
-    }
+
 }
 
 Game_Battler.prototype.clearAnimations = function() {
@@ -1186,7 +1169,6 @@ Game_Battler.prototype.removeChainSelfState = function() {
     const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
     if (this.isStateAffected(chainSelfId)){
         this.removeState(chainSelfId);
-        this.resetApParam();
         this._bindBatllers.forEach(battler => {
             battler.removeState($gameStateInfo.getStateId(StateType.CHAIN_TARGET));
         });
@@ -1274,10 +1256,6 @@ Game_Battler.prototype.gainMp = function(value) {
 
 Game_Battler.prototype.gainTp = function(value) {
     this.setTp(this.tp + value);
-};
-
-Game_Battler.prototype.gainAp = function(value) {
-    this.setAp(this._ap + value);
 };
 
 Game_Battler.prototype.gainSilentTp = function(value) {
@@ -1434,38 +1412,6 @@ Game_Battler.prototype.performCollapse = function() {
 };
 
 
-Game_Battler.prototype.gainDefineAp = function(isPressed) {
-    if (this.isActor() && isPressed == true){
-        // 操作中
-        return;
-    }
-    if (this.isActor() && this.isStateAffected($gameStateInfo.getStateId(StateType.GUARD))){
-        return;
-    }
-    //バインド制限
-    if (this.isStateAffected($gameStateInfo.getStateId(StateType.CHAIN_TARGET))){
-        return;
-    }
-    //凍結
-    if (this.isStateAffected($gameStateInfo.getStateId(StateType.FROZEN))){
-        return;
-    }
-    //待ち伏せ
-    if (this.isStateAffected($gameStateInfo.getStateId(StateType.VANTAGE))){
-        return;
-    }
-    if (this.isStateAffected($gameStateInfo.getStateId(StateType.CHAIN_SELF))){
-        this._ap -= 3;
-        return;
-    }
-    //鈍足
-    if (this.isStateAffected($gameStateInfo.getStateId(StateType.SLOW))){
-        this._ap -= 1.5;
-        return;
-    }
-    this._ap -= 3;
-}
-
 Game_Battler.prototype.realTgr = function() {   
     let value = this.tgr;
     const provocation = this.getStateEffect($gameStateInfo.getStateId(StateType.PROVOCATION));
@@ -1484,37 +1430,6 @@ Game_Battler.prototype.initMp = function() {
     // 初期ＭＰアップ
     value += this.getStateEffect($gameStateInfo.getStateId(StateType.BATTLE_MP_BUFF_ADD));
     return value;
-};
-
-Game_Battler.prototype.gainSkillCount = function(id,num) { 
-    const skill = $dataSkills[id];
-    // パッシブはカウントを加算しない
-    if (skill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE){
-        return;
-    }
-    if (this.isActor()){
-        if (this._ownSkills[id] != null){
-            this._ownSkills[id].count += num;
-            if (this.isStateAffected($gameStateInfo.getStateId(StateType.SKILL_EXP))){
-                this._ownSkills[id].count += num;
-            }
-        } else{
-            this._ownSkills[id] = {count:num,sp:0};
-        }
-        if (this.skillLevel(id) >= skill.maxLevel){
-            if (this._ownSkills[id].sp > 0){
-                this._ownSkills[id].sp -= 1;
-            }
-        }
-        // 他キャラのカウントも調節
-        $gameActors._data.forEach(actor => {
-            if (actor && actor._ownSkills[id] && actor.actorId() <= 5){
-                if (actor._ownSkills[id].count < this._ownSkills[id].count){
-                    actor._ownSkills[id].count = this._ownSkills[id].count;
-                }
-            }
-        });
-    }
 };
 
 Game_Battler.prototype.getSkillLvByCount = function(skillId,count) {
@@ -1569,30 +1484,11 @@ Game_Battler.prototype.getSkillSpCount = function(id) {
 }
 
 Game_Battler.prototype.getSkillExpPercent = function(skillId) { 
-    const count = this.getSkillCount(skillId);
-    const lv = this.skillLevelWithoutSP(skillId);
-    const nextExp = $gameSkillExp.getData($dataSkills[skillId].nextExp);
-    if (count > 0){
-        if (nextExp && nextExp.length >= lv){
-            const now = nextExp[lv];
-            const before = nextExp[lv-1];
-            return (count - before) / (now - before);
-        }
-    }
     return 0 / 1;
 }
 
 Game_Battler.prototype.getSkillExpPercentTotal = function(skillId) { 
-    const count = this.getSkillCountTotal(skillId);
-    const lv = this.skillLevel(skillId);
-    const nextExp = $gameSkillExp.getData($dataSkills[skillId].nextExp);
-    if (count > 0){
-        if (nextExp && nextExp.length >= lv){
-            const now = nextExp[lv];
-            const before = nextExp[lv-1];
-            return (count - before) / (now - before);
-        }
-    }
+
     return 0 / 1;
 }
 
@@ -1796,7 +1692,6 @@ Game_Actor.prototype.setup = function(actorId) {
     this._skillSet2 = null;
 
     this._statePlus = {
-
     }
 };
 
@@ -1924,10 +1819,6 @@ Game_Actor.prototype.nextRequiredExp = function() {
 };
 
 Game_Actor.prototype.maxLevel = function() {
-    // 体験版は10がMAX
-    if ($gameDefine.gameVersionNumber() < 100 && !$gameTemp.isPlaytest()){
-        return 10;
-    }
     return this.actor().maxLevel;
 };
 
@@ -2585,18 +2476,7 @@ Game_Actor.prototype.otherSkillIds = function() {
 
 
 
-Game_Actor.prototype.skillLevelWithoutSP = function(skillId) {
-    return this.getSkillLv(skillId);
-}
 
-Game_Actor.prototype.skillLevelWithoutSPAwake = function(skillId) {
-    const count = this.getSkillCount(skillId) + 1;
-    return this.getSkillLvByCount(skillId,count);
-}
-
-Game_Actor.prototype.skillLevel = function(skillId) {
-    return this.getSkillLvTotal(skillId);
-}
 
 Game_Actor.prototype.passiveSkills = function() {
     // パッシブは自動で発動
@@ -2720,10 +2600,6 @@ Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel) {
         }
     }
     this.recoverAll();
-    this.resetApParam();
-    if (this._enemyId < 100){
-        this.randApParam();
-    }
     this.enemy().actions.forEach(action => {
         // レベル制限
         if (action.conditionType == ActionConditionType.PartyLv){ // enemyLv
@@ -2774,12 +2650,6 @@ Game_Enemy.prototype.level = function() {
     return this._level;
 };
 
-
-//乱数をつける
-Game_Enemy.prototype.randApParam = function() {
-    this._ap += Math.randomInt(200) - 100;
-};
-
 Game_Enemy.prototype.isEnemy = function() {
     return true;
 };
@@ -2815,10 +2685,6 @@ Game_Enemy.prototype.traitObjects = function() {
 Game_Enemy.prototype.paramBase = function(paramId) {
     return this.enemy().params[paramId];
 };
-
-Game_Enemy.prototype.skillLevel = function() {
-    return this.mdf;
-}
 
 Game_Enemy.prototype.passiveSkills = function() {
     let list = [];
@@ -3134,10 +3000,6 @@ Game_Enemy.prototype.changeActions = function(id) {
         this._actionList.push(element);
     });
 };
-
-Game_Enemy.prototype.skillLevelWithoutSP = function() {
-    return 1;
-}
 
 Game_Enemy.prototype.attackId = function() {
     return this.enemy().attackId;

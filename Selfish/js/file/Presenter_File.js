@@ -70,7 +70,6 @@ class Presenter_File extends Presenter_Base {
 
         $gameParty.allMembers().forEach(actor => {
             actor.exChangeslotData();
-            actor.setSelfElement();
             actor.clearAllPassiveState();
         });
         $gameParty.resetBattleParameter();

@@ -63,12 +63,9 @@ class Map_Scene extends Scene_Base{
     }
 
     createBattleStatus(){
-        this._battleStatus = new Sprite_BattlerStatus();
-        this._battleStatus.setup($gameParty.battleMembers()[0]);
+        this._battleStatus = new Sprite_Actor($gameParty.battleMembers()[0]);
+        this._battleStatus._battlerStatusSprite.updateSkillSet();
         this.addChild(this._battleStatus);
-        this._battleStatus.x = 0;
-        this._battleStatus.y = 584;
-        this._battleStatus.updateSkillSet();
     }
 
 
@@ -432,30 +429,12 @@ class Map_Scene extends Scene_Base{
             */
     }
 
-    launchBattle(){
-        //this.startEncounterEffect();
-    }
-
-    startEncounterEffect(){
-        this._encounterEffectDuration = this.encounterEffectSpeed();
-    }
-
-    updateEncounterEffect(){
-        if (this._encounterEffectDuration > 0) {
-            this._encounterEffectDuration--;
-        }
-    }
-
-    encounterEffectSpeed(){
-        return 4;
-    }
-
     updateTouchEvent(){
         return;
     }
 
     updateStatus(){
-        this._battleStatus.refreshStatus();
+        this._battleStatus._battlerStatusSprite.refreshStatus();
         this._enemySpirite.refreshStatus();
     }
 
@@ -463,7 +442,12 @@ class Map_Scene extends Scene_Base{
         EventManager.showEffekseer(animationId,640,320,1,1);
     }
 
-    effectDamage(value){
+    playerEffectDamage(value,count){
+        const damageSprite = this._battleStatus.setDamagePopup("hpDamage",value,count);
+        this._battleStatus.addChild(damageSprite);
+    }
+
+    enemyEffectDamage(value){
         const damageSprite = this._enemySpirite.setDamagePopup("hpDamage",value,1);
         this._enemySpirite.addChild(damageSprite);
     }

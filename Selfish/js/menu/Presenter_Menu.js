@@ -12,7 +12,7 @@ class Presenter_Menu extends Presenter_Base{
 
     commandStart(){
         this._view.setRoleData(this._model.roleData());
-        this._view.commandStart();
+        this._view.commandStart(this._model.player());
         this._view.setDragHandler((sprite) => {this.commandFeature(sprite)});
     }
 
@@ -48,7 +48,7 @@ class Presenter_Menu extends Presenter_Base{
     commandChangeEquip(select){
         const _player = this._model.player();
         const _index = _player.equips().findIndex(a => a == select.item);
-        if (_index > 0){
+        if (_index >= 0){
             _player.changeEquip(_index,null);
         } else{
             if (_player.canEquip(select.item)){
@@ -75,8 +75,8 @@ class Presenter_Menu extends Presenter_Base{
     }
 
     commandChangeSetSkill(slot,select){
+        const _player = this._model.player();
         if (select != null){
-            const _player = this._model.player();
             const _skillSet = (slot == 1) ? _player._skillSet1 : _player._skillSet2;
             const _type = select.type;
             switch (_type){

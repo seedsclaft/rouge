@@ -6,7 +6,7 @@ class Window_FeatureList extends Window_Base{
     constructor(x,y,width,height){
         super(new Rectangle( x,y,width,height ));
         this.hide();
-        this.scale.x = this.scale.y = 0.75;
+        this.scale.x = this.scale.y = 1;
         this.padding = 4;
         this._lastFeature = null;
     }
@@ -29,7 +29,7 @@ class Window_FeatureList extends Window_Base{
         }
         if (this._lastFeature != features.toString()){
             let width = 0;
-            this.contents.fontSize = 23;
+            this.contents.fontSize = 21;
             features.forEach((feature) => {
                 let measureTextWidth = this.contents.measureTextWidth(feature);
                 if (measureTextWidth > width){
@@ -46,7 +46,7 @@ class Window_FeatureList extends Window_Base{
     }
 
     drawFeatures(features){
-        this.contents.fontSize = 22;
+        this.contents.fontSize = 21;
         let y = 0;
         features.forEach((feature,index) => {
             y = index * 28;

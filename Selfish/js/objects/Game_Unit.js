@@ -189,7 +189,6 @@ Game_Party.prototype.initialize = function() {
     this._commonEventNum = {};
     this._commonEventRead = {};
     
-    this._stageData = new Game_Stage();
     //スキルNew済みIDリスト
     this._newSkillIdList = [];
 
@@ -703,6 +702,7 @@ Game_Party.prototype.clearDestination = function() {
     this._destinationX = null;
     this._destinationY = null;
 };
+
 Game_Party.prototype.addLearnSkill = function(skillId) {
     if (skillId < $gameDefine.defaultSlotId){
         return;
@@ -710,64 +710,6 @@ Game_Party.prototype.addLearnSkill = function(skillId) {
     if (!this._learnedSkills.includes(skillId)){
         this._learnedSkills.push(skillId);
     }
-};
-
-Game_Party.prototype.setStageData = function(stageId) {
-    this._stageData.setup(stageId);
-};
-
-Game_Party.prototype.stageData = function() {
-    return this._stageData;
-};
-
-Game_Party.prototype.setStagePhase = function(phase) {
-    return this._stageData._phase = phase;
-};
-
-Game_Party.prototype.stageEvent = function() {
-    if (!this._stageData._stageSeaquence){
-        return null;
-    }
-    if (this._stageData._stageSeaquence.length < this._stageStepCount){
-        return null;
-    }
-    return this._stageData._stageSeaquence[this._stageStepCount-1];
-};
-
-Game_Party.prototype.stageLength = function() {
-    return this._stageData.stageLength();
-};
-
-Game_Party.prototype.stageInit = function() {
-    return this._stageData.initialize();
-};
-
-Game_Party.prototype.getStageResourceBgm = function() {
-    let list = [];
-    if (this.stageData()._stageId == 0){
-        return [];
-    }
-    const stage = DataManager.getStageInfos(this._stageNo);
-    const phase = this.stageData().phase;
-    if (phase == 'init' || phase == 'start'){
-        list.push($gameBGM.getBgm('stagemenu'));
-    }
-    if (stage.bgm != "" && phase != "bossBefore" && phase != 'boss' && phase != 'save'){
-        list.push($gameBGM.getBgm(stage.bgm));
-    }
-    if (stage.bossBattleBgm){
-        list.push($gameBGM.getBgm('boss'));
-    } else{
-        list.push($gameBGM.getBgm('lastbattle'));
-    }
-    return list;
-};
-
-Game_Party.prototype.stageProgress = function() {
-    if (this.stageLength() != 0){
-        return this._stageStepCount / this.stageLength();
-    }
-    return 0;
 };
 
 // バトル終了時のステータスにする
@@ -817,33 +759,6 @@ Game_Party.prototype.totalMp = function() {
     return this.battleMembers().reduce(function(r, actor) {
         return r + actor.mp;
     }, 0);
-}
-
-Game_Party.prototype.gainNextStage = function() {
-    const stageData = DataManager.getStageInfos(this.stageNo());
-    if (stageData && stageData.nextId){
-        const nextStage = DataManager.getStageInfos(stageData.nextId);
-        if (nextStage.version <= $gameDefine.gameVersionNumber() || $gameTemp.isPlaytest()){
-            this.gainStage(stageData.nextId);
-        } else{
-            Debug.log("ステージ未実装");
-        }
-    }
-}
-
-Game_Party.prototype.nextStageName = function() {
-    const stageData = DataManager.getStageInfos(this.stageNo());
-    if (stageData){
-        const nextStage = DataManager.getStageInfos(stageData.nextId);
-        return TextManager.getText(nextStage.nameId);
-    }
-    return "";
-}
-
-Game_Party.prototype.clearStageData = function() {
-    this.stageData().clear();
-    this.setStageNo(0);
-    $gameSystem.clearResume();
 }
 
 Game_Party.prototype.avarageLevel = function() {

@@ -108,6 +108,8 @@ class Menu_Scene extends Scene_Base{
                     break;
             }
 
+        } else{
+            this._selectWindow.activate();
         }
     }
 
@@ -130,6 +132,7 @@ class Menu_Scene extends Scene_Base{
         const _category = this._categoryWindow.category();
         const _item = this._selectWindow.item();
         this._playerStatus.refresh(_category,_item);
+        this.updateFeature();
     }
 
     changeCategory(plusIndex){
@@ -144,7 +147,9 @@ class Menu_Scene extends Scene_Base{
         const _item = this._selectWindow.item();
         this._selectWindow.setCategory(_category);
         this._selectWindow.activate();
+        this._selectWindow.select(-1);
         this._playerStatus.refresh(_category,_item);
+        this.updateFeature();
     }
 
     callBackButton(){
@@ -209,14 +214,34 @@ class Menu_Scene extends Scene_Base{
     setDragHandler(handler){
     }
 
+    updateFeature(){
+        const _item = this._selectWindow.item();
+        if (_item != null && _item.item.description){
+            console.log(_item.item)
+            let feature = [_item.item.description];
+            if (_item.item.damage && _item.item.damage.type == 1 && _item.item.damage.formula){
+                feature.push("ダメージ値:x" + _item.item.damage.formula);
+            }
+            if (DataManager.isWeapon(_item.item)){
+                feature.push("攻撃:" + _item.item.params[2]);
+            }
+            if (DataManager.isArmor(_item.item)){
+                feature.push("防御:" + _item.item.params[3]);
+            }
+            this.commandFeature(feature,this._selectWindow.x + 160,this._selectWindow.index() * 40 + 192)
+        } else{
+            this.clearFeature();
+        }
+    }
+
     commandFeature(feature,x,y){
         this._featureWindow.show();
-        this._featureWindow.open();
+        //this._featureWindow.open();
         this._featureWindow.refresh(feature,x,y);
     }
 
     clearFeature(){
-        this._featureWindow.close();
+        this._featureWindow.hide();
     }
 
 
@@ -281,11 +306,15 @@ class Menu_Scene extends Scene_Base{
         this._selectWindow.resetData();
         this._selectWindow.refresh();
         this._selectWindow.activate();
+        if (this._selectWindow.item() == null){
+            this._selectWindow.select(-1);
+        }
         this._playerStatus.setup(_player);
         const _redrawitem = this._selectWindow.item();
         this._playerStatus.refresh(_category,_redrawitem);
         this._battleStatus.refreshStatus();
         this._statusWindow.setup(_player);
+        this.updateFeature();
     }
 
     refreshKeyHelpWindow(key){
@@ -316,7 +345,6 @@ class Menu_Scene extends Scene_Base{
 
     terminate(){
         super.terminate();
-        gsap.killTweensOf(this);
         if (this._skillWindow){
             this._skillWindow.terminate();
         }

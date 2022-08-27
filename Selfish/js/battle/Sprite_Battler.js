@@ -119,7 +119,7 @@ Sprite_Battler.prototype.setDamagePopup = function(type,value,length) {
     if (length === undefined){
         length = 0;
     }
-    var sprite = new Sprite_Damage();
+    let sprite = new Sprite_Damage();
     sprite.x = this.damageOffsetX();
     sprite.y = this.damageOffsetY() - ((length%10) * 32);
     sprite.setup(type,value);
@@ -194,7 +194,7 @@ Sprite_Battler.prototype.inHomePosition = function() {
 };
 
 Sprite_Battler.prototype.setCounterPopup = function() {
-    var sprite = new Sprite_Damage();
+    let sprite = new Sprite_Damage();
     sprite.x = this.damageOffsetX();
     sprite.y = this.damageOffsetY();
     sprite.setCounterPopup();
@@ -203,7 +203,7 @@ Sprite_Battler.prototype.setCounterPopup = function() {
 }
 
 Sprite_Battler.prototype.setChainPopup = function() {
-    var sprite = new Sprite_Damage();
+    let sprite = new Sprite_Damage();
     sprite.x = this.damageOffsetX();
     sprite.y = this.damageOffsetY();
     sprite.setChainPopup();
@@ -332,21 +332,10 @@ Sprite_Actor.prototype.setBattler = function(battler) {
 };
 
 Sprite_Actor.prototype.setActorHome = function(index) {
-    this.setHome(index * 280 + 120, Graphics.boxHeight - 72);
+    this.setHome(index * 280 + 120, Graphics.boxHeight - 120);
 };
 
 Sprite_Actor.prototype.setElementRect = function() {
-    let sprite = new Sprite(new Bitmap(216 + 24,88));
-    this.addChildAt(sprite,1);
-    sprite.x = 0;
-    sprite.y = -8;
-    const elementColor = $gameColor.skillElementColor(this._battler.selfElement());
-    const elementColor2 = $gameColor.skillElementColor2(this._battler.selfElement());
-    let bitmap = new Bitmap(320,120);
-    bitmap.gradientFillRectHalf(0,0,240,78,elementColor,elementColor2)
-    sprite.bitmap = bitmap;
-    sprite.opacity = 128;
-    gsap.to(sprite,0,{pixi:{ skewX:-15}})
 }
 
 Sprite_Actor.prototype.update = function() {
@@ -510,7 +499,6 @@ Sprite_Actor.prototype.terminate = function() {
     }
     this._mainSprite = null;
     this._actor = null;
-    gsap.killTweensOf(this);
     this.destroy();
 }
 
@@ -962,7 +950,6 @@ Sprite_Enemy.prototype.terminate = function() {
     this._battler = null;
     this._effectTarget = null;
     if (this._mainSprite){
-        gsap.killTweensOf(this._mainSprite);
         this._mainSprite.destroy();
     }
     this._mainSprite = null;
@@ -972,7 +959,6 @@ Sprite_Enemy.prototype.terminate = function() {
         this._button.destroy();
     }
     this._button = null;
-    gsap.killTweensOf(this);
     //this.destroy();
 }
 

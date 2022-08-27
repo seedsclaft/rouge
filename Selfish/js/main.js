@@ -26,7 +26,6 @@ const scriptUrls = [
 	"js/common/Debug.js",
 	"js/common/CommonUtility.js",
 	"js/common/DeployUtility.js",
-	"js/common/Window_SkillBase.js",
 
 	"js/rpg_sprites.js",
 	"js/rpg_windows.js",

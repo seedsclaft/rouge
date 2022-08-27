@@ -5,10 +5,15 @@ class Model_Map extends Model_Base{
         this._levelUpValue = 0;
         this._levelUpPoint = 0;
         this._tempRoleData = null;
+        this._damageData = [];
     }
 
     tempRoleData(){
         return this._tempRoleData;
+    }
+
+    damageData(){
+        return this._damageData;
     }
     
     async loadMapData(){
@@ -194,5 +199,21 @@ class Model_Map extends Model_Base{
         });
         this._levelUpValue = 0;
         this.player().refreshPassive();
+    }
+
+    initDamageData(){
+        this._damageData = [];
+    }
+
+    pushDamageData(result){
+        this._damageData.push(result);
+    }
+
+    totalDamage(){
+        let damage = 0;
+        this._damageData.forEach(element => {
+            damage += element;
+        });
+        return damage;
     }
 }

@@ -483,6 +483,7 @@ Game_Event.prototype.checkMoveType = function() {
         return false;
     }
     if (this._enemy.isDead()){
+        this.changeState(EnemyState.Dead);
         return 0;
     }
     const sight = this._enemy.mat;

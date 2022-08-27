@@ -326,13 +326,6 @@ class Scene_Option {
     }
 
     static openPopupDataTransport(){
-        SoundManager.playOk();
-        PopupManager.openDataTransport(() => {
-            this.inputFileName();
-        },
-        () =>{
-            this._optionWindow.activate();
-        });
     }
 
     static inputFileName(){

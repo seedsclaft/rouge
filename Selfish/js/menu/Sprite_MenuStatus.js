@@ -31,26 +31,6 @@ class Sprite_MenuStatus extends Sprite_BattlerStatus{
         sprite2.y = 4;
         sprite2.opacity = 64;
         gsap.to(sprite2,0,{pixi:{ skewX:-15}});
-        /*
-        sprite.bitmap = ImageManager.loadSystem('IconSet');
-        var iconIndex = this._battler.selfElement() + 63;
-        var pw = Window_Base._iconWidth;
-        var ph = Window_Base._iconHeight;
-        var sx = iconIndex % 16 * pw;
-        var sy = Math.floor(iconIndex / 16) * ph;
-        sprite.setFrame(sx, sy, pw, ph);
-        */
-        let sprite = new Sprite();
-        this.addChild(sprite);
-        sprite.x = 78;
-        sprite.y = 4;
-        const elementColor = $gameColor.skillElementColor(this._battler.selfElement());
-        const elementColor2 = $gameColor.skillElementColor2(this._battler.selfElement());
-        let bitmap = new Bitmap(320,120);
-        bitmap.gradientFillRectHalf(0,0,200,78,elementColor,elementColor2);
-        sprite.bitmap = bitmap;
-        sprite.opacity = 128;
-        gsap.to(sprite,0,{pixi:{ skewX:-15}});
     }
 
     setLv(){

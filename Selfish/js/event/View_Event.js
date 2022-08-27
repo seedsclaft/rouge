@@ -596,12 +596,6 @@ class View_Event {
     }
 
     commandEventAuto(){
-        $gameSystem._autoMode = $gameSystem._autoMode == true ? false : true;
-        if ($gameSystem._autoMode){
-            this._eventMenuSprite.showAutoButton();
-        } else{
-            this._eventMenuSprite.hideAutoButton();
-        }
     }
 
     commandEventSkip(){
@@ -617,11 +611,6 @@ class View_Event {
     }
 
     showEventMenu(){
-        if ($gameSystem._autoMode){
-            this._eventMenuSprite.showAutoButton();
-        } else{
-            this._eventMenuSprite.hideAutoButton();
-        }
         this._eventMenuSprite.visible = true;
     }
 
@@ -772,29 +761,6 @@ class View_Event {
         }
     }
 
-    setCrystal(fileName,x,y){
-        if (this._crystal == null){
-            this._crystal = new Sprite_Crystal();
-            const index = _.findIndex(this._layer.children,(child) => child == this._fadeSprite);
-            this._layer.addChildAt(this._crystal,index);
-        }
-        this._crystal.setup(fileName,x,y);
-    }
-
-    moveCrystal(duration,x,y){
-        if (this._crystal != null){
-            this._crystal.moveCrystal(duration,x,y);
-        }
-    }
-    
-    endCrystal(){
-        if (this._crystal != null){
-            this._crystal.endCrystal(() => {
-                this._crystal = null;
-            });
-        }
-    }
-
     tintPicture(fileName,color){
         const sprite = this.getEventPicture(fileName);
         if (sprite){
@@ -821,10 +787,5 @@ class View_Event {
     }
 
     endRollCredit(no,x,y,onlyOnes,noIndent){
-        let sprite = new Sprite_EndRollCredit();
-        sprite.x = x;
-        sprite.y = y;
-        sprite.setup(no,onlyOnes,noIndent);
-        this._layer.addChild(sprite);
     }
 }

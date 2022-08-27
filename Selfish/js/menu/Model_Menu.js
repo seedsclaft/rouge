@@ -41,30 +41,8 @@ class Model_Menu extends Model_Base {
             $gameParty.makeMenuActorPrevious();
         }
     }
-    
-    skillSpGain(skillId,value){
-        if (skillId < $gameDefine.defaultSlotId){
-            return false;
-        }
-        const lv = this.selectActor().skillLevel(skillId);
-        const max = $dataSkills[skillId].maxLevel;
-        if (lv >= max && value > 0){
-            return false;
-        }
-        const actor = this.selectActor();
-
-        actor.refreshPassive();
-        actor.setHp(actor.mhp);
-        return true;
-    }
 
     pushLimitBreakSkillId(actor,ids){
-        actor._skills.forEach(skillId => {
-            let lemitBreakSkill = $dataSkills[skillId+1000];
-            if (skillId && lemitBreakSkill != null && lemitBreakSkill.damage.elementId == actor.selfElement()){
-                ids.push(lemitBreakSkill);
-            }
-        });
     }
 
     menuCommand(){

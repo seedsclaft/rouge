@@ -187,9 +187,6 @@ Game_Define.prototype.frictionDamage = function(actor,item) {
   let array = actor.mp;
   if (array < 0) array = 0;
   let rate = Number( this.frictionDamageArray[array] );
-  if (item.damage.elementId != actor.selfElement()){
-    rate *= 0.5;
-  }
   return rate;
 }
 

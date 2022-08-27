@@ -113,9 +113,6 @@ DataManager.loadDatabasePlus = function(object) {
     if (object == $dataSkills){
         this.createSkillDataPlus();
     }
-    if (object == $dataWeapons){
-        this.createStageDataPlus();
-    }
     if (object == $dataEnemies){
         this.createEnemyDataPlus();
     }
@@ -163,9 +160,6 @@ DataManager.createSkillDataPlus = function() {
     });
 }
 
-DataManager.createStageDataPlus = function() {
-    $dataStage = new Game_StageList()._data;
-}
 
 DataManager.createEnemyDataPlus = function() {
     $dataEnemies.forEach(element => {
@@ -411,7 +405,6 @@ DataManager.createGameObjects = function() {
     $gameBGM           = new Game_BGM();
     $gameSE            = new Game_SE();
     $gameStateInfo     = new Game_StateInfo();
-    $gameElement       = new Game_Element();
     $gameKeyMap        = new Game_KeyMap();
     $gameSkillExp      = new Game_SkillExp();
     $gameHelp          = new Game_Help();

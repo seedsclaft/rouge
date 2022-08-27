@@ -56,9 +56,6 @@ Window_SkillHelp.prototype.drawTextEx = function(helpData, x, y) {
 
         var damage = (helpData.power * 0.01).toFixed(2);
         var repeat = helpData.hit;
-        var elementColor = $gameColor.skillElementColor(helpData.elementId);
-        var elementColor2 = $gameColor.skillElementColor2(helpData.elementId);    
-        this.drawBackFadeLeftSkewX(64,7,240,26,elementColor,elementColor2,200);
 
         if (damage && helpData.power){
             if (repeat >= 1){

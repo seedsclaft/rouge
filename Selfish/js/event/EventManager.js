@@ -391,7 +391,6 @@ EventManager.update = function() {
     }
     if (this._eventView) this._eventView.update();
     this.updateSkip();
-    this.updateAutomode();
     if (this._interpreter.isRunning() == false) {
         return;
     }
@@ -436,9 +435,6 @@ EventManager.loadStageSequenceData = function(){
     });
 }
 
-EventManager.autoMode = function() {
-    return $gameSystem._autoMode;
-}
 
 EventManager.callSkip = function() {
     this._callSkip = true;
@@ -537,77 +533,6 @@ EventManager.updateSkip = function() {
         //this.onLogOpen();
     }
 };
-
-EventManager.updateAutomode = function() {
-    if (this._eventSkip == true){
-        return;
-    }
-    if (!this._skipEnable){
-        return;
-    }
-    if (this._backLogWIndow && this._backLogWIndow.active){
-        return;
-    }
-    if (Input.isTriggered('menu') && !Input.isTriggered('cancel')){
-        SoundManager.playCursor();
-        this._eventView.commandEventAuto();
-        //$gameSystem._autoMode = $gameSystem._autoMode == true ? false : true;
-        //this._eventView._autoSprite.alpha = $gameSystem._autoMode == true ? 1 : 0;
-    }
-};
-
-EventManager.endStage = function(){
-    SceneManager.snapForBackground();
-
-    this.exit();
-
-    this._model.endStage();
-    // マップBGM・BGSを初期化
-    $gameSystem._mapBgm = null;
-    $gameSystem._mapBgs = null;
-    // 
-    $gamePlayer.clearTransferInfo();
-    BackGroundManager.clearWeather();
-    EventManager.clearWeather();
-
-    BackGroundManager.resetStageMode();
-    SceneManager.push(Save_Scene);
-    Scene_Save._nextScene = Map_Scene;
-}
-
-EventManager.endGame = function(){
-    SceneManager.snapForBackground();
-    $gameSystem._continue = false;
-    //this.exit();
-
-    // マップBGM・BGSを初期化
-    $gameSystem._mapBgm = null;
-    $gameSystem._mapBgs = null;
-    // 
-    $gamePlayer.clearTransferInfo();
-    BackGroundManager.clearWeather();
-    EventManager.clearWeather();
-
-    BackGroundManager.resetStageMode();
-    // ステージ情報を初期化
-    $gameParty.clearStageData();
-
-    //メニュー有効化
-    $gameSystem.enableMenu();
-    //セーブ有効化
-    $gameSystem.enableSave();
-
-    this.exit();
-    PopupManager.openEndGame(() => {
-        SceneManager.push(Save_Scene);
-        Scene_Save._nextScene = "Shutdown";
-    },() => {
-        EventManager.shutdown();
-        /*
-        SceneManager.goto(Title_Scene);
-        */
-    });
-}
 
 EventManager.shutdown = function(){
     if ($gameDefine.platForm() == PlatForm.Android || $gameDefine.platForm() == PlatForm.iOS){

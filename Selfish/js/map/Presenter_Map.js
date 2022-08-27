@@ -13,7 +13,6 @@ class Presenter_Map extends Presenter_Base {
     }
 
     async start(){
-        $gameSystem.setResume("Map_Scene");
         this._resourcedata = this._model.loadResourceData();
         this._view.setResourceData(this._resourcedata);
 
@@ -120,11 +119,15 @@ class Presenter_Map extends Presenter_Base {
         if (setSkilled == false){
             _player.setBattleAction($dataSkills[1]);
         }
+        this._model.initDamageData();
         const event = $gamePlayer.checkFrontEvent();
         const nears = $gamePlayer.checkNearEvents();
         const _player = this._model.player();
         const _playerLevel = _player.level;
-        const _enemy = event._enemy;
+        let _enemy = null;
+        if (event) {
+            _enemy = event._enemy;
+        }
         if (event && _enemy.isAlive()){
             let _battler = [_enemy,_player];
             let _enemyEvent = [event];
@@ -142,6 +145,10 @@ class Presenter_Map extends Presenter_Base {
                     this.commandEnemy(_player,battler,enemyEvent);
                 }
             });
+            let totalDamage = this._model.totalDamage();
+            if (totalDamage < 0){
+                this._view.playerEffectDamage(totalDamage,1);
+            }
             this._view.updateStatus();
         }
         Input.clear();
@@ -163,7 +170,7 @@ class Presenter_Map extends Presenter_Base {
         if (_result < 0){
             _enemy.performDamage();
             this._view.effectStart(1);
-            this._view.effectDamage(_result);
+            this._view.enemyEffectDamage(_result);
         }
         if (_enemy.isDead()){
             _enemy.performCollapse();
@@ -177,7 +184,8 @@ class Presenter_Map extends Presenter_Base {
         if (_enemy.isAlive()){
             event.setStopCount(0);
             const _result = this._model.commandBattle(_enemy,_player,1);
-            if (_result != 0){
+            if (_result < 0){
+                this._model.pushDamageData(_result);
                 _player.performDamage();
             }
         }
