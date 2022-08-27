@@ -1,0 +1,96 @@
+アクター設定,ソラ 通常,
+本文,やぁ \N[5],Hey\c \N[5].
+本文,早かったじゃない\|\|\^,That was quick.\|\|\^
+アクター設定,カイト 通常,
+本文,ただいま戻りました,I'm back.
+アクター設定,ソラ 驚き・動揺,
+本文,…ん？,Hm?
+アクター設定,ソラ 驚き・動揺,
+本文,後ろにいるのって…,Who's that behind you?
+アクター設定,カイト 通常,
+本文,市場で道案内を頼まれて\.,I was asked for directions
+本文,そしたら…,in the marketplace.\. Then...
+アクター設定,カイト 通常,
+本文,目的地がちょうど\.,It turns out they were coming here.
+本文,ここだったみたいで…,
+アクター設定,レミィ 通常,
+本文,お久しぶりです,It's been a long time\c
+アクター設定,レミィ 通常,
+本文,\N[6]先輩,\N[6].
+アクター設定,ソラ 特殊１,
+本文,げえっ！ \N[3]！,What?! \N[3]?!
+アクター設定,リン 通常,
+本文,それは～\.,I think\.
+本文,\N[5]が悪いと思うよ,you messed up\c \N[5].
+アクター設定,カイト 通常,
+本文,ボク \N[2]に,Did I do something to offend \N[2]?
+本文,嫌われるようなことしたのかな？,
+アクター設定,リン 通常,
+本文,そういうことじゃなくて～,That's not the issue.
+アクター設定,ハティ 通常,
+本文,\N[5] この計算で答えあってる？,\N[5]\c is this calculation right?
+アクター設定,カイト 笑顔,
+本文,うん 正解だよ,Yeah\c that's right.
+アクター設定,カイト 通常,
+本文,\N[12]なら次も解けると思うよ,I think you can solve the next one too.
+アクター設定,ハティ 通常,
+本文,よっしゃ！,Yes!
+アクター設定,リン 通常,
+本文,\N[5]は知らないと思うけど,I don't think you know this\c
+アクター設定,リン 通常,
+本文,\N[2] \N[5]が来てから\.,but \N[2] has changed a lot
+本文,けっこう変わったんだよ,since you arrived.
+アクター設定,カイト 通常,
+本文,そうなの？,Really?
+アクター設定,リン 通常,
+本文,\N[5]のそういうところ～,It's that kind of reaction.
+アクター設定,リン 通常,
+本文,まったく\.,Honestly.\.
+本文,お子様なんだから～,You're such a kid.
+アクター設定,オルフェ 通常,
+本文,あれ…？\.,Huh...?\.
+本文,\N[5]より\N[11]のが年上だっけ？,Is \N[11] older than you?
+アクター設定,カイト 通常,
+本文,ボクのほうが上だけど…,I'm older...
+アクター設定,ハティ 通常,
+本文,\N[5] どう？,How is it?
+アクター設定,カイト 笑顔,
+本文,\N[12]すごいね,You did great.
+本文,当たってるよ,You got the right answer.
+アクター設定,ハティ 通常,
+本文,イェーイ,Yay!
+アクター設定,リン 通常,
+本文,\N[5]～\.,\N[5].
+本文,何かプレゼントとか渡してみたら,You should give her a present.
+アクター設定,カイト 不信・怒り,
+本文,プレゼントか…,A present?
+アクター設定,カイト 不信・怒り,
+本文,確かに…\.,She has been taking care of me\.
+本文,ここに来てからお世話になりっぱなしだし,since I arrived.
+アクター設定,カイト 不信・怒り,
+本文,\N[2]の好きなものって何だろう…,I wonder what \N[2] likes.
+アクター設定,リン 通常,
+本文,もう～\.,That's not something
+本文,そういうの他人に聞かないの～,you should be asking us about.
+アクター設定,リン 通常,
+本文,お子様なんだから！,You're such a kid!
+アクター設定,オルフェ 通常,
+本文,\N[5]は\N[11]より年上なのにお子様なの\.,You're older than \N[11]\c but you're still the kid?
+本文,なんでだろう…？,
+アクター設定,カイト 不信・怒り,
+本文,えっと…,Um...
+アクター設定,カイト 通常,
+本文,まだお客さん居るんだし\.,We still have guests here.\.
+本文,ちょっと静かにしてよう,Let's all keep it down.
+アクター設定,リン 通常,
+本文,ごまかした,You can't fool me.
+アクター設定,オルフェ 通常,
+本文,ごまかした！,Or me!
+アクター設定,カイト 笑顔,
+本文,あはは…,Haha...
+アクター設定,カイト 通常,
+本文,\N[2]… あれから,\N[2] hasn't talked to me much
+本文,あまり口聞いてくれなくなっちゃった,ever since then.
+アクター設定,カイト 通常,
+本文,今度 市場に行ったら\.,Maybe I'll go look for a present
+本文,探してみようかな プレゼント,the next time I'm at the marketplace.

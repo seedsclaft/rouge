@@ -1,0 +1,29 @@
+poison,1,State: Poison,Take damage after acting.,
+electrochain,2,State: Bind,User and target cannot act. Breaks,after some turns or if user attacked.
+stun,3,State: Stun,Cannot act next turn.,
+salt,4,State: Provoke,Take all single target attacks of the,provoked. No effect on party attacks.
+counter,5,State: Counter,Attacking an enemy in counter mode,makes them attack outside their turn.
+slowspeed,6,State: Hamstring,Wait time until next turn increases.,
+fleeze,7,State: Freeze,Cannot act until attacked.,Take slightly more damage.
+sick,8,State: Inflammation,Unable to recover HP.,Try to cure quickly or win swiftly.
+substitute,9,State: Cover,Take all single attacks on allies.,No effect on party attacks.
+resist,10,State: Status Immune,Watch out for enemies immune to,status ailments!
+grow,11,State: Growth,Boost stats until the battle ends.,Watch out for snowball effects.
+curse,12,State: Curse,Cannot restore MP.,
+nocost,13,State: No Cost,Does not use MP to cast spells.,Watch out for enemy assaults!
+provision,14,State: Target,Become the target of all enemy single,attacks\c except provoked ones.
+damageblock,15,State: Wall,Not affected by damage lower than,Wall’s point value.
+chain,16,State: Chain,Makes it so that next ally can,act immediately.
+finite,17,State: Death Sentence,When Death Sentence wears off\c,target is KO’d.
+discharge,18,State: Misfire,If spent MP is lower than a set amount\c,attack is redirected to self.
+shieldbreak,19,State: Break,Unable to Guard or Perfect Guard.,
+changeMagic,41,Menu: Magic,Discovered magic can be equipped from,the Magic Command on the Menu screen.
+commonElement,61,Magic: Common,Anyone can equip common element magic.,
+passiveMagic,62,Magic: Element Passive,Just equipping passive magic like Life,Strange raises your stats.
+passiveMagicTec,63,Magic: Passive Stacking,If you equip multiple passive magics\c,their effects will stack.
+battleGuard,81,Battle: Guard,You can guard by pressing the \K[5],button while the enemy attacks.
+chargeAttack,82,Battle: Magic Attack,Watch out when the enemy’s MP is max!,Time your guards well!
+loseSwitch,83,Battle: Defeat Condition,Check the defeat condition!,No one can be KO’d!
+loseSwitch2,84,Battle: Special Defeat Condition,Check the defeat condition!,Neither enemy nor ally can be KO’d!
+magicElement,85,Battle: Elemental Advantage,Elemental advantages boost damage.,Check\c the top left chart,when picking a spell.
+newhelp,999,Alert,A new Help Topic has been added.,

@@ -1,0 +1,64 @@
+アクター設定,,
+本文,保護者はつらいよ\|\^,Being a Guardian is Hard\|\^
+アクター設定,カイト 通常,
+本文,\N[4]先生,Miss \N[4].
+アクター設定,マリー 通常,
+本文,おや\. 元気かね\N[5]くん,How are you doing\c \N[5]?\.
+アクター設定,マリー 笑顔,
+本文,また一緒に戦えて\.,I'm happy to fight alongside you\.
+本文,先生は嬉しいよ,again.
+アクター設定,カイト 通常,
+本文,あの…,Um...
+アクター設定,カイト 通常,
+本文,ありがとうございました,Thank you very much.
+アクター設定,マリー 驚き・動揺,
+本文,ん…？\.,Hm?\.
+本文,急にどうしたのかね？,Where's this coming from?
+アクター設定,カイト 不信・怒り,
+本文,この戦いが終わったら\.,Once this battle is over\c\.
+本文,きっと全部うまく行くと思うんです,I think everything will work out.
+アクター設定,マリー 通常,
+本文,それは…\.,Do you mean\.
+本文,街の統治についてかね？,running the city?
+アクター設定,カイト 通常,
+本文,はい,Yes.
+アクター設定,マリー 通常,
+本文,まぁ たしかに\.,I mean\c\.
+本文,計画としては理にかなっているね,the plan is very logical.
+アクター設定,マリー 驚き・動揺,
+本文,でもさ…,But...
+アクター設定,マリー 驚き・動揺,
+本文,\N[5]くんは,You're going to quit magic\c\.
+本文,魔法使いをやめちゃうんでしょ,right?
+アクター設定,カイト 通常,
+本文,はい,Yes.
+アクター設定,カイト 不信・怒り,
+本文,僕の魔法は\.,I don't think my magic\.
+本文,もう必要ないと思うから,is needed anymore.
+アクター設定,マリー 通常,
+本文,ふーん…,Hmm...
+アクター設定,カイト 不信・怒り,
+本文,ボクは間違っているのでしょうか？,Am I wrong?
+アクター設定,マリー 通常,
+本文,いいんじゃん？,It's fine.
+アクター設定,マリー 通常,
+本文,キミがそう思うんだったら,If that's what you believe.
+アクター設定,カイト 驚き・動揺,
+本文,本当ですか？,Really?
+アクター設定,マリー 通常,
+本文,むしろ先生は嬉しいよ…,I'm actually happy.
+アクター設定,マリー 通常,
+本文,\N[5]くんが\.,To hear you say\.
+本文,こんなに立派なこと言ってくれて！,such a respectable thing!
+アクター設定,カイト 笑顔,
+本文,良かった…,I'm relieved to hear you say that.
+アクター設定,マリー 笑顔,
+本文,よし！\.,Okay!\.
+本文,\N[5]くん,\N[5].
+アクター設定,マリー 特殊１,
+本文,どっちが多くマモノを退治できるか…,Let's compete to see who can\.
+アクター設定,マリー 笑顔,
+本文,競争だーっ！,defeat more monsters!
+アクター設定,カイト 驚き・動揺,
+本文,えぇ！？\.,What?!\.
+本文,ちょっと待ってください！,Hold on!

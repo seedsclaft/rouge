@@ -1,0 +1,37 @@
+アクター設定,マリー 通常,
+本文,\N[5]くん…\.,\N[5]\c\.
+本文,アタシに嘘ついたね,you lied to me\c didn't you?
+アクター設定,カイト 通常,
+本文,…,...
+アクター設定,カイト 通常,
+本文,どれのことでしょう？,Can you be more specific?
+アクター設定,マリー 不信・怒り,
+本文,うわ…\.,Wow.\.
+本文,一つじゃないんだ…,So you lied more than once.
+アクター設定,マリー 不信・怒り,
+本文,アタシが過去に…,I touched the Black Pearl in the past and
+アクター設定,マリー 不信・怒り,
+本文,黒水晶に触れる実験に失敗して\.,became a monster when the experiment failed.\.
+本文,マモノになってしまったこと,You knew that when you
+アクター設定,マリー 通常,
+本文,わかってて魔力を注入したね？,poured your magic into me\c didn't you?
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 通常,
+本文,はい,Yes.
+アクター設定,マリー 驚き・動揺,
+本文,アタシをマモノにして\.,What were you planning on doing\.
+本文,どうするつもりだったのかね？,if I turned into a monster again?
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,倒すつもりでした,Defeat you.
+アクター設定,マリー 笑顔,
+本文,おおぅ！\.,Wow!
+本文,過激だなぁ,That's awfully extreme.
+アクター設定,マリー 通常,
+本文,倒す理由は？,Why would you do that?
+アクター設定,カイト 通常,
+本文,\N[4]先生を…,So...
+アクター設定,カイト 不信・怒り,
+本文,コロすためです,I could kill you.

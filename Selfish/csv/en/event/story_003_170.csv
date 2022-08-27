@@ -1,0 +1,96 @@
+アクター設定,カイト 通常,
+本文,１階まで降りてこられた…,We made it down to the first floor.
+アクター設定,ノエル 通常,
+本文,なぁ おい…\N[5],Hey\c \N[5].
+アクター設定,ノエル 通常,
+本文,すごいじゃねえか！,That was amazing!
+アクター設定,カイト 驚き・動揺,
+本文,何が…？,What was?
+アクター設定,ノエル 通常,
+本文,魔法使えるのかよ！\.,You can use magic?!\.
+本文,言えよ～,Why didn't you tell me?
+アクター設定,カイト 驚き・動揺,
+本文,うん,Yeah.
+アクター設定,ノエル 通常,
+本文,\N[5] できることあるじゃんか\.,See\c you've got something you can do.
+本文,もっと 胸張れよ,Be a little more confident.
+アクター設定,カイト 驚き・動揺,
+本文,\N[14]は怖くないの？,Aren't you scared?
+アクター設定,ノエル 通常,
+本文,何がだよ,Of what?
+アクター設定,カイト 不信・怒り,
+本文,ボクがマモノに,I might turn into a monster.
+本文,なっちゃうかもしれないから,
+アクター設定,ノエル 通常,
+本文,まーた その話かよ,That again?
+アクター設定,ノエル 通常,
+本文,あんな噂 信じてねえよ,I don't believe in that rumor.
+アクター設定,カイト 不信・怒り,
+本文,誰にも言わない？,You won't tell anyone?
+アクター設定,ノエル 通常,
+本文,言わねえよ\.\.\.,No way.\.\.\.
+本文,でも… まてよ,Hold on though.
+アクター設定,カイト 通常,
+本文,…？,...?
+アクター設定,ノエル 通常,
+本文,いや やめた,No\c never mind.
+アクター設定,カイト 通常,
+本文,何をぶつぶつ言ってるのさ,What are you mumbling about?
+アクター設定,ノエル 通常,
+本文,いやぁ\. これをダシに\.,I thought I could blackmail
+本文,孤児院のやつらゆすれないかなと,the orphanage with this.
+アクター設定,カイト 特殊１,
+本文,…！,...!
+アクター設定,ノエル 通常,
+本文,だから やめたって言ったじゃねえか！\.,I said never mind!\.
+本文,怖い顔するなよ,Don't give me that scary look.
+アクター設定,カイト 不信・怒り,
+本文,もう \N[14]は\.,Why do you always\.
+本文,すぐ悪いこと考えるんだから,come up with these schemes?
+アクター設定,ノエル 通常,
+本文,ッハハ,Ha ha.
+アクター設定,ノエル 通常,
+本文,でもさ ちょっと\.,You were kind of cool\c though.
+本文,かっこよかったぜ,
+アクター設定,カイト 通常,
+本文,…何が？,What do you mean?
+アクター設定,ノエル 通常,
+本文,何がって…\.,Well\c\.
+本文,マモノがでたとき,when the monster appeared…
+アクター設定,ノエル 通常,
+本文,すぐにあたしを\.,You came to protect me right away.
+本文,かばってくれただろ,
+アクター設定,ノエル 通常,
+本文,って！\.,Dang it!\.
+本文,最後まで言わせんな恥ずかしい,I can't believe you made me say it.
+アクター設定,カイト 笑顔,
+本文,うん…\.,Yeah...\.
+本文,ありがとう,Thanks.
+アクター設定,ノエル 通常,
+本文,…！,...!
+アクター設定,ノエル 通常,
+本文,おまえが感謝してどうすんだよ,Why are you the one thanking me?
+アクター設定,カイト 不信・怒り,
+本文,あ… \.ごめん,Oh...\. Sorry.
+アクター設定,ノエル 通常,
+本文,謝ってどうすんだよ まったく,Now why are you apologizing?
+アクター設定,ノエル 通常,
+本文,とにかく…,Anyway…
+アクター設定,ノエル 通常,
+本文,\N[5] サンキューな,Thanks\c \N[5].
+アクター設定,カイト 通常,
+本文,うん こちらこそ,You too.
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,ものぐさ魔法使い 通常,
+本文,\N[3]さん…？　,\N[3]?
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,ものぐさ魔法使い 通常,
+本文,\N[3]さん…\.,\N[3]\c\.
+本文,こちらに何か？,is there something here?
+アクター設定,レミィ 通常,
+本文,いいえ\.,It's nothing.
+本文,何でもないわ,
+アクター設定,レミィ 通常,
+本文,戻りましょう,Let's head back.

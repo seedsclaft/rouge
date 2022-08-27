@@ -1,0 +1,75 @@
+アクター設定,,
+本文,因縁がある人たち\|\^,The Fated Ones\|\^
+アクター設定,カイト 通常,
+本文,\N[3]さん\.,\N[3]\c\.
+本文,聞いてもいいでしょうか？,may I ask you something?
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,レミィ 通常,
+本文,何かしら？,What is it?
+アクター設定,カイト 通常,
+本文,\N[3]さんは\.,Do you and Miss \N[4]
+本文,\N[4]先生とお知り合いなんですか？,know each other?
+アクター設定,レミィ 通常,
+本文,えぇ,Yes.
+アクター設定,レミィ 通常,
+本文,\N[4]さんは\.,It may be only a month\c
+本文,ひと月だけだけれど 私達と同じ\^,but \N[4] is the same as us.
+アクター設定,マリー 笑顔,
+本文,ねぇねぇ \N[5]くん,Hey\c \N[5].
+アクター設定,レミィ 通常,
+本文,でも… 本人の希望で\^,But it's what she wanted.\^
+アクター設定,マリー 笑顔,
+本文,しばらく見ないうちに\.,You've gotten a lot better\.
+本文,魔法の扱いが達者になったね！,with magic all of a sudden!
+アクター設定,マリー 笑顔,
+本文,先生は嬉しいよ～,I'm proud of you.
+アクター設定,マリー 笑顔,
+本文,やっぱり\.,I knew I saw something in you!
+本文,アタシの目に狂いはなかったんだね！,
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,カイト 通常,
+本文,あ…,Oh...
+アクター設定,マリー 通常,
+本文,…,...
+アクター設定,マリー 通常,
+本文,言ったよね？,Didn't I tell you?
+アクター設定,カイト 特殊１,
+本文,…,...
+アクター設定,カイト 驚き・動揺,
+本文,ごめんなさい,I'm sorry.
+アクター設定,マリー 笑顔,
+本文,うんうん\.,Good\c good.
+本文,わかればよろしい,As long as you understand.
+アクター設定,マリー 不信・怒り,
+本文,次 変なこと吹き込もうとしたら,Next time you put ideas in his head\c\.
+アクター設定,マリー 不信・怒り,
+本文,二度としゃべれないように\.,I'll sew your mouth shut\.
+本文,口\. 縫い付けるよ？,so you can never speak again.
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,レミィ 特殊１,
+本文,それは\.,That seems physically impossible.
+本文,物理的に無理だと思うわ,
+アクター設定,マリー 不信・怒り,
+本文,…,...
+アクター設定,マリー 驚き・動揺,
+本文,超イラっとくるんだけど,You're really getting on my nerves.
+アクター設定,マリー 驚き・動揺,
+本文,助けられてる分際で\.,You know I came here
+本文,よく言えるね,to rescue you.
+アクター設定,レミィ 通常,
+本文,…？,...?
+アクター設定,レミィ 通常,
+本文,気分を悪くしたのなら\.謝るわ,I apologize\. if I offended you.
+アクター設定,マリー 驚き・動揺,
+本文,そういうところっ！,That's what I'm talking about!
+アクター設定,マリー 不信・怒り,
+本文,アタシは\.,I will never acknowledge you!\.
+本文,絶対に！\. 認めないからね,
+アクター設定,マリー 不信・怒り,
+本文,「魔法使い」を率いていいのは\.,Only \N[6] is fit to lead the wizards!
+本文,\N[6]だけなんだから！,
+アクター設定,レミィ 通常,
+本文,…,...

@@ -1,0 +1,155 @@
+アクター設定,ニナ 通常,
+本文,\N[4]さん！,\N[4]!
+アクター設定,マリー 通常,
+本文,おおぉ\. \N[2]くん\.,Oh\c\. \N[2].\.
+本文,忙しそうだねぇ,Looks like you're keeping yourself busy.
+アクター設定,ニナ 不信・怒り,
+本文,…,...
+アクター設定,ニナ 通常,
+本文,マモノのことなんですが…,About the monsters...
+アクター設定,ニナ 不信・怒り,
+本文,街の内部に,They might be
+本文,潜んでいるかもしれないんです,hiding somewhere within the town.
+アクター設定,マリー 笑顔,
+本文,おぉ\. それはビックリだね！,Ooh.\. What a surprise!
+アクター設定,ニナ 不信・怒り,
+本文,まさかとは思いますが…,...In case you didn't know already.
+アクター設定,マリー 驚き・動揺,
+本文,おや？\. もしかして…,What's this?\. Don't tell me...
+アクター設定,マリー 笑顔,
+本文,アタシを疑っておるのかね？,you're suspicious of me?
+アクター設定,ニナ 驚き・動揺,
+本文,いえ\. そういうわけじゃ…,No.\. I didn't say that...
+アクター設定,マリー 通常,
+本文,無理もないよねぇ,I wouldn't blame you.
+アクター設定,マリー 通常,
+本文,\N[2]くんは知ってるもんね\.,After all\c you know all about me\.
+本文,アタシの秘密の研究所のこと,and my secret lab.
+アクター設定,ニナ 不信・怒り,
+本文,心当たりがあるなら\.,If you have any idea who the real
+本文,教えてください,culprit is\c\. please tell me.
+アクター設定,マリー 通常,
+本文,んー…\.,Hmm...
+本文,別に答えてもいいけど,Sure. Why not.
+アクター設定,マリー 笑顔,
+本文,犯人は…\. アタシでした！\.,What would you do\. if I told you...\.
+本文,って言ったら？,It's me!
+アクター設定,ニナ 不信・怒り,
+本文,…,...
+アクター設定,ニナ 不信・怒り,
+本文,…,...
+アクター設定,ニナ 不信・怒り,
+本文,…,...
+アクター設定,マリー 笑顔,
+本文,な\. なんか言おうよ,Come on.\. At least say something.
+アクター設定,マリー 驚き・動揺,
+本文,冗談じゃん\. 冗談！,I'm kidding.\. That was a joke!
+アクター設定,マリー 不信・怒り,
+本文,\N[2]くんは…,\N[2]...
+アクター設定,マリー 不信・怒り,
+本文,この街に住んでて\.,Have you experienced anything unpleasant\.
+本文,居心地悪い経験したことない？,in the time you've been living here?
+アクター設定,ニナ 通常,
+本文,…？,...?
+アクター設定,ニナ 不信・怒り,
+本文,具体的にどういう…？,Like what?
+アクター設定,マリー 不信・怒り,
+本文,例えば…\.,For example...\.
+本文,魔法を自由に使えなかったり,Have you ever been unable to use magic?
+アクター設定,マリー 不信・怒り,
+本文,魔法が使えるからってだけで\.,Or used magic and\.
+本文,白い目で見られたり,received nasty looks for it?
+アクター設定,ニナ 不信・怒り,
+本文,わたしは…\.,Well...\.
+アクター設定,ニナ 通常,
+本文,たしかに…\.,Now that you mention it...\.
+本文,以前は嫌な噂もありましたけど,There were some ugly rumors going around\c
+アクター設定,ニナ 通常,
+本文,あまり気にしてないです,but I mostly ignored them.
+アクター設定,ニナ 通常,
+本文,\N[6]さんも\.,I like \N[6]\.
+本文,孤児院のみんなも大好きだから,and everyone at the orphanage so much
+アクター設定,ニナ 通常,
+本文,みんなと一緒にいられれば\.,that just getting to be with them\.
+本文,それだけで…,is enough...
+アクター設定,マリー 不信・怒り,
+本文,つまんないの\.,Yawn.\.
+本文,答えになってないじゃん,That doesn't answer my question.
+アクター設定,ニナ 驚き・動揺,
+本文,それは…,But...
+アクター設定,マリー 通常,
+本文,でもさ\.,Listen.\.
+本文,そんなこと言いながら…,You say that...
+アクター設定,マリー 笑顔,
+本文,少しハイになってるよね？\.,But it's kind of a rush\c isn't it?\.
+本文,魔法使いとしてみんなに頼られて,Being the wizard everyone depends on.
+アクター設定,ニナ 驚き・動揺,
+本文,そ\. そんなことは…,Th-\.That's not true...
+アクター設定,マリー 笑顔,
+本文,あれだけ煙たがられてたのに,I've seen how people avoid you.
+アクター設定,マリー 笑顔,
+本文,みんなによってたかって\.,It must feel great to have them\.
+本文,頼りにされたら,crowding around you\c
+アクター設定,マリー 笑顔,
+本文,気分いいよねぇ！,begging for your help!
+アクター設定,ニナ 特殊１,
+本文,…,...
+アクター設定,マリー 通常,
+本文,世間ってさ…,Why is it...
+アクター設定,マリー 通常,
+本文,どうしてこんなに単純で\.,people can be so stupid and\.
+本文,馬鹿なんだろうね？,predictable?
+アクター設定,マリー 通常,
+本文,注目されるのは\.,It's always the loudmouths\.
+本文,いつも声の大きい人たちばかり,who get all the attention.
+アクター設定,ニナ 驚き・動揺,
+本文,えっ…？,You think so?
+アクター設定,マリー 驚き・動揺,
+本文,それを聞く側も…,If you have to ask\c it's because you
+アクター設定,マリー 驚き・動揺,
+本文,与えられた情報に晒されて,take everything people say at face value
+アクター設定,マリー 驚き・動揺,
+本文,他人の事情も知りもしないで,and never question their motives.
+アクター設定,マリー 驚き・動揺,
+本文,何も考えないで,Nobody wants to be alone\c right?
+アクター設定,マリー 驚き・動揺,
+本文,大きい枠組みの方に入りたがる,We all want to be part of the group.
+アクター設定,マリー 驚き・動揺,
+本文,その方が簡単で楽で安全だから,It's easier and safer if we don't
+アクター設定,マリー 不信・怒り,
+本文,誰だって…\.,have to think for ourselves.
+本文,孤独になりたくないじゃん？,
+アクター設定,マリー 笑顔,
+本文,ねぇ？,Don't you agree?
+アクター設定,マリー 通常,
+本文,この議題について…,Tell me\c \N[2]...\.
+アクター設定,マリー 通常,
+本文,\N[2]くんは\.,What do you think
+本文,どう思うかね？,of that?
+アクター設定,ニナ 不信・怒り,
+本文,わたしは\.,I\.
+本文,難しいことはわからないけど,don't know if that's true or not.
+アクター設定,ニナ 不信・怒り,
+本文,間違ったことをしてる人には\.,I just know when people do something wrong\.
+本文,間違ってるって言うし,they need to be told.
+アクター設定,ニナ 驚き・動揺,
+本文,孤独は寂しいから\.,And people need company\.
+本文,できるだけ独りにはさせたくないし,otherwise they'll get lonely.
+アクター設定,ニナ 悲しみ・焦り,
+本文,親しい人がいなくなるのは\.,I can't stand the thought\.
+本文,嫌だし…,of losing my friends...
+アクター設定,マリー 驚き・動揺,
+本文,ちょ…！\.,Hey?!\.
+本文,そこ泣くところ！？,Are you starting to cry?!
+アクター設定,マリー 不信・怒り,
+本文,…,...
+アクター設定,マリー 驚き・動揺,
+本文,わ\. 悪かったよ,Okay.\. I'm sorry.
+アクター設定,マリー 不信・怒り,
+本文,でもさ,But listen.
+アクター設定,マリー 不信・怒り,
+本文,泣くのは\.,Breaking down in tears is\.
+本文,卑怯だよ？,totally unfair.
+アクター設定,ニナ 悲しみ・焦り,
+本文,はい…\.,You're right.\.
+本文,わかってます,It is.

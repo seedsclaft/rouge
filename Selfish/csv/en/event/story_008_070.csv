@@ -1,0 +1,78 @@
+アクター設定,レミィ 通常,
+本文,貴方,You.
+アクター設定,カイト 通常,
+本文,…はい\.,Yes?\.
+本文,なんでしょう？,
+アクター設定,レミィ 通常,
+本文,魔法使いについて\.,I think you have the wrong idea\.
+本文,勘違いしているのではないかしら,about wizards.
+アクター設定,カイト 通常,
+本文,昨日の風船の件ですか,You mean the balloon yesterday?
+アクター設定,レミィ 通常,
+本文,えぇ…,Yes.
+アクター設定,レミィ 通常,
+本文,私達の職務は…,My job...
+アクター設定,レミィ 通常,
+本文,マモノを駆除すること,is to eliminate monsters.
+アクター設定,レミィ 通常,
+本文,市井の魔法使いが\.,And to see if wizards in town\.
+本文,魔法を悪用していないか,are abusing magic
+アクター設定,レミィ 通常,
+本文,監視\.,by monitoring\.
+本文,管理をすること,and overseeing them.
+アクター設定,レミィ 通常,
+本文,人助けをしているわけではないわ,I'm not here to help people.
+アクター設定,カイト 不信・怒り,
+本文,でも 子供が泣いてたら\.,But don't you want to help
+本文,助けようと思いませんか？,when you seeing a crying child?
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,レミィ 通常,
+本文,この国には\.,There are people in this country\.
+本文,魔法使いをよく思わない人もいるわ,who don't care for wizards.
+アクター設定,レミィ 通常,
+本文,実際に 昨日\.,The girl's mother yesterday\.
+本文,子供の母親は私達を警戒していたもの,was wary of us.
+アクター設定,カイト 不信・怒り,
+本文,それはそうですけど…,That's true\c but...
+アクター設定,レミィ 通常,
+本文,私達はあくまで,We only need
+本文,職務に準ずるのみ,to fulfill our duties.
+アクター設定,レミィ 通常,
+本文,仕事中でなければともかく…,If it's not for the job...
+アクター設定,レミィ 不信・怒り,
+本文,公私混同は\.,we should avoid
+本文,良くないわ,interacting with the public.
+アクター設定,カイト 通常,
+本文,…でも,But...
+本文,\N[3]さん,
+アクター設定,カイト 通常,
+本文,子供にジャンプしてって\.,when the little girl\.
+本文,お願いされたとき,asked you to jump\c
+アクター設定,カイト 通常,
+本文,リクエストに応えましたよね？,you listened to her request.
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,カイト 通常,
+本文,しかも,You even did
+本文,スピンまでしてました,a little spin.
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,レミィ 不信・怒り,
+本文,そうだったかしら？,Did I?
+アクター設定,カイト 通常,
+本文,してましたよ,You did.
+アクター設定,レミィ 通常,
+本文,そう…,I see...
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,レミィ 通常,
+本文,貴方,You.
+アクター設定,カイト 通常,
+本文,はい,Yes?\.
+アクター設定,レミィ 通常,
+本文,今日も同行を,Would you accompany me
+本文,お願いしていいかしら？,again today?
+アクター設定,カイト 通常,
+本文,えぇ,Yes\c
+本文,良いですよ,of course.

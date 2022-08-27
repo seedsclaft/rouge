@@ -1,0 +1,136 @@
+アクター設定,,
+本文,シニカルなクエスチョン\|\^,Cynical Questions\|\^
+アクター設定,マリー 笑顔,
+本文,いきなりですが！,\N[5]!
+アクター設定,マリー 特殊２,
+本文,ここで\N[5]くんに\.,I have\.
+本文,クエスチョン！,a pop question for you!
+アクター設定,マリー 特殊１,
+本文,デデーン！,Ba-dum!
+アクター設定,カイト 驚き・動揺,
+本文,いきなりすぎますよ！？,A little more warning would be nice!
+アクター設定,マリー 通常,
+本文,元々ここは\.,What do you think\.
+本文,なんだったでしょうか？,this place used to be?
+アクター設定,カイト 不信・怒り,
+本文,漠然としすぎて\.,How would I know?\.
+本文,わかりませんよ,Can't I at least get a hint?
+アクター設定,マリー 驚き・動揺,
+本文,んー…\.,Already?\.
+本文,さっそく第一ヒント？,All right. Hint number one.
+アクター設定,マリー 笑顔,
+本文,この洞窟と似たような雰囲気を\.,Does this cave remind you of\.
+本文,どこかで感じたことはないかね？,anyplace else you're familiar with?
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,わからないです,I don't know.
+アクター設定,マリー 不信・怒り,
+本文,むむむ…,*grumble*
+アクター設定,マリー 笑顔,
+本文,何がどういうふうに\.,What don't you know?\.
+本文,わからないか 教えてもらえるかね？,Can you explain yourself?
+アクター設定,カイト 不信・怒り,
+本文,\N[4]先生がボクに\.,I don't know what it is you\.
+本文,何を期待しているのかわかりません,expect me to say.
+アクター設定,マリー 驚き・動揺,
+本文,おおぅ…\.,Aha.\.
+本文,そう来たか,I should have guessed.
+アクター設定,マリー 笑顔,
+本文,\N[5]くん\.,\N[5]\c\.
+本文,すっかり生意気になったねぇ,you've developed a bit of an attitude.
+アクター設定,マリー 笑顔,
+本文,先生は少しだけ\.,And I have to say\c
+本文,イラっとしたよ,I'm not very pleased about that.
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,いつも そうやって\.,As usual\c\.
+本文,はぐらかしますよね,you're changing the subject.
+アクター設定,マリー 通常,
+本文,んー？,Hmm?
+アクター設定,マリー 通常,
+本文,キミはいったい\.,I have no clue\.
+本文,何を言っておるのかね？,what you might be referring to.
+アクター設定,カイト 不信・怒り,
+本文,\N[4]先生はいつも勝手で\.,You always change the subject\c\.
+本文,こちらの質問に答えてくれません,and you never answer any of my questions.
+アクター設定,マリー 驚き・動揺,
+本文,えー！？,That's not true!
+アクター設定,マリー 笑顔,
+本文,そんなことないよ\.,I'm your teacher.\.
+本文,アタシは先生だもん,I would never do that.
+アクター設定,マリー 特殊２,
+本文,生徒の質問には\.,I'll answer any question\.
+本文,何でも答えるよ,my students might have.
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,ボクは\N[4]先生と\.,I think you and I\.
+本文,もっと本音で話をする必要があると思います,need to have a more serious talk sometime.
+アクター設定,マリー 驚き・動揺,
+本文,えー！？,You do?!
+アクター設定,マリー 通常,
+本文,これまでいっぱい\.,But we've already had\.
+本文,話してきたじゃん,plenty of serious conversations.
+アクター設定,マリー 驚き・動揺,
+本文,アタシ\.,Have all of my lessons\.
+本文,何か間違ったこと教えたかね？,somehow been a failure?
+アクター設定,カイト 不信・怒り,
+本文,いえ…\.,No.\.
+本文,\N[4]先生はいつも正しいです,Everything you teach is always correct.
+アクター設定,マリー 笑顔,
+本文,だよねぇ！,Of course it is!
+アクター設定,カイト 不信・怒り,
+本文,でもボクは…,It's just that...
+アクター設定,カイト 不信・怒り,
+本文,\N[4]先生を\.,I\.
+本文,信用できないんです,don't trust you.
+アクター設定,マリー 通常,
+本文,ん…？,Hmm?
+アクター設定,マリー 通常,
+本文,それはどうしてだろうね？,Why would that be?
+アクター設定,カイト 不信・怒り,
+本文,それが…\.,Why...?\.
+本文,わからないんです,I don't know.
+アクター設定,マリー 通常,
+本文,ふーん…,Hmph.
+アクター設定,マリー 不信・怒り,
+本文,あのね\.,Listen\c\.
+本文,\N[5]くん,\N[5].
+アクター設定,マリー 通常,
+本文,世の中には\.,This world\.
+本文,色んな人がいるんだよ,has a lot of people in it.
+アクター設定,マリー 通常,
+本文,自分よがりで\.,Some are too proud\.
+本文,話を聞いてくれない人や,to listen others.
+アクター設定,マリー 通常,
+本文,権力や身分が違いすぎて\.,Some feel their status puts them above\.
+本文,話ができない人や,having to listen.
+アクター設定,マリー 不信・怒り,
+本文,頭が悪すぎて話にならない人,Some are too stupid to even bother with.
+アクター設定,マリー 驚き・動揺,
+本文,そういうのに\.,You\c however\c\.
+本文,どうやって対応するか,you're a bright kid.
+アクター設定,マリー 笑顔,
+本文,頭の良いキミなら\.,I think you know\.
+本文,わかるはずだと思うけど,what the proper response is.
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,先生は意地悪です,You like teasing me\c don't you?
+アクター設定,マリー 通常,
+本文,…,...
+アクター設定,マリー 不信・怒り,
+本文,あっそう…,That's your answer?
+アクター設定,マリー 通常,
+本文,\N[5]くん,\N[5]\c
+アクター設定,マリー 笑顔,
+本文,もう何も答えなくて\.,shut up\.
+本文,シャーラップだよ,and don't say another word.
+アクター設定,マリー 通常,
+本文,アタシと\N[5]くんは\.,If only\.
+本文,もっと別な関係で…,you and I had met\.
+アクター設定,マリー 通常,
+本文,別のタイミングで…\.,at some other time
+本文,知り合えたら良かったんだよ,and under different circumstances.

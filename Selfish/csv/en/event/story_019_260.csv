@@ -1,0 +1,11 @@
+アクター設定,マリー 通常,,,
+本文,\N[5]くん\.,What do you think\c\.,,
+本文,どうしよう？,\N[5]?,,
+アクター設定,マリー 笑顔,,,
+本文,ヤっちゃう？\.,Should we do it?\.,,
+本文,どーんと！,Consequences be damned?!,,
+アクター設定,カイト 通常,,,
+本文,…,...,,
+選択肢の準備,心の準備が…,どーんとやってみよう,Give me a second to prepare.,Let's do it.
+選択肢の遷移先,0,心の準備が…,Give me a second to prepare.,
+選択肢の遷移先,1,どーんとやってみよう,Let's do it.,

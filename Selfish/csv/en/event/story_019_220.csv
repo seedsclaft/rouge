@@ -1,0 +1,114 @@
+アクター設定,マリー 通常,
+本文,これさ…,Look here\c \N[5].
+アクター設定,マリー 笑顔,
+本文,なにかわかるかね？,Can you tell me what this is?
+アクター設定,カイト 驚き・動揺,
+本文,…！,...!
+アクター設定,カイト 驚き・動揺,
+本文,黒水晶！？,Is that a Black Pearl?!
+アクター設定,マリー 笑顔,
+本文,大正解！,Correct!
+アクター設定,マリー 通常,
+本文,正確にはかけら\.,Or rather\c it's a very small\.
+本文,ほんの一部だけどね,piece of one.
+アクター設定,カイト 不信・怒り,
+本文,どうして\.,Miss \N[4]\c\.
+本文,\N[4]先生が？,where did you get that from?
+アクター設定,マリー 通常,
+本文,あの赤帽が北部遠征で見つけたやつ,Red-hat girl found it on her trip north.
+アクター設定,マリー 笑顔,
+本文,もったいないから\.,There was no sense in\.
+本文,回収してきたのだよ,leaving it lying around.
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,触って,Is it safe
+本文,大丈夫なんですか？,to touch it?
+アクター設定,マリー 通常,
+本文,うーん…,Uh...
+アクター設定,マリー 驚き・動揺,
+本文,大丈夫っぽいねぇ,So it seems.
+アクター設定,カイト 通常,
+本文,そうですか,Really?
+アクター設定,マリー 通常,
+本文,あの赤帽は触れただけで\.,I'm not quite sure why\c though.
+本文,マモノになったっぽいけど,When red-hat girl touched it\c\.
+アクター設定,マリー 笑顔,
+本文,なんでアタシは大丈夫なのかね？,she turned into a monster.
+アクター設定,カイト 通常,
+本文,ボクには\.,I certainly\.
+本文,わからないです,don't have a clue.
+アクター設定,マリー 驚き・動揺,
+本文,ふーん…,Hmph.
+アクター設定,マリー 通常,
+本文,\N[5]くんは\.,It seems\.
+本文,触っても大丈夫なんだよね？,you have no problem touching it\c either.
+アクター設定,カイト 不信・怒り,
+本文,まぁ…,I guess not.
+アクター設定,マリー 不信・怒り,
+本文,うーん…,Hmm...
+アクター設定,マリー 驚き・動揺,
+本文,おかしいんだよね,That's strange.
+アクター設定,カイト 不信・怒り,
+本文,何がですか？,What is?
+アクター設定,マリー 驚き・動揺,
+本文,アタシの先天属性は白じゃん,I'm inherently white.
+アクター設定,マリー 不信・怒り,
+本文,白って簡単に\.,Touching black\.
+本文,黒に染められそうじゃん,should quickly have an effect on me.
+アクター設定,カイト 驚き・動揺,
+本文,色の話ですか？,You're talking about the color?
+アクター設定,マリー 不信・怒り,
+本文,魔法の話だよ,I'm talking about magic.
+アクター設定,マリー 通常,
+本文,これは仮説だけど…,I can think of two possible explanations.
+アクター設定,マリー 笑顔,
+本文,アタシの魔力が\.,My magic power\.
+本文,この黒水晶より高いか,is stronger than this piece of Pearl.
+アクター設定,マリー 笑顔,
+本文,アタシの先天属性は\.,Or my inherent magic type\.
+本文,本当は黒だからか,is actually black.
+アクター設定,カイト 不信・怒り,
+本文,そんなことって\.,Is that even\.
+本文,あるんですか？,possible?
+アクター設定,マリー 不信・怒り,
+本文,ねーよ,Not a chance.
+アクター設定,マリー 笑顔,
+本文,いくらアタシが\.,I may be\.
+本文,天才だからってさ…,a genius\c
+アクター設定,マリー 笑顔,
+本文,既存の概念を\.,but our existing reality\.
+本文,超えることはできないよ,has its limits.
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,過去に一度\.,Perhaps\c\.
+本文,触れたことがあるからじゃないですか？,this isn't the first time?
+アクター設定,マリー 通常,
+本文,ん…？,Hmm?
+アクター設定,マリー 通常,
+本文,誰が\.何に？,What isn't?\. Who are you talking about?
+アクター設定,カイト 不信・怒り,
+本文,\N[4]先生が\.,You.
+本文,黒水晶の本体に,Perhaps you've touched the Pearl before?
+アクター設定,マリー 通常,
+本文,ん…,Hmm.
+アクター設定,マリー 驚き・動揺,
+本文,それはわからないなぁ,That\c I don't know.
+アクター設定,マリー 通常,
+本文,だってさ…,After all...
+アクター設定,マリー 通常,
+本文,アタシ記憶がないもん,I wouldn't remember.
+アクター設定,カイト 驚き・動揺,
+本文,えっ？,Why not?
+アクター設定,マリー 笑顔,
+本文,あれ？\.,Wait.\.
+本文,話してなかったっけ？,Didn't I tell you I lost my memories?
+アクター設定,カイト 通常,
+本文,初めて知りました,Not until just now.
+アクター設定,マリー 驚き・動揺,
+本文,おおぅ！\.,Oops!\.
+本文,これはうっかりミステイク！,My mistake!
+アクター設定,マリー 通常,
+本文,まぁ…\.,Then again\c\.
+本文,好んで話すことじゃないしね,it's not something I like talking about.

@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target":"es6"
+  },
+  "files": [
+    "./rmmv.d.ts",
+    "./rmmv-pixi.d.ts"    
+  ],
+  "include": [
+    "./*",
+    "./plugins_dev/*.js",
+    "./plugins/*.js",
+    "./animation/*.js",
+    "./arena/*.js",
+    "./background/*.js",
+    "./battle/*.js",
+    "./chapter/*.js",
+    "./debug/*.js",
+    "./enemy/*.js",
+    "./event/*.js",
+    "./filters/*.js",
+    "./file/*.js",
+    "./loading/*.js",
+    "./managers/*.js",
+    "./map/*.js",
+    "./menu/*.js",
+    "./objects/*.js",
+    "./option/*.js",
+    "./result/*.js",
+    "./scenes/*.js",
+    "./sprites/*.js",
+    "./stage/*.js",
+    "./top/*.js",
+    "./tweet/*.js",
+    "./windows/*.js",
+  ],
+  "exclude": [
+    "./plugins/*"
+  ]
+}

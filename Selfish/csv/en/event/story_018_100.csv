@@ -1,0 +1,126 @@
+アクター設定,レミィ 通常,
+本文,行き止まりのようね…,Looks like it's a dead end.
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,レミィ 通常,
+本文,困ったわ,What do we do now?
+アクター設定,アーシア 驚き・動揺,
+本文,ちょい\.ちょい\.ちょい！,Hold on!\. Wait\. one\. second!
+アクター設定,アーシア 不信・怒り,
+本文,この場所…\.,Don't you think this place looks\.
+本文,思いっきりあやしいじゃないですか！,incredibly suspicious?!
+アクター設定,アーシア 驚き・動揺,
+本文,調べなくていいんです？,Shouldn't we investigate?
+アクター設定,レミィ 驚き・動揺,
+本文,確かに,True.
+アクター設定,アーシア 通常,
+本文,\N[3]さーん,\N[3].
+アクター設定,アーシア 通常,
+本文,もっと\.,Try and put a little more\.
+本文,スムーズに会話しましょうよ,effort into your conversation.
+アクター設定,アーシア 笑顔,
+本文,会話の基本は…\.,Good communication is like...\.
+本文,ドッジボールです！,playing dodgeball!
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,レミィ 通常,
+本文,壁の奥から気配を感じるわ,I sense something within the wall.
+アクター設定,レミィ 不信・怒り,
+本文,何か仕掛けが…？,Maybe some kind of mechanism?
+アクター設定,アーシア 笑顔,
+本文,やっぱし\.,I knew it.\.
+本文,何かありそうっすね,There's something there.
+アクター設定,ニナ 驚き・動揺,
+本文,地下道に\.,Can you believe\.
+本文,こんなにマモノがいるなんて,how many monsters there are down here?
+アクター設定,ニナ 悲しみ・焦り,
+本文,じめじめして気持ち悪いし…,And it's so cold and damp.
+アクター設定,ニナ 特殊１,
+本文,んもぅ…！,I've just about had enough!
+アクター設定,カイト 通常,
+本文,たしかに…\.,It definitely feels a lot less pleasant\.
+本文,前に来た時より 雰囲気が重いかも,than the last time I was down here.
+アクター設定,ニナ 驚き・動揺,
+本文,前に来た…？,You've been down here before?
+アクター設定,カイト 驚き・動揺,
+本文,いや！\.,No!
+本文,なんでもないよ,Never mind.
+アクター設定,ニナ 不信・怒り,
+本文,んもぅ…,\N[5]...
+アクター設定,ニナ 通常,
+本文,終わったら\.,When this is finished\c\.
+本文,ちゃんと話してよね,I want a full explanation.
+アクター設定,ニナ 通常,
+本文,心配してるのは\.,And just so you know\c\.
+本文,わたしだけじゃないんだから,I'm not the only one worried about you.
+アクター設定,カイト 通常,
+本文,うん…\.,Uh-huh.\.
+本文,ありがとう \N[2],Thanks\c \N[2].
+アクター設定,ニナ 通常,
+本文,\N[4]さん？,\N[4]?
+アクター設定,アーシア 不信・怒り,
+本文,うーん…\.,Hmm...\.
+本文,どうしたものやら,I wonder what it could be?
+アクター設定,レミィ 通常,
+本文,…,...
+アクター設定,アーシア 不信・怒り,
+本文,秘密の合言葉とか\.,Maybe there's some kind of\.
+本文,あるんですかね？,secret password?
+アクター設定,レミィ 通常,
+本文,合言葉…,A password?
+アクター設定,レミィ 通常,
+本文,たとえば？,Like what?
+アクター設定,アーシア 通常,
+本文,そうですねぇ…,Good question.
+アクター設定,アーシア 笑顔,
+本文,ギギガガ,Gigi Gaga.
+アクター設定,アーシア 通常,
+本文,ありゃ…！？,Huh?!
+アクター設定,アーシア 不信・怒り,
+本文,ちょっ…\.,Whoa...!\.
+本文,嘘でしょう！？\.\.\^,You've got to be kidding me?!\.\.\^
+アクター設定,レミィ 特殊１,
+本文,貴方は…\.,You are\.
+本文,\N[1]では？\.\^,\N[1]\c right?!\.\^
+アクター設定,アーシア 通常,
+本文,おっしゃらずとも\.,Absolutely!\.
+本文,そうですけどっ！？\.\^,Without a doubt!\.\^
+アクター設定,アーシア 笑顔,
+本文,これはまた…,What have we here?
+アクター設定,レミィ 通常,
+本文,驚いたわ…,This is a surprise.
+アクター設定,ニナ 不信・怒り,
+本文,何が起きたんですか！？,What just happened?!
+アクター設定,カイト 不信・怒り,
+本文,地下道の奥に\.,So this\.
+本文,こんな空間が…,is where the tunnel leads?
+アクター設定,カイト 不信・怒り,
+本文,\N[4]先生は…\.,Miss \N[4]\c\.
+本文,知ってたんですか？,did you know this place existed?
+アクター設定,マリー 通常,
+本文,\N[5]くん…\.,\N[5]\c\.
+本文,せっかくここまで来たんだから,instead of asking so many questions\c
+アクター設定,マリー 通常,
+本文,余計なことは\.,why don't you shut up\.
+本文,詮索しないでシャーラップだよ,and just be glad you're here.
+アクター設定,レミィ 通常,
+本文,この先…,I have a feeling
+アクター設定,レミィ 不信・怒り,
+本文,今までより強力な\.,the monsters we meet beyond this point\.
+本文,マモノの気配がするわ,are going to be a lot stronger.
+アクター設定,アーシア 通常,
+本文,この結晶洞窟…\.,Do you think this crystalline cave\.
+本文,もしや魔法発祥の地では！？,could be the birthplace of all magic?
+アクター設定,アーシア 笑顔,
+本文,面白くなってきましたぜ！,This is fascinating!
+アクター設定,ニナ 不信・怒り,
+本文,み\. 皆さん…？,Um...\. Where are you going...?
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,強い魔力を感じる\.\.,I sense really strong magic.\.\.
+本文,この力って…,Where is it coming from...?
+アクター設定,ニナ 驚き・動揺,
+本文,ちょ… \N[5]まで！？,\N[5]...?! Not you too?!
+アクター設定,ニナ 驚き・動揺,
+本文,置いてかないでください！,Everyone\c wait for me!

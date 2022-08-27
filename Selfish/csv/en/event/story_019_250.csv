@@ -1,0 +1,139 @@
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,マリー 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,\N[4]先生,Miss \N[4]?
+アクター設定,マリー 不信・怒り,
+本文,…何？,What?
+アクター設定,カイト 通常,
+本文,ボクの魔法で\.,It might be worth\.
+本文,試せるかもしれません,trying to use my magic.
+アクター設定,マリー 通常,
+本文,ん？\.,Hmm?
+本文,何を\.試すの？,Use your magic\. on what?
+アクター設定,カイト 通常,
+本文,\N[4]先生の記憶を,On your memories.
+本文,戻せるかもしれません,They might return.
+アクター設定,マリー 驚き・動揺,
+本文,ほぅ…,You think so?
+アクター設定,マリー 驚き・動揺,
+本文,詳しく話を聞こうじゃないか,Perhaps you'd care to explain?
+アクター設定,カイト 通常,
+本文,…,...
+アクター設定,カイト 通常,
+本文,先に確認したいんですけど,All right. See if this makes sense.
+アクター設定,カイト 通常,
+本文,魔法というものは\.,Magic acts as a sort of go-between\.
+本文,人の感情を媒介にしているんですよね,for peoples' emotions\c right?
+アクター設定,マリー 通常,
+本文,そうだね,Very good.
+アクター設定,マリー 笑顔,
+本文,よく勉強してるね\.,You've been studying\c haven't you?\.
+本文,偉い！\.偉い！,I'm\. very impressed!
+アクター設定,カイト 通常,
+本文,ボクの魔法には\.,Well\c my magic\.
+本文,「想い」がのっています,is filled with...my thoughts.
+アクター設定,マリー 通常,
+本文,想い？,Your thoughts?
+アクター設定,カイト 通常,
+本文,ボクはそう呼んでいます,That's the way I describe it.
+アクター設定,マリー 不信・怒り,
+本文,続けて,Go on.
+アクター設定,カイト 通常,
+本文,ボクの想いを媒介にして\.,So when I use my magic\c\.
+本文,魔法を放ちます,it carries those thoughts with it.
+アクター設定,カイト 通常,
+本文,その想いは誰かに伝わると\.,Anyone who is touched by my magic\.
+本文,感情として伝染し,will receive them as emotions.
+アクター設定,カイト 通常,
+本文,やがて記憶になります,And in the end\c they'll become memories.
+アクター設定,マリー 不信・怒り,
+本文,うーん…,I see...
+アクター設定,マリー 不信・怒り,
+本文,人は言葉や仕草で\.,Normally people share thoughts by\.
+本文,感情を表現し\. 想いを伝える,expressing them with words and gestures.
+アクター設定,マリー 通常,
+本文,\N[5]くんの場合は\.,But in your case\c you're saying\.
+本文,魔法でもそれができる…,you can do the same with magic.
+アクター設定,マリー 通常,
+本文,そういうこと？,Is that it?
+アクター設定,カイト 通常,
+本文,はい\.,Yes.\.
+本文,だいたいは…,Pretty much.
+アクター設定,カイト 通常,
+本文,ただ\.少し違うところがあって…,There's just\. one small thing I left out.
+アクター設定,カイト 不信・怒り,
+本文,その想いには\.,Those thoughts can also hold emotions\.
+本文,ボク以外の感情も入ることがあります,that don't belong to me.
+アクター設定,マリー 驚き・動揺,
+本文,\N[5]くん以外…？,They can?
+アクター設定,カイト 通常,
+本文,\N[4]先生\.,Miss \N[4]\c\.
+本文,ここに来るまでに,have you ever
+アクター設定,カイト 通常,
+本文,自分以外の記憶や感情が\.,experienced having someone else's\.
+本文,自分自身に流れ込んだりしませんでしたか？,emotions or memories flowing into you?
+アクター設定,マリー 驚き・動揺,
+本文,…？,...?
+アクター設定,マリー 通常,
+本文,特に何もなかったけど？,Not that I'm aware of.
+アクター設定,マリー 笑顔,
+本文,なかなか興味深い事象だね,It sounds pretty interesting\c though.
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 通常,
+本文,\N[4]先生が失くした記憶は…,I think
+アクター設定,カイト 通常,
+本文,想いの力によって\.,maybe I can recover your lost memories\.
+本文,呼び戻せるかもしれません,with the power of my thoughts.
+アクター設定,カイト 通常,
+本文,記憶は消えても\.,Even if they've vanished from your mind\c\.
+本文,身体が覚えているかもしれませんから,your body may still remember them.
+アクター設定,マリー 通常,
+本文,うーん…,I don't know...
+アクター設定,マリー 驚き・動揺,
+本文,急にスピリチュアルな話になったけど,This is starting to sound spiritual.
+アクター設定,マリー 通常,
+本文,つまり…\.,So...\.
+本文,\N[5]くんは,What you're saying is\c
+アクター設定,マリー 笑顔,
+本文,アタシに魔法と一緒に,you'll hit me with your magic\c along
+本文,想いとやらをぶち込んでくれるってことだね,with whatever thoughts that come with it?
+アクター設定,カイト 驚き・動揺,
+本文,そんな…\.,Not quite.
+本文,攻撃するつもりはないですよ,You make it sound like I'm attacking you.
+アクター設定,マリー 通常,
+本文,アタシは,Either way\c
+本文,それでも構わないけど…,I'm fine with it.
+アクター設定,カイト 不信・怒り,
+本文,冗談はやめてください,I wish you'd take me seriously.
+アクター設定,マリー 驚き・動揺,
+本文,うーん…,Hmm.
+アクター設定,マリー 通常,
+本文,黒属性の魔法を\.,I've never had black magic\.
+本文,身体に注入したことはないけど,poured into my body before.
+アクター設定,マリー 通常,
+本文,アタシは黒水晶に触れても,It shouldn't be\.
+本文,マモノにならないし,too risky\c though.
+アクター設定,マリー 通常,
+本文,リスクとしては\.,After all\c I touched the Black Pearl
+本文,少なそう…,and didn't turn into a monster.
+アクター設定,マリー 通常,
+本文,アタシは\N[5]くんの魔法は\.,And I'm certainly curious to learn more\.
+本文,もっと詳しく知りたいし,about your magic\c \N[5].
+アクター設定,マリー 笑顔,
+本文,やってみる価値はあるんじゃん？,I'd say it's probably worth trying.
+アクター設定,マリー 通常,
+本文,でも ちょっと考えさせてよ,But give me a second to think about it.
+アクター設定,カイト 不信・怒り,
+本文,…,...
+アクター設定,カイト 不信・怒り,
+本文,わかりました,Okay.
+アクター設定,マリー 通常,
+本文,まさか\N[5]くんが\.,Who would've guessed\.
+本文,アタシに協力してくれる日が来るなんて,the day would come when you'd help me.
+アクター設定,マリー 特殊１,
+本文,先生は嬉しいよ！,This is exciting!
+アクター設定,カイト 不信・怒り,
+本文,…,...

@@ -1,0 +1,43 @@
+アクター設定,リン 通常,
+本文,\N[5]お兄ちゃん\.,Hey\c \N[5]\c
+本文,二日酔いって何～？,what's a "hangover"?
+アクター設定,カイト 通常,
+本文,うーん…\.,Hmm...\.
+本文,ボクにもよくわからないなぁ,I don't really know\c myself.
+アクター設定,カイト 通常,
+本文,ところで…\.,Say...\.
+本文,\N[6]さんは？,Where's \N[6]?
+アクター設定,リン 通常,
+本文,\N[6]お姉ちゃん寝てるよ…\.,\N[6]'s asleep right now.\.
+本文,気分悪いんだって,She said she wasn't feeling well.
+アクター設定,カイト 驚き・動揺,
+本文,えっ！\.,Huh\c really?!\.
+本文,平気なの！？,Is she okay?!
+アクター設定,リン 通常,
+本文,うーん…\.,Mmm...\.
+本文,二日酔いなんだって,She said it was a "hangover."
+アクター設定,カイト 通常,
+本文,あ…そうなんだ,Oh...I see.
+アクター設定,カイト 驚き・動揺,
+本文,\N[11]！\.,\N[11]!\.
+本文,もう外に出てて大丈夫なの？,Are you sure you can be outside?
+アクター設定,リン 通常,
+本文,大丈夫だよ～,Yeah\c I'll be fine!
+アクター設定,リン 通常,
+本文,だって今度からは\.,If anything happens to me\c
+本文,\N[5]お兄ちゃんが助けてくれるんでしょ？,you'll save me\c right?
+アクター設定,カイト 通常,
+本文,え…\.と…,Er...\.uh...
+アクター設定,リン 通常,
+本文,あれ…\.,Huh...?\.
+本文,違かったっけ？,You mean you won't?
+アクター設定,カイト 笑顔,
+本文,いや…違わないよ,Oh\c no...I will.
+アクター設定,リン 通常,
+本文,やっぱりそうだよね！,I knew it!
+アクター設定,リン 通常,
+本文,危なくなったら\.,Yeah\c if things get scary\c
+本文,\N[5]お兄ちゃんや\N[3]お姉ちゃんがいるもんね！,I've got you and \N[3]!
+アクター設定,カイト 通常,
+本文,うん\.,Yeah.\.
+本文,任せてよ！,Just leave it to us.
