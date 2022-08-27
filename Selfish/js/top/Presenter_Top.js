@@ -27,7 +27,7 @@ class Presenter_Top extends Presenter_Base {
         $dataOption.adjustScreen();
         const platForm = $gameDefine.platForm();
         //if (platForm == PlatForm.Steam || platForm == PlatForm.DlSite || platForm == PlatForm.DlSite){
-            await this._model.convertTextData();
+            //await this._model.convertTextData();
         //}
 
         if ($gameDefine.gameVersionNumber() < 100 && !$gameTemp.isPlaytest()){

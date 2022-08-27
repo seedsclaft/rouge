@@ -73,15 +73,15 @@ class Model_Title {
     }
 
     outputTextdata() {
-        LocalizeUtility.outputTextdata();
+        //LocalizeUtility.outputTextdata();
     }
 
     csvToTextdata(type) {
-        LocalizeUtility.csvToTextdata(type);
+        //LocalizeUtility.csvToTextdata(type);
     }
 
     csvToEventdata(type) {
-        LocalizeUtility.csv2event(type);
+        //LocalizeUtility.csv2event(type);
     }
 
     scriptMinify() {

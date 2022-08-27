@@ -67,7 +67,7 @@ class Presenter_Option extends Presenter_Base{
         if (isEnable){
             this._model.optionGain(option,symbol);
             if (symbol == "language"){
-                await LocalizeUtility.convertTextData();
+                //await LocalizeUtility.convertTextData();
                 this.setOptionList();
                 this._view._optionWindow.activate();
                 this._view._categoryWindow.deactivate();
@@ -83,7 +83,7 @@ class Presenter_Option extends Presenter_Base{
         if (isEnable){
             this._model.optionLess(option,symbol);
             if (symbol == "language"){
-                await LocalizeUtility.convertTextData();
+                //await LocalizeUtility.convertTextData();
                 this.setOptionList();
                 this._view._optionWindow.activate();
                 this._view._categoryWindow.deactivate();

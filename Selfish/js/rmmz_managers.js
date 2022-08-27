@@ -1933,13 +1933,6 @@ SceneManager.setupEventHandlers = function() {
     window.addEventListener("dragover", (event) => {
         event.preventDefault();
     },true);
-    window.addEventListener("drop", (event) => {
-        event.preventDefault();
-        if ($gameTemp.isPlaytest()){
-            var files = event.dataTransfer.files;
-            EventManager.setupEventBycsv(files[0].name,files[0].path);
-        }
-    },true);
 };
 
 SceneManager.update = function(deltaTime) {

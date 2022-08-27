@@ -175,7 +175,6 @@ class Model_Event extends Model_Base {
                     fs.mkdirSync(dirPath);
                 }
                 fs.writeFileSync(dirPath + filePath, data);
-                LocalizeUtility.event2csv(event);
             }
             common.push(event);
         });
@@ -202,7 +201,6 @@ class Model_Event extends Model_Base {
             }
             fs.writeFileSync(dirPath + filePath, data);
         }
-        console.log("イベント文字数は" +  LocalizeUtility.textBody().length);
     }
 
     localFileDirectoryPath () {
@@ -263,9 +261,5 @@ class Model_Event extends Model_Base {
                 });
             }
         });
-        for (var i = 1;i < 8;i++){
-            var key = "Actor000" + String(i);
-            LocalizeUtility.actortext2csv(list[key],key);
-        }
     }
 }

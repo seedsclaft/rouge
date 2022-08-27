@@ -263,7 +263,7 @@ class Scene_Option {
             ConfigManager.save();
             /*
             */
-            await LocalizeUtility.convertTextData();
+            //await LocalizeUtility.convertTextData();
             this._presenter.setOptionList();
             this._optionWindow.activate();
             this._categoryWindow.deactivate();

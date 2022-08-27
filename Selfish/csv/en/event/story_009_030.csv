@@ -1,8 +1,0 @@
-アクター設定,マリー 通常,,,
-本文,どうする？\.,What'll it be?\.,,
-本文,もうクイズはじめちゃう？,Ready to do the quiz?,,
-アクター設定,カイト 不信・怒り,,,
-本文,どうしようかな…,Hmm...,,
-選択肢の準備,準備ＯＫ,まだ予習が……,I'm ready.,I need to study some more.
-選択肢の遷移先,0,準備ＯＫ,I'm ready.,
-選択肢の遷移先,1,まだ予習が……,I need to study some more.,

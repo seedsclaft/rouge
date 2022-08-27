@@ -4,7 +4,7 @@ class Model_Top {
 
     
     async convertTextData(){
-        LocalizeUtility.convertTextData();
+        //LocalizeUtility.convertTextData();
     }
 
 }
