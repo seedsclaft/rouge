@@ -508,7 +508,7 @@ Game_BattlerBase.prototype.setTp = function(tp) {
 };
 
 Game_BattlerBase.prototype.maxTp = function() {
-    return 100;
+    return this.luk;
 };
 
 Game_BattlerBase.prototype.setAp = function(ap) {
@@ -1790,7 +1790,6 @@ Game_Actor.prototype.setup = function(actorId) {
 
     this.refreshPassive();
 
-    SkillAwakeManager.levelUpLearnSkill(this);
 
     // setSkills
     this._skillSet1 = null;

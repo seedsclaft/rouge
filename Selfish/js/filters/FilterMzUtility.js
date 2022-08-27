@@ -291,10 +291,6 @@ class FilterMzUtility {
     static updateScene(){
         if (this._scene != SceneManager._scene){
             this._scene = SceneManager._scene;
-            if (this._scene instanceof Terminal_Scene){
-                this._throuthTerminal = true;
-                return;
-            }
             if (this._throuthTerminal == true){
                 return;
             }

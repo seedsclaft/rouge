@@ -4,7 +4,7 @@
 
 class Window_Confirm extends Window_Command{
     constructor(){
-        super(new Rectangle (-40,184,1080,160));
+        super(new Rectangle (-40,240,1280 + 120,200));
         this.openness = 0;
         this._commandText = {};
         this._lastIndex = this.index();
@@ -30,12 +30,12 @@ class Window_Confirm extends Window_Command{
         if (this._mainText){
             if (this._subText){
                 var text = this.convertEscapeCharacters(this._mainText);
-                this.drawText(text,40,4,960,'center');
+                this.drawText(text,40,8,1280,'center');
                 var text2 = this.convertEscapeCharacters(this._subText);
-                this.drawText(text2,40,36,960,'center');
+                this.drawText(text2,40,40,1280,'center');
             } else{
                 var text = this.convertEscapeCharacters(this._mainText);
-                this.drawText(text,40,20,960,'center');
+                this.drawText(text,40,24,1280,'center');
             }
         }
     }
@@ -52,7 +52,7 @@ class Window_Confirm extends Window_Command{
     }
 
     itemWidth(){
-        return 200;
+        return 280;
     }
 
     itemHeight(){
@@ -71,11 +71,11 @@ class Window_Confirm extends Window_Command{
         let rect = new Rectangle();
         rect.width = this.itemWidth();
         rect.height = this.itemHeight();
-        rect.x = 280 * index + 280;
+        rect.x = 360 * index + 360;
         if (Object.keys(this._handlers).length == 1){
-            rect.x += 280 / 2;
+            rect.x += 360 / 2;
         }
-        rect.y = 80;
+        rect.y = 112;
         return rect;
     }
 

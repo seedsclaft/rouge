@@ -6,9 +6,6 @@ class Presenter_Base {
         if ($gamePause == true){
             return;
         }
-        if (PopupStageInfoManager.busy()){
-            return;
-        }
         if (Presenter_Loading.busy()){
             return;
         }
@@ -41,17 +38,9 @@ class Presenter_Base {
             case 'Battle_Scene':
             case 'Scene_Battle':
                 const stageEvent = $gameParty.stageEvent();
-                if (stageEvent && stageEvent._type == "mapBattle" && stageEvent._eventId && stageEvent._eventId._enemies.length == 0){                
-                    SceneManager.push(Terminal_Scene);
-                    break;
-                }
+
                 $gameSystem._battleCalledMenu = false;
                 SceneManager.push(Battle_Scene);
-                break;
-            case 'Stage_Scene':
-            case 'Scene_Stage':
-                this._model.reloadMapIfUpdated();
-                SceneManager.goto(Stage_Scene);
                 break;
             case 'endEvent':
                 $gamePlayer.clearTransferInfo();

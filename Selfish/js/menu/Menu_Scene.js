@@ -183,13 +183,13 @@ class Menu_Scene extends Scene_Base{
         this._roleSelectWindow.refresh();
     }
 
-    commandStart(){
+    commandStart(_player){
         this._categoryWindow.show();
         const _category = this._categoryWindow.category();
         this._selectWindow.setCategory(_category);
         this._selectWindow.show();
         this._playerStatus.show();
-        this.refreshWindow();
+        this.refreshWindow(_player);
         Input.clear();
     }
 
@@ -276,8 +276,7 @@ class Menu_Scene extends Scene_Base{
         if (this._presenter) this._presenter.update();
     }
 
-    refreshWindow(){
-        const _player = $gameParty.battleMembers()[0];
+    refreshWindow(_player){
         const _category = this._categoryWindow.category();
         this._selectWindow.resetData();
         this._selectWindow.refresh();
@@ -286,6 +285,7 @@ class Menu_Scene extends Scene_Base{
         const _redrawitem = this._selectWindow.item();
         this._playerStatus.refresh(_category,_redrawitem);
         this._battleStatus.refreshStatus();
+        this._statusWindow.setup(_player);
     }
 
     refreshKeyHelpWindow(key){

@@ -108,7 +108,8 @@ SceneManager.onError = function(event) {
     console.error(event.message);
     console.error(event.filename, event.lineno);
     try {
-        PopupErrorManager.setErrorMessage(event.reason.stack);
+        this.stop();
+        Graphics.printError("Error", event.message, event);
         AudioManager.stopAll();
     } catch (e) {
         //
@@ -116,17 +117,14 @@ SceneManager.onError = function(event) {
 };
 
 SceneManager.catchNormalError = function(e) {
-    //Graphics.printError(e.name, e.message, e);
-    console.error(e.stack);
-    console.error(e);
+    Graphics.printError(e.name, e.message, e);
     AudioManager.stopAll();
-    PopupErrorManager.setErrorMessage(e.stack);
+    console.error(e.stack);
 };
 
 SceneManager.catchUnknownError = function(e) {
-    //Graphics.printError("UnknownError", String(e));
+    Graphics.printError("UnknownError", String(e));
     AudioManager.stopAll();
-    PopupErrorManager.setErrorMessage(String(e));
 };
 
 SceneManager.catchException = function(e) {

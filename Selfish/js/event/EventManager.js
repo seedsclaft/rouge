@@ -41,6 +41,7 @@ EventManager.createLogSprite = function() {
         sprite.opacity = 0;
     }
 }
+
 EventManager.startLogText = function(text) {
     if (this._logSprites.length == 0){
         this._waitLogData.push(text);
@@ -71,7 +72,6 @@ EventManager.startLogText = function(text) {
         }
     }});
 }
-
 
 //イベントの再生開始
 EventManager.setup = async function(eventName,endCall) {
@@ -119,11 +119,7 @@ EventManager.start = async function(event) {
     }
     this._interpreter.setup(event.list);
     this._bgmLoader.setCommand(event.list);
-    if (SceneManager._scene instanceof Terminal_Scene){
-
-    } else{
-        this._pictureLoader.setCommand(event.list);
-    }
+    this._pictureLoader.setCommand(event.list);
     if (event && event.name && !event.name.includes('common')){
         await Promise.all(
             [this._bgmLoader.loadBgmFirst(),this._pictureLoader.loadPictureFirst()]
@@ -432,25 +428,6 @@ EventManager.clearWeatherLoad = function() {
 }
 
 EventManager.setStage = async function(num){
-    this._eventView.hideStageTitle();
-    $gameParty.resetBattleParameter();
-    $gameParty._stageStepCount = 0;
-    this.startFadeOut(0.5);
-
-    //var initEvent = _.find($dataArmors,(a) => a && a.params[0] == num && a.params[1] == 0)
-    
-    var data = await this.loadStageSequenceData();
-    if (num){
-        var event = _.find(data.events,(e) => e && e.name == "Stage" + num);
-    } else{
-        var event = _.find(data.events,(e) => e && e.name == "Stage" + $gameParty.stageNo());    
-    }
-    $gameParty.setStagePhase('init');
-    $gameParty.clearReadTips();
-    $gameParty.setStageData(num);
-    this.setupEvent(event.pages[0],()=>{
-        SceneManager.push(Stage_Scene);
-    });
 }
 
 EventManager.loadStageSequenceData = function(){
@@ -778,93 +755,6 @@ EventManager.loadBgm = async function(bgm) {
 
 EventManager.setEaseMode = function(isEase) {
     this._eventView.setEaseMode(this._label,isEase);
-}
-
-EventManager.setTimeLine = function(x) {
-    this._eventView.setTimeLine(x);
-}
-
-EventManager.endTimeLine = function() {
-    this._eventView.endTimeLine();
-}
-
-EventManager.setCrystal = function(fileName,x,y) {
-    this._eventView.setCrystal(fileName,x,y);
-}
-
-EventManager.moveCrystal = function(duration,x,y) {
-    this._eventView.moveCrystal(duration,x,y);
-}
-
-EventManager.endCrystal = function() {
-    this._eventView.endCrystal();
-}
-
-EventManager.startQuiz = async function() {
-    this._do = 0;
-    this._quizData = new Game_Quiz();
-    this._quizstate = 1;
-    var self = this;
-    await this._model.loadEventFile('quizdata').then((event) =>{
-        self._quizEvent = event;
-        self.quiz();
-    });
-}
-
-EventManager.quiz = function() {
-    this._quizstate = 2;
-    var quiz = this._quizData.getQuiz();
-    var question = _.find(this._quizEvent.list,(e) => e.code == 401);
-    question.parameters[0] = '\\>' + TextManager.getQuizQuestion(quiz.index);
-    var choise = _.find(this._quizEvent.list,(e) => e.code == 102);
-    var selectList = TextManager.getQuizChoices(quiz.index);
-    choise.parameters[0] = [
-        selectList[0],
-        selectList[1],
-        selectList[2],
-    ];
-    this._answer = quiz.answer;
-    $gameTimer.start(10 * 60);
-    this._interpreter.setup(this._quizEvent.list);
-}
-
-EventManager.nextQuiz = function() {
-    if (this._quizIndex < 49){
-        this._quizIndex += 1;
-        this.quiz();
-        return true;
-    }
-    this._quizData = null;
-    this._quizEvent = null;
-    this._quizIndex = 0;
-    this._answer = 0;
-    this._quizstate = 0;
-    return false;
-}
-
-EventManager.skipQuiz = function() {
-    /*
-    this._eventView.messageClear();
-    var index = this._eventView.choiseMessageIndex();
-    this.answer(index);
-    */
-    this._eventView.skipQuiz();
-}
-
-EventManager._quizData = null;
-EventManager._quizEvent = null;
-EventManager._quizIndex = 0;
-EventManager._answer = 0;
-EventManager._do = 0;
-EventManager._quizstate = 0;
-EventManager.answer = function(num) {
-    this._quizstate = 3;
-    if (num == this._answer){
-        SoundManager.playAnswerQuiz();
-        this._do += 1;
-    } else{
-        SoundManager.playMissQuiz();
-    }
 }
 
 EventManager.allEventFileOutput = function() {

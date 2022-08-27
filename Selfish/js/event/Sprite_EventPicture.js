@@ -20,12 +20,6 @@ class Sprite_EventPicture extends Sprite{
         this._faceSprite.anchor.x = 0.5;
         this._faceSprite.anchor.y = 0.5;
         this.addChild(this._faceSprite);
-        this._emotionSprite = new Sprite_Emotion();
-        this.addChild(this._emotionSprite);
-        this._messagePoint = new Sprite_FaceSquare();
-        this.addChild(this._messagePoint);
-        this._messageName = new Sprite_FaceName();
-        this.addChild(this._messageName);
     
         this._easeMode = true;
     
@@ -57,8 +51,6 @@ class Sprite_EventPicture extends Sprite{
             this.y = this._posData.y;
             this._faceSprite.x = 0;
             this._faceSprite.y = 0;
-            this._emotionSprite.y = -80;
-            this._emotionSprite.setPosY(this.y,-80);
             if (this._mainSprite.scale.x < 0){
                 this._mainSprite.scale.x = this._posData.scale * -1;
                 this._mainSprite.scale.y = this._posData.scale;
@@ -242,58 +234,20 @@ class Sprite_EventPicture extends Sprite{
         if (this._mainSprite.scale.x < 0){
             positionX *= -1;
         }
-        this._messagePoint.setPosition(positionX,this._faceSprite.y + 24);
             
         var actor = this._pictureLabel.substring(5,9);
-        if (name){
-            this._messageName.setName(name);
-        } else{
-            this._messageName.setName(TextManager.actorName(+actor));
-        }
-        this._messageName.setPosition(positionX,this._faceSprite.y + 240 / 2);
         
         let targetScale = 1.0;
         targetScale = Math.abs(this._mainSprite.scale.x);
         if (this._posData && this._posData.scale){
             targetScale += 1 - this._posData.scale;
         }
-        this._messagePoint.zoomIn(targetScale);
-        this._messageName.zoomIn();
     }
 
     stopMessagePoint(){
-        this._messagePoint.stopMessagePoint();
-        this._messageName.stopMessagePoint();
     }
 
     setEmotion(index){
-        this._emotionSprite.setup(this,index);
-        if (index == 2){
-            index = 11;
-        }
-        if (index == 4){
-            index = 6;
-        }
-        if (index == 5){
-            index = 3;
-        }
-        if (index == 7){
-            index = 6;
-        }
-        if (index == 8){
-            index = 11;
-        }
-        if (index == 9){
-            index = 11;
-        }
-        if (index == 10){
-            index = 11;
-        }
-        if (index == 11){
-            this.setAnimation('wait',true);
-        } else{
-            this.setAnimation('anim' + index,true);
-        }
     }
 
     update(){
@@ -305,11 +259,6 @@ class Sprite_EventPicture extends Sprite{
     updateFaceName(){
         if (!this._animation){
             return;
-        }
-        if (this.scale.x < 0){
-            this._messageName.scale.x = -0.75;
-        } else{
-            this._messageName.scale.x = 0.75;
         }
     }
 
@@ -367,16 +316,12 @@ class Sprite_EventPicture extends Sprite{
     }
 
     pause(){
-        this._messagePoint.pause();
-        this._messageName.pause();
         this._animation.forEach(anim => {
             anim.pause();
         });
     }
 
     resume(){
-        this._messagePoint.resume();
-        this._messageName.resume();
         this._animation.forEach(anim => {
             anim.resume();
         });
@@ -495,18 +440,6 @@ class Sprite_EventPicture extends Sprite{
             this._mainSprite.destroy();
             this.removeChild(this._mainSprite);
         }
-        if (this._emotionSprite){
-            this._emotionSprite.terminate();
-            this.removeChild(this._emotionSprite);
-        }
-        if (this._messagePoint){
-            this._messagePoint.destroy();
-            this.removeChild(this._messagePoint);
-        }
-        if (this._messageName){
-            this._messageName.destroy();
-            this.removeChild(this._messagePoint);
-        }
         if (this._animation){
             this._animation.forEach(element => {
                 if (element){
@@ -517,9 +450,6 @@ class Sprite_EventPicture extends Sprite{
             gsap.killTweensOf(this);
         }
         this._faceSprite = null;
-        this._emotionSprite = null;
-        this._messagePoint = null;
-        this._messageName = null;
         this._filters = null;
         this._tweens = null;
         this._posData = null;

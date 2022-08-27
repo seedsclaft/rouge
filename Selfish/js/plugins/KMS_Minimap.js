@@ -199,40 +199,6 @@ var fillRegularPolygon = function(graphics, x, y, width, height, startRad, verte
     graphics.drawPolygon(points);
 };
 
-
-//-----------------------------------------------------------------------------
-// Plugin commands
-
-var _KMS_Game_Interpreter_pluginCommand =
-        Game_Interpreter.prototype.pluginCommand;
-Game_Interpreter.prototype.pluginCommand = function(command, args)
-{
-    _KMS_Game_Interpreter_pluginCommand.call(this, command, args);
-
-    if (command !== 'Minimap')
-    {
-        return;
-    }
-
-    switch (args[0])
-    {
-    case 'show':
-        $gameSystem.setMinimapEnabled(true);
-        break;
-    case 'hide':
-        $gameSystem.setMinimapEnabled(false);
-        break;
-    case 'refresh':
-        $gameMap.refreshMinimapCache();
-        break;
-    default:
-        // 不明なコマンド
-        Debug.log('[Minimap %1] Unknown command.'.format(args[0]));
-        break;
-    }
-};
-
-
 //-----------------------------------------------------------------------------
 // Tilemap
 
@@ -719,18 +685,18 @@ Sprite_Minimap.prototype.createFieldSprite = function()
     this.addChild(this._fieldSprite);
 
     const direction = $gamePlayer.direction();
+    let targetRotation = null;
     if (direction == 6){
-        gsap.to(this._fieldSprite, 0, {pixi:{},rotation:-1 *  Math.PI / 2});
-        this._targetRotation = -1 * Math.PI / 2;
+        targetRotation = -1 *  Math.PI / 2;
     } else
     if (direction == 4){
-        gsap.to(this._fieldSprite, 0, {pixi:{},rotation:1 *  Math.PI / 2});
-        this._targetRotation = Math.PI / 2;
+        targetRotation = Math.PI / 2;
     } else
     if (direction == 2){
-        gsap.to(this._fieldSprite, 0, {pixi:{},rotation:-1 *  Math.PI });
-        this._targetRotation = -1 * Math.PI;
+        targetRotation = -1 *  Math.PI;
     }
+    gsap.to(this._fieldSprite, 0, {pixi:{},rotation:targetRotation});
+    this._targetRotation = targetRotation;
 
     this._lastAngle = direction;
 };
@@ -965,7 +931,6 @@ Sprite_Minimap.prototype.updateObjectSprites = function()
 Sprite_Minimap.prototype.updatePlayerSprite = function()
 {
     // スプライトの向きを設定
-    var angle;
     if (KMS.imported['3DVehicle'] && $gameMap.is3DMode())
     {
         angle = -$gameMap.get3DPlayerAngle();
@@ -1064,8 +1029,8 @@ Sprite_Minimap.prototype.refreshTilemap = function()
     this._tilemap.horizontalWrap = $gameMap.isLoopHorizontal();
     this._tilemap.verticalWrap   = $gameMap.isLoopVertical();
 
-    var scaleX = Params.mapRect.width / this._tilemap.width;
-    var scaleY = Params.mapRect.height / this._tilemap.height;
+    const scaleX = Params.mapRect.width / this._tilemap.width;
+    const scaleY = Params.mapRect.height / this._tilemap.height;
     this._tilemap.scale.x = scaleX;
     this._tilemap.scale.y = scaleY;
     this._tilemap.x += this._tilemap._margin * scaleX;

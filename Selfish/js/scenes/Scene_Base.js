@@ -306,7 +306,6 @@ Scene_Boot.prototype.start = async function() {
     EventManager.init();
     Presenter_Loading.init();
     PopupInputManager.init();
-    PopupLevelUpManager.init();
 
     //Graphics._switchFPSCounter();
 };

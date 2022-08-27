@@ -54,10 +54,6 @@ class Presenter_Map extends Presenter_Base {
             return this.commandMenu();
             case MapCommand.Save:
             return this.commandSave();
-            case MapCommand.SkipStage:
-            return this.commandSkipStage();
-            case MapCommand.EndStage:
-            return this.commandEndStage();
             case MapCommand.Start:
             return this.commandStart();
             case MapCommand.MovePlayer:
@@ -70,12 +66,14 @@ class Presenter_Map extends Presenter_Base {
             return this.commandSkillUse(2);
             case MapCommand.Event:
             return this.commandEvent();
-            case MapCommand.CheckRole:
-            return this.commandCheckRole();
+            case MapCommand.CheckPoint:
+            return this.commandCheckPoint();
             case MapCommand.LevelUp:
             return this.commandLevelUp();
-            case MapCommand.RoleUp:
-            return this.commandRoleUp();
+            case MapCommand.DesideLevelUp:
+            return this.commandDesideLevelUp();
+            case MapCommand.ResetLevelUp:
+            return this.commandResetLevelUp();
         }
         this._view.clearCommand();
     }
@@ -96,6 +94,8 @@ class Presenter_Map extends Presenter_Base {
     playMapBgm(){
         if ($gamePlayer._battleState == false){
             $gameMap.autoplay();
+        } else{
+            AudioManager.playBgm($gameBGM.getBgm('battle'));
         }
     }
 
@@ -109,20 +109,6 @@ class Presenter_Map extends Presenter_Base {
         SceneManager.push(Save_Scene);
     }
 
-    commandSkipStage(){
-        const stageData = this._model.stageData();
-        $gameScreen.setFilters(null);
-        FilterMzUtility.initFilters();
-        if (stageData.length != 0){
-            EventManager.setStage(stageData.id);
-        } else{
-            EventManager.endStage(stageData.id);
-        }
-    }
-
-    commandEndStage(){
-        EventManager.setup("common_009");
-    }
 
     commandMovePlayer(){
         $gamePlayer.moveStraight(Input.dir8);
@@ -165,7 +151,9 @@ class Presenter_Map extends Presenter_Base {
             event.changeState(EnemyState.Battle);
         }
         if (_player.level > _playerLevel){
-            this._model._levelUpValue = _player.level > _playerLevel;
+            this._model.makeLevelUpData(_player.level - _playerLevel);
+            SoundManager.playLevelUp();
+            EventManager.startLogText("Level Up : " + _player.level);
             this.commandLevelUp();
         }
     }
@@ -213,18 +201,29 @@ class Presenter_Map extends Presenter_Base {
     }
 
     commandLevelUp(){
-        const _role = this._model.roleData();
-        this._view.commandLevelUp(_role);
+        const _role = this._model.tempRoleData();
+        const _value = this._model._levelUpPoint;
+        this._view.commandLevelUp(_role,_value);
     }
 
-    commandCheckRole(){
+    commandCheckPoint(){
         const item = this._view._roleSelectWindow.item();
         const _changeRole = this._model.changeRoleData(item);
-        this._view.commandCheckRole(_changeRole);
+        if (this._model._levelUpPoint == 0){
+            this._view.commandCheckPoint(_changeRole);
+        } else{        
+            const _value = this._model._levelUpPoint;
+            this._view.nextCheckPoint(_changeRole,_value);
+        }
     }
 
-    commandRoleUp(){
-        const item = this._view._roleSelectWindow.item();
-        this._model.roleUp(item);
+    commandResetLevelUp(){
+        const _role = this._model.resetLevelUpData();
+        const _value = this._model._levelUpPoint;
+        this._view.commandLevelUp(_role,_value);
+    }
+
+    commandDecideLevelUp(){
+        this._model.desideLevelUp();
     }
 }

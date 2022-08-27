@@ -535,44 +535,6 @@ class View_Event {
     }
 
     startBossCollapseAnimation(x,y){
-        let sprite = new Sprite_Animation();
-        let target = new Sprite();
-        target.x = x;
-        this._layer.addChild(target);
-        const animation = $dataAnimations[1];
-        sprite.targetObjects = target;
-        sprite.setup([target], animation, false, 0, null);
-        this._layer.addChild(sprite);
-        target.getCenterY = function(){
-            return y;
-        };
-        
-        Graphics._onTickSkipFlag = true;
-        let _snap = SceneManager.snap();
-    
-        sprite._animation.speed = 200;
-        sprite.setFrameIndexEvent(110,() => {
-            EncounterEffect.setup(_snap,x,y);
-            BackGroundManager.collapseBackGround();
-            EncounterEffect.startBattle();
-            this._layer.addChild(EncounterEffect.baseSprite);
-            EncounterEffect._encounterEffectDuration = 60;
-            SoundManager.playBossCollapse1();
-        });
-        sprite.setFrameIndexEvent(130,() => {
-            sprite._animation.speed = 20;
-        });
-        sprite.setFrameIndexEvent(360,() => {
-            AudioManager.fadeOutBgm(2);
-        });
-        sprite.setFrameIndexEvent(480,() => {
-            EventManager.startFadeOut(0.5);
-        });
-        sprite.setFrameIndexEvent(500,() => {
-        });
-        gsap.to(this, 9, {opacity:255,onComplete:function(){
-            Graphics._onTickSkipFlag = false;
-        }});
     }
 
     setEaseMode(fileName,isEase){

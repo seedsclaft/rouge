@@ -41,15 +41,20 @@ class Window_RoleSkillSelect extends Window_Selectable{
         this.contents.fontSize = 21;
         if (item != null) {
             const rect = this.itemRect(index);
+            this.resetTextColor();
             if (this.index() == index){
                 this.drawBack(rect.x ,rect.y,rect.width,this.itemHeight()-2,this.cursorColor(),128);
-                this.resetTextColor();
+                
             }
             //this.drawSkillIcon(item.iconIndex, rect.x + 2, rect.y + 4, rect.width);
             //let name = item.name;
         
-            this.drawText(TextManager.getStateName(item.state.id), rect.x, rect.y + 1, rect.width,"left");
-            this.drawText(item.level, rect.x + 160, rect.y + 1, 72,"right");
+            this.drawText(TextManager.getStateName(item.state.id), rect.x + 8, rect.y + 1, rect.width,"left");
+            
+            if (item.up){
+                this.changeTextColor(this.powerUpColor());
+            }
+            this.drawText(item.level, rect.x - 8, rect.y + 1, rect.width,"right");
         }
     }
 

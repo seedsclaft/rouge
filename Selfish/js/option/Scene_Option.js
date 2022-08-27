@@ -303,42 +303,6 @@ class Scene_Option {
     }
 
     static openPopupCredit(){
-        const credit = Game_Credit.getData();
-        if (this._creditWindow == null){
-            this._creditWindow = new Window_Credit(120,0,720,540);
-            this._creditWindow.setHandler('ok', () => {
-                this._creditWindow.close();
-                this._creditWindow.deactivate();
-                this._optionWindow.activate();
-            });
-            this._creditWindow.setHandler('cancel', () => {
-                this._creditWindow.close();
-                this._creditWindow.deactivate();
-                this._optionWindow.activate();
-            });
-            this._creditWindow.setHandler('down', () => {
-                let index = this._creditWindow.index();
-                if (index < 20){
-                    index = 20;
-                }
-                this._creditWindow.smoothSelect(index+1);
-                this._creditWindow.activate();
-            });
-            this._creditWindow.setHandler('up', () => {
-                let index = this._creditWindow.index();
-                if (index <= 20){
-                    index = 0;
-                }
-                this._creditWindow.smoothSelect(index-1);
-                this._creditWindow.activate();
-            });
-            SceneManager._scene.addChild(this._creditWindow);
-        }
-        this._creditWindow.setData(credit);
-        this._creditWindow.open();
-        this._creditWindow.show();
-        this._creditWindow.activate();
-        SoundManager.playOk();
     }
 
     static openPopupSupport(){

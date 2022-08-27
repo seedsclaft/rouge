@@ -3,6 +3,12 @@ class Model_Map extends Model_Base{
         super();
         this._needTarnsfer = false;
         this._levelUpValue = 0;
+        this._levelUpPoint = 0;
+        this._tempRoleData = null;
+    }
+
+    tempRoleData(){
+        return this._tempRoleData;
     }
     
     async loadMapData(){
@@ -134,7 +140,7 @@ class Model_Map extends Model_Base{
             value = 1;
         }
         value = Math.floor(value * this.player().finalExpRate());
-        this.player().gainExp(value * 100);
+        this.player().gainExp(value);
     }
 
     roleData(){
@@ -153,20 +159,39 @@ class Model_Map extends Model_Base{
         return list;
     }
 
+    makeLevelUpData(lv){
+        this._levelUpValue = lv;
+        this._levelUpPoint = lv * 3;
+        this._tempRoleData = this.roleData();
+    }
+
+    resetLevelUpData(){
+        this._levelUpPoint = this._levelUpValue * 3;
+        this._tempRoleData = this.roleData();
+        return this._tempRoleData;
+    }
+
     changeRoleData(item){
-        let _roleData = this.roleData();
+        this._levelUpPoint -= 1;
+        let _roleData = this.tempRoleData();
         _roleData.forEach(role => {
             if (role.state.id == item.state.id){
-                role.level += this._levelUpValue * 5;
+                role.level += 1;
                 role.up = true;
             }
-            
         });
         return _roleData;
     }
 
-    roleUp(item){
-        this.player().addStatePlus(item.state.id,this._levelUpValue * 5);
+    desideLevelUp(){
+        const _tempData = this.tempRoleData();
+        _tempData.forEach(temp => {
+            if (temp.up == true){
+                let stateId = _player.getStateEffect(temp.state.id);
+                let value = temp.level - _player.getStateEffect(roleStateId);
+                this.player().addStatePlus(stateId,value);
+            }
+        });
         this._levelUpValue = 0;
         this.player().refreshPassive();
     }

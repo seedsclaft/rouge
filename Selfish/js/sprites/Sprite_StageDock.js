@@ -24,6 +24,5 @@ class Sprite_StageDock extends Sprite{
 
     callStageInfo(){
         SoundManager.playOk();
-        PopupStageInfoManager.popupStageInfo(null);
     }
 }

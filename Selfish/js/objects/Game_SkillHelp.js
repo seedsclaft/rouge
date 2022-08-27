@@ -9,9 +9,6 @@ class Game_SkillHelp{
             this._hit = 0;
         }
         this._baseText = this.replaceText(battler,skillId);
-        if (awakeFlag){
-            this._baseText = this.changeAwake(battler,skillId);
-        }
     }
 
     get elementId (){
@@ -157,63 +154,4 @@ class Game_SkillHelp{
         return value;
     }
 
-    changeAwake(battler,skillId){
-        var text = this._baseText;
-        var awakeData = _.find(SkillAwakeManager.getActorClassData(battler),(info) => info.skillId == skillId);
-        if (awakeData && !battler.isLearnedSkill(skillId)){
-            if (awakeData.awake.type == 0){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5000);
-                text = text.replace("\\l", awakeData.awake.level);
-                text = text.replace("\\N", battler.name());
-            } else if (awakeData.awake.type == 4 || awakeData.awake.type == 9){
-                var text = TextManager.getText(700500) + "\n";
-                awakeData.awake.skill.forEach(s => {
-                    var base = TextManager.getText(5040);
-                    base = base.replace("\\m", TextManager.getSkillName(s.id));
-                    base = base.replace("\\a", s.lv);
-                    text += base + "\n";
-                });
-            } else if (awakeData.awake.type == 7){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5070);
-                awakeData.awake.skill.forEach(s => {
-                    text = text.replace("\\m", TextManager.getSkillName(s.id));
-                });
-                this.setHelpWindowText(text);
-            } else if (awakeData.awake.type == 8){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5080);
-            } else if (awakeData.awake.type == 3){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5030);
-            } else if (awakeData.awake.type == 2){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5020);
-            } else if (awakeData.awake.type == 1){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5010);
-            } else if (awakeData.awake.type == 10){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5090);
-            } else if (awakeData.awake.type == 11){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5100);
-            } else if (awakeData.awake.type == 12){
-                var text = TextManager.getText(700500) + "\n";// + TextManager.getText(5110);
-                if ($gameParty.hasStage(15)){
-                    var temp = TextManager.getText(5110).split("");
-                    var isReplace = false;
-                    temp.forEach(t => {
-                        if (t != "？"){
-                            if (isReplace == false){
-                                isReplace = true;
-                                text += TextManager.getText(5111);
-                            }
-                            text += t;
-                        }
-                    });
-                } else{
-                    text += TextManager.getText(5110);
-                }
-            } else if (awakeData.awake.type == 13){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5120);
-            } else if (awakeData.awake.type == 14){
-                var text = TextManager.getText(700500) + "\n" + TextManager.getText(5130).format(awakeData.awake.value);
-            }
-        }
-        return text;
-    }
 }

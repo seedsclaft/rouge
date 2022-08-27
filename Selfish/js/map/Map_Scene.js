@@ -43,21 +43,11 @@ class Map_Scene extends Scene_Base{
         this.createSpriteset();
         this.createWindowLayer();
     
-        //this.createMenuButton();
-        //this.createBackButton();
-        //this.createMenuSprite();
-        if ($dataMapInfos[$gameMap.mapId()]){
-            //this.setMenuSprite(TextManager.mapInfosName($gameMap.mapId()),24);
-        }
-        if($gameDefine.mobileMode == true){
-            this.createInputButtons();
-            this.createMapDockButton();
-            //this.createSkipButton();
-            //this.createDockButton();
-        }
         this.createBattleStatus();
         this.createRoleSkillSelectWindow();
-        //this.createKeyMapWindow();
+        this._levelUpText = new Sprite(new Bitmap(Graphics.width,80));
+        this.addChild(this._levelUpText);
+        this._levelUpText.y = 80;
     }
 
     createEnemy(){
@@ -83,10 +73,11 @@ class Map_Scene extends Scene_Base{
 
 
     createRoleSkillSelectWindow(){
-        this._roleSelectWindow = new Window_RoleSkillSelect(400,240,480,320);
+        this._roleSelectWindow = new Window_RoleSkillSelect(320,200,640,320);
         this._roleSelectWindow.setHandler('ok',this.okRoleSelect.bind(this));
         //this._roleSelectWindow.setHandler('cancel',this.cancelRoleSelect.bind(this));
         this.addChild(this._roleSelectWindow);
+        this._roleSelectWindow.hide();
     }
 
     createSpriteset(){
@@ -176,9 +167,6 @@ class Map_Scene extends Scene_Base{
     
         if (this._keyMapWindow){
             this._keyMapWindow.visible = !EventManager.busy();
-        }
-        if (this._dockMenu){
-            this._dockMenu.visible = !EventManager.busy();
         }
         super.update();
         this._sceneMessage.update();
@@ -331,131 +319,6 @@ class Map_Scene extends Scene_Base{
         if (!SceneManager.isSceneChanging()) {
             this.updateCallMenu();
         }
-        if($gameDefine.mobileMode == true){
-            this.updateInputButtons();
-        }
-    }
-
-    createInputButtons(){
-        this._buttons = [];
-        [0,1,2,3].forEach(num => {
-            var button = new Sprite();
-            var bitmap = new Bitmap(160,160);
-            bitmap.fontSize = 160;
-            if (num == 0){
-                bitmap.drawText('▲',0,0,160,160);
-                button.scale.y = 0.25;
-                button.x = 480;
-                button.y = 320;
-            } else if (num == 1){
-                bitmap.fontSize = 120;
-                bitmap.drawText('▼',20,0,120,120);
-                button.scale.y = 0.25;
-                button.x = 480;
-                button.y = 480;
-            } else if (num == 2){
-                bitmap.drawText('▶',0,0,160,160);
-                button.scale.y = 0.25;
-                button.x = 840;
-                button.y = 400;
-            } else if (num == 3){
-                bitmap.drawText('◀',0,0,160,160);
-                button.scale.y = 0.25;
-                button.x = 160;
-                button.y = 400;
-            }
-            button.bitmap = bitmap;
-            button.anchor.x = 0.5;
-            button.anchor.y = 0.5;
-            button.alpha = 0;
-            this._buttons.push(button);
-            this.addChild(button);
-        });
-    }
-
-    createMapDockButton(){
-        this._dockMenu = new Sprite_MapDock(this._mapSprite,this.callSkip.bind(this));
-        this._dockMenu.hide();
-        this.addChild(this._dockMenu);
-    }
-
-    updateInputButtons(){
-        Input._currentState['ok'] = false;
-        Input._currentState['up'] = false;
-        Input._currentState['right'] = false;
-        Input._currentState['left'] = false;
-        Input._currentState['down'] = false;
-        if (PopupManager.busy()){
-            return;
-        }
-        if (EventManager.busy()){
-            if (this._buttons[0].alpha != 0){
-                this._buttons.forEach(btn => {
-                    btn.alpha = 0;
-                });
-            }
-            return;
-        } else{
-            if (this._buttons[0].alpha == 0){
-                this._buttons.forEach(btn => {
-                    btn.alpha = 0.2;
-                });
-            }
-        }
-        if (!TouchInput.isPressed()){
-            return;
-        }
-        if (this._waitCount > 0){
-            return;
-        }
-        if (!TouchInput.isLongPressed()){
-            $gamePlayer.setMoveSpeed(4);
-        }
-        //メニュー、スキップボタン回避
-        if (TouchInput.y < 96){
-            return;
-        }
-        if (TouchInput.x > 840){
-            //return;
-        }
-        var button;
-        if (TouchInput.x > 320 && TouchInput.x < 640 && TouchInput.y < 400){
-            this._waitCount = 20;
-            Input._currentState['ok'] = true;
-            if (!$gamePlayer.isMoving() && TouchInput.isTriggered()){
-                $gamePlayer.checkEventTriggerMapHere([0]);
-            }
-            if (this._eventPicture){
-                Input._currentState['up'] = false;
-                return;
-            }
-            Input._currentState['up'] = true;
-            button = this._buttons[0];
-            if (TouchInput.isLongPressed()){
-                $gamePlayer.setMoveSpeed(5);
-                this._waitCount = 0;
-            }
-        } else
-        if (TouchInput.x > 380 && TouchInput.x < 580 && TouchInput.y > 440){
-            Input._currentState['down'] = true;
-            button = this._buttons[1];
-        } else
-        if (TouchInput.x > 640){
-            this._waitCount = 28;
-            Input._currentState['right'] = true;
-            button = this._buttons[2];
-        } else
-        if (TouchInput.x < 320){
-            this._waitCount = 28;
-            Input._currentState['left'] = true;
-            button = this._buttons[3];
-        }
-        this._buttons.forEach(btn => {
-            btn.alpha = 0.2;
-        });
-        gsap.to(button, 0, {pixi:{alpha:0.75},onComplete:function(){
-            gsap.to(button, 0.5, {pixi:{alpha:0.2}});
-        }.bind(this)});    
     }
 
     updateTransferPlayer(){
@@ -605,31 +468,52 @@ class Map_Scene extends Scene_Base{
         this._enemySpirite.addChild(damageSprite);
     }
 
-    commandLevelUp(role){
+    commandLevelUp(role,value){
+        this._levelUpText.show();
+        this.updateLevelUpText(value);
         this._roleSelectWindow.setData(role);
         this._roleSelectWindow.show();
         this._roleSelectWindow.activate();
+        this._roleSelectWindow.opacity = 255;
     }
 
     okRoleSelect(){
         const item = this._roleSelectWindow.item();
-        this.setCommand(MapCommand.CheckRole);
+        this.setCommand(MapCommand.CheckPoint);
+    }
+
+    nextCheckPoint(role,value){
+        this.updateLevelUpText(value);
+        this._roleSelectWindow.setData(role);
+        this._roleSelectWindow.activate();
     }
     
-    commandCheckRole(role){
+    commandCheckPoint(role){
+        this.updateLevelUpText(0);
         this._roleSelectWindow.setData(role);
-        $gameMessage.setChoices(["はい","いいえ"], 1, 1);
-        $gameMessage.setChoiceBackground(1);
-        $gameMessage.setChoicePositionType(0);
-        $gameMessage.setChoiceCallback(function(n) {
-            if (n == 0){
-                this.setCommand(MapCommand.RoleUp);
-                this._roleSelectWindow.deactivate();
-                this._roleSelectWindow.hide();
-            } else{
-                this.setCommand(MapCommand.LevelUp);
-            }
-        }.bind(this));
+        const mainText = "確定？";
+        const subText = "";
+        const text1 = TextManager.getDecideText();
+        const text2 = TextManager.getCancelText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{subText:subText, select:0});
+        _popup.setHandler(text1,'ok',() => {
+            this.setCommand(MapCommand.DesideLevelUp);
+            this._roleSelectWindow.deactivate();
+            this._roleSelectWindow.hide();
+            this._levelUpText.hide();
+        });
+        _popup.setHandler(text2,'cancel',() => {
+            this.setCommand(MapCommand.ResetLevelUp);
+        });
+        _popup.open();
+    }
+
+    updateLevelUpText(value){
+        this._levelUpText.bitmap.clear();
+        const _text = "残りポイント：" + value;
+        this._levelUpText.bitmap.drawText("成長させる技能を選択してください",0,0,Graphics.width,40,"center");
+        this._levelUpText.bitmap.drawText(_text,0,40,Graphics.width,40,"center");
     }
 
     terminate(){
@@ -658,10 +542,8 @@ class Map_Scene extends Scene_Base{
 const MapCommand = {
     Menu : 0,
     Save : 1,
-    SkipStage : 2,
     SwapOrder : 3,
     Start : 4,
-    EndStage : 5,
 
     
     MovePlayer : 11,
@@ -669,7 +551,8 @@ const MapCommand = {
     Skill1 : 13,
     SKill2 : 14,
     Event : 15,
-    CheckRole : 16,
+    CheckPoint : 16,
     LevelUp : 17,
-    RoleUp : 18
+    DesideLevelUp : 18,
+    ResetLevelUp : 19
 }

@@ -203,7 +203,6 @@ Game_Party.prototype.initialize = function() {
     // 撃破敵リスト
     this._enemyInfoData = [];
 
-    this._recordData = new Game_Result();
     
     //読んだTipsリスト
     this._readTipsId = [];
@@ -268,13 +267,6 @@ Game_Party.prototype.checkReadTutorial = function(key) {
         this._readTutorialKey = [];
     }
     return _.contains(this._readTutorialKey,key);
-}
-
-Game_Party.prototype.recordData = function() {
-    if (!this._recordData){
-        this._recordData = new Game_Result();
-    }
-    return this._recordData;
 }
 
 Game_Party.prototype.stageNo = function() {

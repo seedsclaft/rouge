@@ -56,7 +56,7 @@ class Presenter_Menu extends Presenter_Base{
                 _player.changeEquip(_slotIndex,select.item);
             }
         }
-        this._view.refreshWindow();
+        this._view.refreshWindow(_player);
     }
 
     commandUseItem(select){
@@ -71,7 +71,7 @@ class Presenter_Menu extends Presenter_Base{
         results.forEach(result => {
             action.applyResult(result.target,result);
         });
-        this._view.refreshWindow();
+        this._view.refreshWindow(_player);
     }
 
     commandChangeSetSkill(slot,select){
@@ -89,7 +89,7 @@ class Presenter_Menu extends Presenter_Base{
                 break;
             }
         }
-        this._view.refreshWindow();
+        this._view.refreshWindow(_player);
     }
 
     commandDebug(){

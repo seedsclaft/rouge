@@ -46,9 +46,6 @@ class TipsManager {
         this._tips.alpha = 0;
         this._tips.x = 760;
         let posY = 40;
-        if (SceneManager._scene instanceof Stage_Scene){
-            posY = 88;
-        }
         this._tips.y = posY;
         gsap.to(this._tips,0.25,{alpha:1,x:640});
         gsap.to(this._tips,0.25,{alpha:0,x:680,delay:5});

@@ -81,8 +81,6 @@ class Presenter_File extends Presenter_Base {
         const resumeScene = this._model.resumeScene();
         if ( resumeScene ){
             this.commandContinue();
-        } else{
-            SceneManager.push(Terminal_Scene);
         }
         this.checkUpdate();
     }
