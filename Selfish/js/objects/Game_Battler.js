@@ -1194,6 +1194,7 @@ Game_Battler.prototype.makeActions = function() {
         this._actions = [];
         this._actions.push(new Game_Action(this));
     }
+    return this._actions;
 };
 
 Game_Battler.prototype.currentAction = function() {
@@ -1223,7 +1224,8 @@ Game_Battler.prototype.forceAction = function(skillId, targetIndex) {
     } else {
         action.setTarget(targetIndex);
     }
-    this._actions.push(action);
+    //this._actions.push(action);
+    return action;
 };
 
 Game_Battler.prototype.useItem = function(item) {
@@ -1620,6 +1622,31 @@ Game_Battler.prototype.damageRate = function() {
     return value;
 }
 
+Game_Battler.prototype.getAttackValue = function(weaponSlotId) {
+    let value = 0;
+    let _weapon = null;
+    if (this.isActor()){
+        _weapon = this.weapons()[weaponSlotId];
+        if (_weapon){
+            value += this.weapons()[weaponSlotId].params[2];
+        }
+    } else{
+        value = this.atk;
+    }
+    const _roleAtk = this.roleAttackValue(_weapon);
+    const _skillAtk = 1 + 0.5 * _roleAtk / 100;
+    return (this.atk - value) + value * _skillAtk;
+}
+
+Game_Battler.prototype.roleAttackValue = function(weapon) {
+    if (weapon == null) return 0;
+    switch (weapon.wtypeId){
+        case WeaponType.ONE_HANDED:
+            return this.getStateEffect($gameStateInfo.getStateId( StateType.ONE_HANDED ));
+    }
+    return 0;
+}
+
 //-----------------------------------------------------------------------------
 // Game_Actor
 //
@@ -1688,8 +1715,8 @@ Game_Actor.prototype.setup = function(actorId) {
 
 
     // setSkills
-    this._skillSet1 = null;
-    this._skillSet2 = null;
+    this._skillSet1 = {};
+    this._skillSet2 = {};
 
     this._statePlus = {
     }
@@ -1703,16 +1730,30 @@ Game_Actor.prototype.addStatePlus = function(id,value) {
 }
 
 Game_Actor.prototype.skillSet1 = function() {
-    return this._skillSet1;
+    if (this._skillSet1){
+        if (this._skillSet1.isSkill){
+            return $dataSkills[this._skillSet1.itemId];
+        } else{
+            return $dataItems[this._skillSet1.itemId];
+        }
+    }
+    return null;
 }
 
 Game_Actor.prototype.skillSet2 = function() {
-    return this._skillSet2;
+    if (this._skillSet2){
+        if (this._skillSet2.isSkill){
+            return $dataSkills[this._skillSet2.itemId];
+        } else{
+            return $dataItems[this._skillSet2.itemId];
+        }
+    }
+    return null;
 }
 
-Game_Actor.prototype.setSlotSkill = function(slot,skill) {
-    if (slot == 1) this._skillSet1 = skill;
-    if (slot == 2) this._skillSet2 = skill;
+Game_Actor.prototype.setSlotSkill = function(slot,itemId,isSkill) {
+    if (slot == 1) this._skillSet1 = {isSkill:isSkill, itemId:itemId};
+    if (slot == 2) this._skillSet2 = {isSkill:isSkill, itemId:itemId};
 }
 
 Game_Actor.prototype.actorId = function() {
@@ -2389,15 +2430,6 @@ Game_Actor.prototype.makeConfusionActions = function() {
     }
 };
 
-Game_Actor.prototype.makeActions = function() {
-    Game_Battler.prototype.makeActions.call(this);
-    if (this.isAutoBattle()) {
-        this.makeAutoBattleActions();
-    } else if (this.isConfused()) {
-        this.makeConfusionActions();
-    }
-};
-
 Game_Actor.prototype.updateStateSteps = function(state) {
     /*
     if (state.removeByWalking) {
@@ -2979,17 +3011,22 @@ Game_Enemy.prototype.selectAllActions = function(actionList) {
     }
 };
 
-Game_Enemy.prototype.makeActions = function() {
-    Game_Battler.prototype.makeActions.call(this);
-    if (this.numActions() > 0) {
-        let actionList = this._actionList.filter(function(a) {
-            return this.isActionValid(a);
-        }, this);
-        if (actionList.length > 0) {
-            this.selectAllActions(actionList);
-        }
+Game_Enemy.prototype.setAction = function(action) {
+    let actionList = this._actionList.filter(function(a) {
+        return this.isActionValid(a);
+    }, this);
+    if (action) {
+        const ratingMax = Math.max.apply(null, actionList.map(function(a) {
+            return a.rating;
+        }));
+        const ratingZero = ratingMax - 3;
+        actionList = actionList.filter(function(a) {
+            return a.rating > ratingZero;
+        });
+        let select = this.selectAction(actionList, ratingZero);
+        this.setBattleAction($dataSkills[select.skillId]);
     }
-};
+}
 
 // 行動パターンををシフトする
 Game_Enemy.prototype.changeActions = function(id) {

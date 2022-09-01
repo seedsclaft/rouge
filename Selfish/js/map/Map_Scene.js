@@ -118,7 +118,7 @@ class Map_Scene extends Scene_Base{
         this._sceneMessage.createAllWindows();
     }
 
-    commandStart(needTarnsfer,fadeType,mapPictureName){
+    commandStart(needTarnsfer,fadeType){
         if (needTarnsfer) {
             BackGroundManager.changeBackGroundByTile();
         }
@@ -129,11 +129,6 @@ class Map_Scene extends Scene_Base{
         */
         if (this._keyMapWindow){
             this._keyMapWindow.refresh('map');
-        }
-        if (mapPictureName != ''){
-            EventManager.setLabel(mapPictureName);
-            EventManager.showFastMapPicture(mapPictureName);
-            this._eventPicture = mapPictureName;
         }
         this.updateFrontSprite();
     }
@@ -223,6 +218,16 @@ class Map_Scene extends Scene_Base{
             gsap.to(this._otherSprite,0.4,{alpha : 0.6});
         } else {
             gsap.to(this._otherSprite,0.4,{alpha : 0,});
+        }
+    }
+
+    refreshMiniMap(){
+        if ($gamePlayer._battleState == true){
+            gsap.to(this._mapSprite._minimap._maskGraphic.scale,0,{x : 0.75,y:0.75});
+            gsap.to(this._mapSprite._minimap._maskGraphic,0,{x : 60,y:60});
+        } else{
+            gsap.to(this._mapSprite._minimap._maskGraphic.scale,0,{x : 1,y:1});
+            gsap.to(this._mapSprite._minimap._maskGraphic,0,{x : 0,y:0});
         }
     }
 
@@ -333,10 +338,10 @@ class Map_Scene extends Scene_Base{
         if (this.isMenuEnabled() && !$gamePlayer.isMoving() && !EventManager.busy() && !PopupManager.busy()) {
             if (this.isMenuCalled()) {
                 this.callCommandMenu();
-            }
+            } else
             if (this.isSkill1Called()) {
                 this.commandSkill1();
-            }
+            } else
             if (this.isSkill2Called()) {
                 this.commandSkill2();
             }

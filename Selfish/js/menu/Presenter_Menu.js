@@ -66,7 +66,7 @@ class Presenter_Menu extends Presenter_Base{
         
         const action = new Game_Action(_player);
         action.setItem(select.item.id);
-        action.makeActionResult();
+        action.makeActionResult([_player]);
         const results = action.results();
         results.forEach(result => {
             action.applyResult(result.target,result);
@@ -77,14 +77,15 @@ class Presenter_Menu extends Presenter_Base{
     commandChangeSetSkill(slot,select){
         const _player = this._model.player();
         if (select != null){
-            const _skillSet = (slot == 1) ? _player._skillSet1 : _player._skillSet2;
+            const _skillSet = (slot == 1) ? _player.skillSet1() : _player.skillSet2();
             const _type = select.type;
+            const _isSkill = DataManager.isSkill(select.item);
             switch (_type){
                 case SkillSelectType.Learning:
                     if (select.item == _skillSet){
-                        _player.setSlotSkill(slot,null);
+                        _player.setSlotSkill(slot,null,false);
                     } else{
-                        _player.setSlotSkill(slot,select.item);
+                        _player.setSlotSkill(slot,select.item.id,_isSkill);
                     }
                 break;
             }

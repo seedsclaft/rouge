@@ -128,7 +128,6 @@ class CommonUtility {
         "js/menu/Window_LibraryCommand.js",
         "js/menu/Sprite_MenuStatus.js",
         "js/file/File_Scene.js",
-        "js/file/LockFile_Scene.js",
         "js/file/Presenter_File.js",
         "js/file/Model_File.js",
         "js/file/Window_FileList.js",

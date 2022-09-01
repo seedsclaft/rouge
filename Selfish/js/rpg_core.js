@@ -293,6 +293,7 @@ Input.update = function() {
     for (const name in this._currentState) {
         if (this._currentState[name] && !this._previousState[name]) {
             this._latestButton = name;
+            console.error(name)
             this._pressedTime = 0;
             this._date = Date.now();
         }
@@ -300,6 +301,7 @@ Input.update = function() {
     }
     if (this._virtualButton) {
         this._latestButton = this._virtualButton;
+        console.error(this._virtualButton)
         this._pressedTime = 0;
         this._virtualButton = null;
     }

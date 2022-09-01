@@ -64,6 +64,8 @@ class Menu_Scene extends Scene_Base{
         this._selectWindow.setHandler('menu',this.okSkillSet2.bind(this));
         this._selectWindow.setHandler('pagedown',this.changeCategory.bind(this,1));
         this._selectWindow.setHandler('pageup',this.changeCategory.bind(this,-1));
+        this._selectWindow.setHandler('right',this.changeCategory.bind(this,1));
+        this._selectWindow.setHandler('left',this.changeCategory.bind(this,-1));
         this._selectWindow.setHandler('index',this.changeSelect.bind(this,-1));
         this.addChild(this._selectWindow);
     }

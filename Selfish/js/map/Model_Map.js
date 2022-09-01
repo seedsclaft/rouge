@@ -5,6 +5,9 @@ class Model_Map extends Model_Base{
         this._levelUpValue = 0;
         this._levelUpPoint = 0;
         this._tempRoleData = null;
+
+        this._battleMembers = [];
+        this._battleActions = [];
         this._damageData = [];
     }
 
@@ -97,43 +100,6 @@ class Model_Map extends Model_Base{
         return {bgm:needBgm,bgs:needBgs};
     }
 
-    mapPictureName(){
-        const event = $gamePlayer.checkFrontEvent();
-        if (event){
-            return event.characterName();
-        }
-        return '';
-    }
-
-    commandBattle(subject,target){
-        let _weaponAtk = 0;
-        if (subject.isActor()){
-            const _weapon = subject.weapons();
-            _weapon.forEach(w => {
-                _weaponAtk += w.params[2];
-            });
-        } else{
-            _weaponAtk = subject.atk;
-        }
-        const roleAtk = subject.getStateEffect($gameStateInfo.getStateId( StateType.ONE_HANDED ));
-        const _skillAtk = 1 + 0.5 * roleAtk / 100;
-        const _atk = (subject.atk - _weaponAtk) + _weaponAtk * _skillAtk;
-
-        const _defRate = (target.def-1) * 0.12;
-        if (!subject.isActor()){
-            subject.makeActions();
-            if (DataManager.isSkill(subject._actions[0]._item)){
-                subject.setBattleAction($dataSkills[subject._actions[0]._item._itemId]);
-            }
-        }
-        const _action = subject.battleAction();
-        const _damageRate = _action != null ? Number( eval(_action.damage.formula) ) : 1.0;
-        
-        const _damage = Math.floor( _atk * (1-_defRate) * -1 * _damageRate);
-        target.gainHp(_damage);
-        return _damage;
-    }
-
     player(){
         return $gameParty.battleMembers()[0];
     }
@@ -215,5 +181,66 @@ class Model_Map extends Model_Base{
             damage += element;
         });
         return damage;
+    }
+
+    battleMembers(){
+        return this._battleMembers;
+    }
+
+    setBattleMembers(){
+        let members = [];
+        const event = $gamePlayer.checkFrontEvent();
+        if (event && event._enemy) {
+            members.push(this.player());
+            members.push(event._enemy);
+        }
+        const nears = $gamePlayer.checkNearEvents();
+        nears.forEach(nearEvent => {
+            members.push(nearEvent._enemy);
+        });
+        this._battleMembers = members;
+        this._battleMembers = _.sortBy(this._battleMembers,(a) => a.agi);
+    }
+
+    makeActions(){
+        const _enemy = $gamePlayer.frontEnemy();
+        let battleActions = [];
+        this._battleMembers.forEach(battler => {
+            let actions = battler.makeActions();
+            actions.forEach(action => { 
+                let target = null;
+                if (battler.isActor()){
+                    target = _enemy;
+                } else{
+                    target = this.player();
+                    battler.setAction(action);
+                }
+                let battleAction = battler.battleAction();
+                if (DataManager.isSkill(battleAction)){
+                    action.setSkill(battleAction.id);
+                } else{
+                    action.setItem(battleAction.id);
+                }
+                action.makeActionResult([target]);
+                battleActions.push(action);
+            });
+
+        });
+        this._battleActions = battleActions;
+    }
+
+    startBattle(){
+        const action = this._battleActions.shift();
+        const _results = action._results;
+        _results.forEach(result => {
+            if (result.hpDamage > 0){
+
+            }
+        });
+    }
+
+    endBattle(){
+        this._battleMembers = [];
+        this._battleActions = [];
     }
 }

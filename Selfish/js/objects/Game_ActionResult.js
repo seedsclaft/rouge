@@ -36,7 +36,6 @@ Game_ActionResult.prototype.initParam = function() {
     this.kishikaisei = false;
     this.invisible = false;
     this.damageBlock = false;
-    this.apDamage = 0;
 
     this.substitutedTarget = null;
 

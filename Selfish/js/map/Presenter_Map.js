@@ -80,13 +80,13 @@ class Presenter_Map extends Presenter_Base {
     commandStart(){
         const needTarnsfer = this._model.needTransfer();
         const fadeType = this._model.fadeType();
-        const mapPictureName = this._model.mapPictureName();
-        this._view.commandStart(needTarnsfer,fadeType,mapPictureName);
+        this._view.commandStart(needTarnsfer,fadeType);
         const enableWeather = this._model.enableWeather();
         this._view.enableWeather(enableWeather);
         const mapName = this._model.mapName();
         this._view.showMapName(mapName);
         this.playMapBgm();
+        this._view.refreshMiniMap();
         BackGroundManager.changeBackGround($dataMap.battleback1Name);
     }
 
@@ -116,82 +116,88 @@ class Presenter_Map extends Presenter_Base {
     }
 
     commandBattle(setSkilled){
-        if (setSkilled == false){
+        console.error("command")
+        const _player = this._model.player();
+        if (!setSkilled){
             _player.setBattleAction($dataSkills[1]);
         }
         this._model.initDamageData();
         const event = $gamePlayer.checkFrontEvent();
         const nears = $gamePlayer.checkNearEvents();
-        const _player = this._model.player();
         const _playerLevel = _player.level;
         let _enemy = null;
         if (event) {
             _enemy = event._enemy;
         }
-        if (event && _enemy.isAlive()){
-            let _battler = [_enemy,_player];
-            let _enemyEvent = [event];
-            nears.forEach(nearEvent => {
-                _battler.push(nearEvent._enemy);
-                _enemyEvent.push(nearEvent);
-            });
-            _battler = _.sortBy(_battler,(a) => a.agi);
-            _battler.forEach(battler => {
-                if (battler.isActor()){
-                    let enemyEvent = _enemyEvent.find(a => a._enemy == _enemy);
-                    this.commandActor(_player,_enemy,enemyEvent);
-                } else{
-                    let enemyEvent = _enemyEvent.find(a => a._enemy == battler);
-                    this.commandEnemy(_player,battler,enemyEvent);
+        this._model.setBattleMembers();
+        this._model.makeActions();
+
+        let deadTarget = [];
+        const _actions = this._model._battleActions;
+        
+        _actions.forEach(action => {
+            let battler = action.subject();
+            if (battler.isDead()){
+                return;
+            }
+            let _results = action._results;
+            _results.forEach(result => {
+                let target = result.target;
+                action.applyResult(target,result);
+                if (result.hpDamage > 0){
+                    target.performDamage();
+                    if (target.isActor()){
+                        this._model.pushDamageData(result.hpDamage);
+                    } else{
+                        this._view.enemyEffectDamage(result.hpDamage);
+                    }
+                }
+                if (_player.isDead()){
+                    SceneManager.goto(Scene_Gameover);
+                }
+                if (target.isDead()){
+                    deadTarget.push(target);
+                    target.performCollapse();
                 }
             });
-            let totalDamage = this._model.totalDamage();
-            if (totalDamage < 0){
-                this._view.playerEffectDamage(totalDamage,1);
-            }
-            this._view.updateStatus();
+        });
+
+        let totalDamage = this._model.totalDamage();
+        if (totalDamage > 0){
+            this._view.playerEffectDamage(totalDamage,1);
         }
+        this._view.updateStatus();
+
+        this._model.endBattle();
         Input.clear();
         $gameMap.moveStraightPlayer();
         this._view.updateFrontSprite();
         if (event && _enemy.isAlive()){
             event.changeState(EnemyState.Battle);
         }
+        let _enemyEvent = [];
+        if (event && event._enemy) {
+            _enemyEvent.push(event);
+        }
+        nears.forEach(nearEvent => {
+            _enemyEvent.push(nearEvent);
+        });
+        
+        _enemyEvent.forEach(enemyEvent => {
+            enemyEvent.setStopCount(0);        
+            enemyEvent.setMoveType(0);
+        });
+        deadTarget.forEach(enemy => {
+            let enemyEvent = _enemyEvent.find(a => a._enemy == enemy);
+            const key = [enemyEvent._mapId, enemyEvent._eventId, "C"];
+            $gameSelfSwitches.setValue(key, true);
+            this._model.gainExp(enemy.level());
+        });
         if (_player.level > _playerLevel){
             this._model.makeLevelUpData(_player.level - _playerLevel);
             SoundManager.playLevelUp();
             EventManager.startLogText("Level Up : " + _player.level);
             this.commandLevelUp();
-        }
-    }
-
-    commandActor(_player,_enemy,event){
-        const _result = this._model.commandBattle(_player,_enemy,1);
-        if (_result < 0){
-            _enemy.performDamage();
-            this._view.effectStart(1);
-            this._view.enemyEffectDamage(_result);
-        }
-        if (_enemy.isDead()){
-            _enemy.performCollapse();
-            const key = [event._mapId, event._eventId, "C"];
-            $gameSelfSwitches.setValue(key, true);
-            this._model.gainExp(_enemy.level());
-        }
-    }
-
-    commandEnemy(_player,_enemy,event){
-        if (_enemy.isAlive()){
-            event.setStopCount(0);
-            const _result = this._model.commandBattle(_enemy,_player,1);
-            if (_result < 0){
-                this._model.pushDamageData(_result);
-                _player.performDamage();
-            }
-        }
-        event.setMoveType(0);
-        if (_player.isDead()){
-            SceneManager.goto(Scene_Gameover);
         }
     }
 

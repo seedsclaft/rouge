@@ -27,10 +27,8 @@ Game_Action.HITTYPE_PHYSICAL        = 1;
 Game_Action.HITTYPE_MAGICAL         = 2;
 
 Game_Action.prototype.initialize = function(subject, forcing) {
-    this._subjectActorId = 0;
-    this._subjectEnemyIndex = -1;
+    this._subject = subject;
     this._forcing = forcing || false;
-    this.setSubject(subject);
     this.clear();
 };
 
@@ -41,22 +39,8 @@ Game_Action.prototype.clear = function() {
     this._counter = false;
 };
 
-Game_Action.prototype.setSubject = function(subject) {
-    if (subject.isActor()) {
-        this._subjectActorId = subject.actorId();
-        this._subjectEnemyIndex = -1;
-    } else {
-        this._subjectEnemyIndex = subject.index();
-        this._subjectActorId = 0;
-    }
-};
-
 Game_Action.prototype.subject = function() {
-    if (this._subjectActorId > 0) {
-        return $gameActors.actor(this._subjectActorId);
-    } else {
-        return $gameTroop.members()[this._subjectEnemyIndex];
-    }
+    return this._subject;
 };
 
 Game_Action.prototype.friendsUnit = function() {
@@ -65,14 +49,6 @@ Game_Action.prototype.friendsUnit = function() {
 
 Game_Action.prototype.opponentsUnit = function() {
     return this.subject().opponentsUnit();
-};
-
-Game_Action.prototype.setEnemyAction = function(action) {
-    if (action) {
-        this.setSkill(action.skillId);
-    } else {
-        this.clear();
-    }
 };
 
 Game_Action.prototype.setAttack = function() {
@@ -250,13 +226,15 @@ Game_Action.prototype.isValid = function() {
 };
 
 Game_Action.prototype.makeTargets = function() {
-    let targets = [];
+    const targets = [];
     if (!this._forcing && this.subject().isConfused()) {
-        targets = [this.confusionTarget()];
+        targets.push(this.confusionTarget());
+    } else if (this.isForEveryone()) {
+        targets.push(...this.targetsForEveryone());
     } else if (this.isForOpponent()) {
-        targets = this.targetsForOpponents();
+        targets.push(...this.targetsForOpponents());
     } else if (this.isForFriend()) {
-        targets = this.targetsForFriends();
+        targets.push(...this.targetsForFriends());
     }
     return this.repeatTargets(targets);
 };
@@ -290,8 +268,8 @@ Game_Action.prototype.confusionTarget = function() {
 };
 
 Game_Action.prototype.targetsForOpponents = function() {
-    var targets = [];
-    var unit = this.opponentsUnit();
+    let targets = [];
+    let unit = this.opponentsUnit();
 
     //対象全体化
     if (this.subject().isStateAffected($gameStateInfo.getStateId(StateType.ALL_ATTACK))){
@@ -422,6 +400,8 @@ Game_Action.prototype.evaluateWithTarget = function(target) {
 };
 
 Game_Action.prototype.testApply = function(target) {
+    console.log(this)
+    console.log(target)
     return (this.isForDeadFriend() === target.isDead() &&
             ($gameParty.inBattle() || this.isForOpponent() ||
             (this.isHpRecover() && target.hp < target.mhp) ||
@@ -508,8 +488,7 @@ Game_Action.prototype.results = function() {
     return this._results;
 };
 
-Game_Action.prototype.makeActionResult = function() {
-    const targets = this.makeTargets();
+Game_Action.prototype.makeActionResult = function(targets) {
     targets.forEach((target,index) => {
         this.makeResult(target,targets.length-1 == index);
     });
@@ -558,8 +537,6 @@ Game_Action.prototype.makeResult = function(target,lastTarget) {
                 this.makeResultBanish(result);
                 // インビジブル
                 this.makeResultInvisible(result);
-                // apDamage判定
-                this.makeResultApdamage(result);
 
                 let tempHpDamage = 0;
                 this._results.forEach(res => {
@@ -609,14 +586,6 @@ Game_Action.prototype.makeResultHoldOn = function(result) {
     const holdOnId = $gameStateInfo.getStateId(StateType.HOLD_ON);
     if (this.subject().isStateAffected(holdOnId)){
         isHoldOn = true;
-    }
-
-    const loseType = DataManager.getStageInfos($gameParty.stageNo()).loseType;
-    if (loseType == GameStageLoseType.TROOPMEMBERLOST){
-        const selfholdOnId = $gameStateInfo.getStateId(StateType.SELF_HOLD_ON);
-        if (this.subject().isStateAffected(selfholdOnId)){
-            isHoldOn = true;
-        }
     }
 
     if (isHoldOn){
@@ -693,13 +662,6 @@ Game_Action.prototype.makeResultInvisible = function(result) {
             result.hpDamage = 0;
             result.invisible = true;
         }
-    }
-}
-
-Game_Action.prototype.makeResultApdamage = function(result) {
-    const apDamageId = $gameStateInfo.getStateId(StateType.AP_DAMAGE);
-    if (this.subject().isStateAffected(apDamageId) && result.target.hp > 0 && this.isForOpponent()){
-        result.apDamage = this.subject().getStateEffectTotal(apDamageId);
     }
 }
 
@@ -812,7 +774,7 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
     
     baseValue += subject.damageRate();
 
-    baseValue = baseValue * 0.01 * subject.atk;
+    //baseValue = baseValue * 0.01 * subject.atk;
     let elementValue = this.calcElementRate(target);
     let value = baseValue * elementValue;
     if (this.isMagical()) {
@@ -834,12 +796,14 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
 
 Game_Action.prototype.evalDamageFormula = function(target) {
     try {
-        var item = this.item();
-        var a = this.subject();
-        var b = target;
-        var v = $gameVariables._data;
-        var sign = ([3, 4].contains(item.damage.type) ? -1 : 1);
-        var value = Math.max(eval(item.damage.formula), 0) * sign;
+        const _item = this.item();
+        const _atk = this._subject.getAttackValue(0);
+        const _defRate = (target.def-1) * 0.12;
+        const _damageRate = Number( eval(_item.damage.formula) );
+        
+        const _damage = Math.floor( _atk * (1-_defRate) * _damageRate);
+        const sign = ([3, 4].contains(_item.damage.type) ? -1 : 1);
+        let value = Math.max(_damage, 0) * sign;
 		if (isNaN(value)) value = 0;
 		return value;
     } catch (e) {
@@ -890,7 +854,6 @@ Game_Action.prototype.applyGuard = function(damage, target) {
 Game_Action.prototype.executeDamage = function(result) {
     if (this.isHpEffect()) {
         this.executeHpDamage(result);
-        this.executeApDamage(result.target, result.apDamage);
         this.executeRpDamage(this.subject(), result.reDamage);
     } else
     if (this.isMpEffect()) {
@@ -922,10 +885,6 @@ Game_Action.prototype.executeMpDamage = function(target, value) {
     }
     target.gainMp(-value);
     this.gainDrainedMp(value);
-};
-
-Game_Action.prototype.executeApDamage = function(target, value) {
-    target.gainAp(value);
 };
 
 Game_Action.prototype.executeRpDamage = function(target, value) {
@@ -1200,7 +1159,6 @@ Game_Action.prototype.popupData = function(actor) {
     var popup = [];
     var results = this.results();
     var data = $dataSkills[this.item().id];
-    let apDamage = false;
     let reDamage = false;
     results.forEach(result => {
         // ステート解除
@@ -1259,13 +1217,6 @@ Game_Action.prototype.popupData = function(actor) {
         // バニッシュ発動
         if (result.banish){
             popup.push(new PopupTextData(result.target,PopupTextType.RemoveState,TextManager.getStateName($gameStateInfo.getStateId(StateType.BANISH))));
-        }
-        // APDAMAGE発動
-        if (result.apDamage && !apDamage){
-            popup.push(new PopupTextData(result.target,PopupTextType.AddState,TextManager.getStateName($gameStateInfo.getStateId(StateType.AP_DAMAGE))));
-            if (data.scope != ScopeType.ALL_ENEMY){
-                apDamage = true;
-            }
         }
         // 貫通発動
         if (result.penetrate){
@@ -1444,4 +1395,9 @@ Game_Action.prototype.resetDischargeResult = function() {
         tempHpDamage += res.hpDamage;
         res.isDead = (res.target.hp <= tempHpDamage);
     });
+}
+
+const WeaponType = {
+    None:0,
+    ONE_HANDED:1
 }

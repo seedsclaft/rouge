@@ -394,6 +394,13 @@ Game_Player.prototype.checkFrontEvent = function() {
     return data;
 };
 
+Game_Player.prototype.frontEnemy = function() {
+    const _event = this.checkFrontEvent();
+    if (_event && _event._enemy != null) return _event._enemy;
+    return null;
+};
+
+
 Game_Player.prototype.checkNearEvents = function() {
     let data = [];
     [2,4,6,8].forEach(dir => {
