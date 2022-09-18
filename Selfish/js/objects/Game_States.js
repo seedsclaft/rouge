@@ -57,5 +57,5 @@ Game_States.prototype.updateStateTurns = function() {
 }
 
 Game_States.prototype.isStateExpired = function() {
-    return this._turns === 0;
+    return this._turns <= 0;
 }

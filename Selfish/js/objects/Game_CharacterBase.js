@@ -11,7 +11,6 @@ Game_CharacterBase.prototype.initMembers = function() {
     this._realY = 0;
     this._tempX = 0;
     this._moveSpeed = 4;
-    //0820 基本的に上が正面
     this._direction = 8;
     this._priorityType = 1;
     this._tileId = 0;
@@ -187,6 +186,8 @@ Game_Player.prototype.initMembers = function() {
     this._destinationEvent = [];
 
     this._battleState = false;
+    this._state = State.Wait;
+    this._chargeTurn = 0;
 };
 
 Game_Player.prototype.setStepSound = function(name,volume,pitch,pan) {
@@ -245,45 +246,38 @@ Game_Player.prototype.moveStraight = function(d) {
     if (this.direction() == DirectionType.Down){
         d = Direction.getBack(d);
     }
-    if (Input.dir4 == DirectionType.Up){
+    const _moveDirection = (Input.dir4 == DirectionType.Up || Input.dir4 == DirectionType.Down);
+    if (_moveDirection){
         this.setMovementSuccess(this.canPass(this._x, this._y, d));
-    } else{
-        this.setMovementSuccess(true);
-    }
-    if (this.isMovementSucceeded()) {
-        this.setDirection(d);
-        if (Input.dir4 == DirectionType.Up){
-            this._x = $gameMap.roundXWithDirection(this._x, d);
-            this._y = $gameMap.roundYWithDirection(this._y, d);
-            this._realX = $gameMap.xWithDirection(this._x, this.reverseDir(d));
-            this._realY = $gameMap.yWithDirection(this._y, this.reverseDir(d));
+        if (!this.isMovementSucceeded()){
+            return;
         }
-        EventManager.moveActors(Input.dir4);
-        AudioManager.playSe($gamePlayer._stepSound);
-        BackGroundManager.changeBackGroundByTile();
-
-        this._tempX += 1;
-        this.increaseSteps();
     }
+    if (Input.dir4 != DirectionType.Down){
+        this.setDirection(d);
+    }
+    if (_moveDirection){
+        this._x = $gameMap.roundXWithDirection(this._x, d);
+        this._y = $gameMap.roundYWithDirection(this._y, d);
+        this._realX = $gameMap.xWithDirection(this._x, this.reverseDir(d));
+        this._realY = $gameMap.yWithDirection(this._y, this.reverseDir(d));
+    } else{
+        this._tempX = this._x + 1;
+    }
+    EventManager.moveActors(Input.dir4);
+    AudioManager.playSe($gamePlayer._stepSound);
+    BackGroundManager.changeBackGroundByTile();
+
+    this.increaseSteps();
 };
 
 Game_Player.prototype.moveByInput = function() {
     if (!this.isMoving() && this.canMove()) {
         const direction = Input.dir4;
-        if (direction != 8) {
+        if (direction != 8 && direction != 2) {
             this.moveStraight(direction);
         }
     }
-};
-
-Game_Player.prototype.checkMoveStraightPlayer = function() {
-    if (!this.isMoving() && this.canMove()) {
-        const direction = Input.dir4;
-        if (direction == 8) {
-            return true;
-        }
-    }
-    return false;
 };
 
 
@@ -464,14 +458,29 @@ Game_Player.prototype.isCollided = function(x, y) {
         return this.pos(x, y);
     }
 };
+Game_Player.prototype.canPassArrow = function(x, y, d) {
+    const x2 = $gameMap.roundXWithDirection(x, d);
+    const y2 = $gameMap.roundYWithDirection(y, d);
+    if (!$gameMap.isValid(x2, y2)) {
+        return false;
+    }
+    if (this.isThrough() || this.isDebugThrough()) {
+        return true;
+    }
+    if (!this.isMapPassable(x, y, d)) {
+        return false;
+    }
+    return true;
+};
 
 Game_Event.prototype.setupEvent = function(eventData) {
     if (eventData.name.includes('Enemy')){
         const args = eventData.name.split(",");
         this._enemy = new Game_Enemy(Number( args[1] ),0,0,Number ( args[2]) );
-        this._enemyState = EnemyState.Wait;
+        this._state = State.Wait;
         this._distTurn = 0;
         this._eventType = EventType.Enemy;
+        this._chargeTurn = 0;
     } else
     if (eventData.name.includes('Box')){
         this._eventType = EventType.Box;
@@ -490,7 +499,7 @@ Game_Event.prototype.checkMoveType = function() {
         return false;
     }
     if (this._enemy.isDead()){
-        this.changeState(EnemyState.Dead);
+        this.changeState(State.Dead);
         return 0;
     }
     const sight = this._enemy.mat;
@@ -506,14 +515,14 @@ Game_Event.prototype.checkMoveType = function() {
     if (sight < diff){
         this._distTurn += 1;
         if (this._distTurn > 8){
-            this.changeState(EnemyState.None);
+            this.changeState(State.Wait);
         }
     } else
     if (sight == diff){
-        this.changeState(EnemyState.Caution);
+        this.changeState(State.Caution);
     } else
     if (sight > diff){
-        this.changeState(EnemyState.Battle);
+        this.changeState(State.Battle);
     }
     return this._moveType;
 }
@@ -523,10 +532,16 @@ Game_Event.prototype.setMoveType = function(moveType) {
 };
 
 Game_Event.prototype.changeState = function(state) {
-    this._enemyState = state;
+    this._state = state;
     switch (state){
-        case EnemyState.Battle:
+        case State.Battle:
             this.setMoveType(2);
+            break;
+        case State.Wait:
+        case State.Caution:
+        case State.Stun:
+        case State.Dead:
+            this.setMoveType(0);
             break;
     }
 }
@@ -643,10 +658,11 @@ var EventType = {
     Event : 3
 }
 
-var EnemyState = {
+var State = {
     None : 0,
     Wait : 1,
     Caution : 2,
     Battle : 3,
-    Dead: 4
+    Stun: 4,
+    Dead: 5
 }

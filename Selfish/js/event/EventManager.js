@@ -222,13 +222,13 @@ EventManager.moveActors = function(direction,isMoveBg) {
         if (isMoveBg){
             BackGroundManager.moveFront(speedRate);
         }
-    }
-    if (direction == 2 || direction == 4){
+    } else
+    if (direction == 4){
         this._eventView.transLeft(speedRate);
         if (isMoveBg){
             BackGroundManager.moveLeft(speedRate);
         }
-    }
+    } else
     if (direction == 6){
         this._eventView.transRight(speedRate);
         if (isMoveBg){

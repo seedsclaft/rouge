@@ -20,7 +20,6 @@ Game_Map.prototype.initialize = function() {
     this._nameDisplay = true;
     this._battleback1Name = null;
     this._battleback2Name = null;
-    this._nowEvent = null;
 
     this._regionList = [];
 };
@@ -102,26 +101,16 @@ Game_Map.prototype.enableNameDisplay = function() {
     this._nameDisplay = true;
 };
 
-Game_Map.prototype.setMapPicture = function(event) {
-    this._nowEvent = event;
-}
-
-Game_Map.prototype.nowEvent = function() {
-   return this._nowEvent;
-}
-
 Game_Map.prototype.setupEvents = function() {
     this._events = [];
-    for (var i = 0; i < $dataMap.events.length; i++) {
-        if ($dataMap.events[i]) {
-            this._events[i] = new Game_Event(this._mapId, i);
-            this._events[i].setupEvent($dataMap.events[i]);
-        }
+    this._commonEvents = [];
+    for (const event of $dataMap.events.filter(event => !!event)) {
+        this._events[event.id] = new Game_Event(this._mapId, event.id);
+        this._events[event.id].setupEvent(event);
     }
-    this._commonEvents = this.parallelCommonEvents().map(function(commonEvent) {
-        return new Game_CommonEvent(commonEvent.id);
-    });
-
+    for (const commonEvent of this.parallelCommonEvents()) {
+        this._commonEvents.push(new Game_CommonEvent(commonEvent.id));
+    }
     this.refreshTileEvents();
 };
 
@@ -139,10 +128,16 @@ Game_Map.prototype.eraseEvent = function(eventId) {
     this._events[eventId].erase();
 };
 
+Game_Map.prototype.autorunCommonEvents = function() {
+    return $dataCommonEvents.filter(
+        commonEvent => commonEvent && commonEvent.trigger === 1
+    );
+};
+
 Game_Map.prototype.parallelCommonEvents = function() {
-    return $dataCommonEvents.filter(function(commonEvent) {
-        return commonEvent && commonEvent.trigger === 2;
-    });
+    return $dataCommonEvents.filter(
+        commonEvent => commonEvent && commonEvent.trigger === 2
+    );
 };
 
 Game_Map.prototype.setupBattleback = function() {
@@ -155,18 +150,23 @@ Game_Map.prototype.setupBattleback = function() {
     }
 };
 
+
 Game_Map.prototype.setDisplayPos = function(x, y) {
     if (this.isLoopHorizontal()) {
         this._displayX = x.mod(this.width());
+        this._parallaxX = x;
     } else {
-        var endX = this.width() - this.screenTileX();
+        const endX = this.width() - this.screenTileX();
         this._displayX = endX < 0 ? endX / 2 : x.clamp(0, endX);
+        this._parallaxX = this._displayX;
     }
     if (this.isLoopVertical()) {
         this._displayY = y.mod(this.height());
+        this._parallaxY = y;
     } else {
-        var endY = this.height() - this.screenTileY();
+        const endY = this.height() - this.screenTileY();
         this._displayY = endY < 0 ? endY / 2 : y.clamp(0, endY);
+        this._parallaxY = this._displayY;
     }
 };
 
@@ -175,7 +175,7 @@ Game_Map.prototype.tileset = function() {
 };
 
 Game_Map.prototype.tilesetFlags = function() {
-    var tileset = this.tileset();
+    const tileset = this.tileset();
     if (tileset) {
         return tileset.flags;
     } else {
@@ -201,7 +201,7 @@ Game_Map.prototype.data = function() {
 
 Game_Map.prototype.isLoopHorizontal = function() {
     if (!$dataMap){
-        Debug.error($dataMap)
+        Debug.error($dataMap);
     }
     return $dataMap.scrollType === 2 || $dataMap.scrollType === 3;
 };
@@ -277,7 +277,7 @@ Game_Map.prototype.roundYWithDirection = function(y, d) {
 };
 
 Game_Map.prototype.deltaX = function(x1, x2) {
-    var result = x1 - x2;
+    let result = x1 - x2;
     if (this.isLoopHorizontal() && Math.abs(result) > this.width() / 2) {
         if (result < 0) {
             result += this.width();
@@ -289,7 +289,7 @@ Game_Map.prototype.deltaX = function(x1, x2) {
 };
 
 Game_Map.prototype.deltaY = function(y1, y2) {
-    var result = y1 - y2;
+    let result = y1 - y2;
     if (this.isLoopVertical() && Math.abs(result) > this.height() / 2) {
         if (result < 0) {
             result += this.height();
@@ -305,16 +305,16 @@ Game_Map.prototype.distance = function(x1, y1, x2, y2) {
 };
 
 Game_Map.prototype.canvasToMapX = function(x) {
-    var tileWidth = this.tileWidth();
-    var originX = this._displayX * tileWidth;
-    var mapX = Math.floor((originX + x) / tileWidth);
+    const tileWidth = this.tileWidth();
+    const originX = this._displayX * tileWidth;
+    const mapX = Math.floor((originX + x) / tileWidth);
     return this.roundX(mapX);
 };
 
 Game_Map.prototype.canvasToMapY = function(y) {
-    var tileHeight = this.tileHeight();
-    var originY = this._displayY * tileHeight;
-    var mapY = Math.floor((originY + y) / tileHeight);
+    const tileHeight = this.tileHeight();
+    const originY = this._displayY * tileHeight;
+    const mapY = Math.floor((originY + y) / tileHeight);
     return this.roundY(mapY);
 };
 
@@ -360,7 +360,7 @@ Game_Map.prototype.tileEventsXy = function(x, y) {
 };
 
 Game_Map.prototype.eventIdXy = function(x, y) {
-    var list = this.eventsXy(x, y);
+    const list = this.eventsXy(x, y);
     return list.length === 0 ? 0 : list[0].eventId();
 };
 
@@ -368,10 +368,16 @@ Game_Map.prototype.scrollDown = function(distance) {
     if (this.isLoopVertical()) {
         this._displayY += distance;
         this._displayY %= $dataMap.height;
+        if (this._parallaxLoopY) {
+            this._parallaxY += distance;
+        }
     } else if (this.height() >= this.screenTileY()) {
-        var lastY = this._displayY;
-        this._displayY = Math.min(this._displayY + distance,
-            this.height() - this.screenTileY());
+        const lastY = this._displayY;
+        this._displayY = Math.min(
+            this._displayY + distance,
+            this.height() - this.screenTileY()
+        );
+        this._parallaxY += this._displayY - lastY;
     }
 };
 
@@ -379,9 +385,13 @@ Game_Map.prototype.scrollLeft = function(distance) {
     if (this.isLoopHorizontal()) {
         this._displayX += $dataMap.width - distance;
         this._displayX %= $dataMap.width;
+        if (this._parallaxLoopX) {
+            this._parallaxX -= distance;
+        }
     } else if (this.width() >= this.screenTileX()) {
-        var lastX = this._displayX;
+        const lastX = this._displayX;
         this._displayX = Math.max(this._displayX - distance, 0);
+        this._parallaxX += this._displayX - lastX;
     }
 };
 
@@ -389,10 +399,16 @@ Game_Map.prototype.scrollRight = function(distance) {
     if (this.isLoopHorizontal()) {
         this._displayX += distance;
         this._displayX %= $dataMap.width;
+        if (this._parallaxLoopX) {
+            this._parallaxX += distance;
+        }
     } else if (this.width() >= this.screenTileX()) {
-        var lastX = this._displayX;
-        this._displayX = Math.min(this._displayX + distance,
-            this.width() - this.screenTileX());
+        const lastX = this._displayX;
+        this._displayX = Math.min(
+            this._displayX + distance,
+            this.width() - this.screenTileX()
+        );
+        this._parallaxX += this._displayX - lastX;
     }
 };
 
@@ -400,9 +416,13 @@ Game_Map.prototype.scrollUp = function(distance) {
     if (this.isLoopVertical()) {
         this._displayY += $dataMap.height - distance;
         this._displayY %= $dataMap.height;
+        if (this._parallaxLoopY) {
+            this._parallaxY -= distance;
+        }
     } else if (this.height() >= this.screenTileY()) {
-        var lastY = this._displayY;
+        const lastY = this._displayY;
         this._displayY = Math.max(this._displayY - distance, 0);
+        this._parallaxY += this._displayY - lastY;
     }
 };
 
@@ -500,7 +520,6 @@ Game_Map.prototype.update = function(sceneActive) {
     this.updateEvents();
 };
 
-
 Game_Map.prototype.scrollDistance = function() {
     return Math.pow(2, this._scrollSpeed) / 256;
 };
@@ -523,12 +542,12 @@ Game_Map.prototype.doScroll = function(direction, distance) {
 };
 
 Game_Map.prototype.updateEvents = function() {
-    this.events().forEach(function(event) {
+    for (const event of this.events()) {
         event.update();
-    });
-    this._commonEvents.forEach(function(event) {
-        event.update();
-    });
+    }
+    for (const commonEvent of this._commonEvents) {
+        commonEvent.update();
+    }
 };
 
 Game_Map.prototype.changeTileset = function(tilesetId) {
@@ -591,9 +610,7 @@ Game_Map.prototype.setupTestEvent = function() {
 };
 
 Game_Map.prototype.setupStartingMapEvent = function() {
-    var events = this.events();
-    for (var i = 0; i < events.length; i++) {
-        var event = events[i];
+    for (const event of this.events()) {
         if (event.isStarting()) {
             event.clearStartingFlag();
             this._interpreter.setup(event.list(), event.eventId());
@@ -604,10 +621,9 @@ Game_Map.prototype.setupStartingMapEvent = function() {
 };
 
 Game_Map.prototype.setupAutorunCommonEvent = function() {
-    for (var i = 0; i < $dataCommonEvents.length; i++) {
-        var event = $dataCommonEvents[i];
-        if (event && event.trigger === 1 && $gameSwitches.value(event.switchId)) {
-            this._interpreter.setup(event.list);
+    for (const commonEvent of this.autorunCommonEvents()) {
+        if ($gameSwitches.value(commonEvent.switchId)) {
+            this._interpreter.setup(commonEvent.list);
             return true;
         }
     }
@@ -615,9 +631,7 @@ Game_Map.prototype.setupAutorunCommonEvent = function() {
 };
 
 Game_Map.prototype.isAnyEventStarting = function() {
-    return this.events().some(function(event) {
-        return event.isStarting();
-    });
+    return this.events().some(event => event.isStarting());
 };
 
 Game_Map.prototype.moveStraightPlayer = function() {
@@ -635,6 +649,13 @@ Game_Map.prototype.moveStraightPlayer = function() {
             battleState = (state == 2);
         }
     });
+    const _enemyEvents = this.getAllEnemyEvents();
+    _enemyEvents.forEach(enemyEvent => {
+        if (enemyEvent._enemy.isAlive() && !enemyEvent._enemy.canMove()){
+            enemyEvent.changeState(State.Stun);
+        }
+        enemyEvent._enemy.onTurnEnd();
+    });
     $gamePlayer._battleState = battleState;
 }
 
@@ -650,3 +671,21 @@ Game_Map.prototype.autoplay = function() {
         AudioManager.playBgs($dataMap.bgs);
     }
 };
+
+Game_Map.prototype.getEnemyEvent = function(battler) {
+    const _event = this._events.find(a => a && a._enemy && a._enemy == battler);
+    return _event;
+}
+
+Game_Map.prototype.findEnemyByPosition = function(x,y) {
+    const _event = this._events.find(a => a && a._enemy && a.x == x && a.y == y);
+    if (_event && _event._enemy){
+        return _event._enemy;
+    }
+    return null;
+}
+
+Game_Map.prototype.getAllEnemyEvents = function() {
+    const _events = this._events.filter(a => a && a._enemy);
+    return _events;
+}

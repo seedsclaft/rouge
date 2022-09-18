@@ -400,8 +400,7 @@ Game_Action.prototype.evaluateWithTarget = function(target) {
 };
 
 Game_Action.prototype.testApply = function(target) {
-    console.log(this)
-    console.log(target)
+    return true;
     return (this.isForDeadFriend() === target.isDead() &&
             ($gameParty.inBattle() || this.isForOpponent() ||
             (this.isHpRecover() && target.hp < target.mhp) ||
@@ -449,6 +448,7 @@ Game_Action.prototype.itemMrf = function(target) {
 };
 
 Game_Action.prototype.itemHit = function(target) {
+    const successRate = this.item().successRate;
     // 暗闇計算
     const subject = this.subject();
     const blindId = $gameStateInfo.getStateId(StateType.BLIND);
@@ -459,10 +459,10 @@ Game_Action.prototype.itemHit = function(target) {
     // 回避計算
     const evaId = $gameStateInfo.getStateId(StateType.EVA_BUFF_RATE);
     let evaRate = subject.eva;
-    if (target.isStateAffected(evaId)){
+    if (target && target.isStateAffected(evaId)){
         evaRate += target.getStateEffect(evaId) * 0.01;
     }
-    return 1 + (hitRate) - (evaRate);
+    return (1 + (hitRate) - (evaRate)) * successRate * 0.01;
 };
 
 Game_Action.prototype.itemEva = function(target) {
@@ -481,7 +481,11 @@ Game_Action.prototype.itemCri = function(target) {
     if (this.subject().isStateAffected(critcalStateId)){
         value += this.subject().getStateEffect(critcalStateId) * 0.01;
     }
-    return this.item().damage.critical ? (this.subject().cri + value) * (1 - target.cev) : 0;
+    let _targetCev = 1;
+    if (target){
+        _targetCev -= target.cev;
+    }
+    return this.item().damage.critical ? (this.subject().cri + value) * _targetCev : 0;
 };
 
 Game_Action.prototype.results = function() {
@@ -522,7 +526,7 @@ Game_Action.prototype.makeResult = function(target,lastTarget) {
                 }
                 // ダメージブロック
                 const damageBlockId = $gameStateInfo.getStateId(StateType.DAMAGE_BLOCK);
-                if (target.isStateAffected(damageBlockId)){
+                if (target && target.isStateAffected(damageBlockId)){
                     if (value < target.getStateEffect(damageBlockId)){
                         result.hpDamage = 0;
                         result.damageBlock = true;
@@ -544,12 +548,15 @@ Game_Action.prototype.makeResult = function(target,lastTarget) {
                         tempHpDamage += res.hpDamage;
                     }
                 });
-                if (result.target.hp <= (result.hpDamage + tempHpDamage)){
-                    result.isDead = true;
-                }
+                if (result.target){
+                    if (result.target.hp <= (result.hpDamage + tempHpDamage)){
+                        result.isDead = true;
+                    }
+    
+                    if (result.target.isGuard() && result.hpDamage > 0){
+                        result.guard = true;
+                    }
 
-                if (result.target.isGuard() && result.hpDamage > 0){
-                    result.guard = true;
                 }
             }
             if (this.isMpEffect()) {
@@ -607,7 +614,7 @@ Game_Action.prototype.makeResultHoldOn = function(result) {
 Game_Action.prototype.makeResultKishikaisei = function(result) {
     let isKishikaisei = false;
     const kishikaiseiId = $gameStateInfo.getStateId(StateType.KISHIKAISEI);
-    if (result.target.isStateAffected(kishikaiseiId)){
+    if (result.target && result.target.isStateAffected(kishikaiseiId)){
         isKishikaisei = true;
     }
 
@@ -630,7 +637,7 @@ Game_Action.prototype.makeResultKishikaisei = function(result) {
 
 Game_Action.prototype.makeResultBanish = function(result) {
     const banishId = $gameStateInfo.getStateId(StateType.BANISH);
-    if (result.target.isStateAffected(banishId)){
+    if (result.target && result.target.isStateAffected(banishId)){
         let stateData = result.target.getStateData(banishId);
         // 累計ダメージ
         let tempHpDamage = 0;
@@ -650,7 +657,7 @@ Game_Action.prototype.makeResultBanish = function(result) {
 
 Game_Action.prototype.makeResultInvisible = function(result) {
     const invisibleId = $gameStateInfo.getStateId(StateType.INVISIBLE);
-    if (result.target.isStateAffected(invisibleId) && result.hpDamage > 0){ 
+    if (result.target && result.target.isStateAffected(invisibleId) && result.hpDamage > 0){ 
         if (result.target.getStateEffect(invisibleId) > 0){
             let stateData = result.target.getStateData(invisibleId);
             if (stateData){
@@ -689,7 +696,7 @@ Game_Action.prototype.makeHpDamage = function(result, target, value,lastTarget) 
     result.hpDamage = value;
     //フロストウォール
     const damageCutId = $gameStateInfo.getStateId(StateType.DAMAGE_CUT);
-    if (value > 0 && target.isStateAffected(damageCutId)){
+    if (value > 0 && target && target.isStateAffected(damageCutId)){
         result.hpDamage -= target.getStateEffectTotal(damageCutId);
         if (result.hpDamage < 1){
             result.hpDamage = 1;
@@ -703,7 +710,7 @@ Game_Action.prototype.makeHpDamage = function(result, target, value,lastTarget) 
         });
     }
     // 凍結1.5倍ダメージ
-    if (value > 0 && target.isStateAffected($gameStateInfo.getStateId(StateType.FROZEN))){
+    if (value > 0 && target && target.isStateAffected($gameStateInfo.getStateId(StateType.FROZEN))){
         result.hpDamage = Math.round( result.hpDamage * $gameDefine.frozenDamageRate );
         result.pushRemovedState($gameStateInfo.getStateId(StateType.FROZEN));
     }
@@ -717,7 +724,7 @@ Game_Action.prototype.makeMpDamage = function(result,target, value) {
     result.mpDamage = value;
     result.mpAffected = true;
     //呪い
-    if (target.isStateAffected($gameStateInfo.getStateId(StateType.CURSE))){
+    if (target && target.isStateAffected($gameStateInfo.getStateId(StateType.CURSE))){
         result.mpDamage = 0;
         result.mpAffected = false;
     }
@@ -798,10 +805,15 @@ Game_Action.prototype.evalDamageFormula = function(target) {
     try {
         const _item = this.item();
         const _atk = this._subject.getAttackValue(0);
-        const _defRate = (target.def-1) * 0.12;
         const _damageRate = Number( eval(_item.damage.formula) );
+        const _defRate = 100 - (target.def) * 0.12;
+        let _damage = Math.floor( _atk * _damageRate * (_defRate / 100));
         
-        const _damage = Math.floor( _atk * (1-_defRate) * _damageRate);
+        const _shieldRate = target.shieldValue();
+        if (_shieldRate > 0){
+            _damage = Math.floor( _atk * _damageRate * (_defRate / 100) * (_shieldRate / 100));
+        }
+
         const sign = ([3, 4].contains(_item.damage.type) ? -1 : 1);
         let value = Math.max(_damage, 0) * sign;
 		if (isNaN(value)) value = 0;
@@ -812,6 +824,7 @@ Game_Action.prototype.evalDamageFormula = function(target) {
 };
 
 Game_Action.prototype.calcElementRate = function(target) {
+    if (target == null) return 1;
     if (this.item().damage.elementId < 0) {
         return this.elementsMaxRate(target, this.subject().attackElements());
     } else {
@@ -843,7 +856,7 @@ Game_Action.prototype.applyGuard = function(damage, target) {
     const penetrateId = $gameStateInfo.getStateId(StateType.PENETRATE);
     if (damage > 0 && target.isGuard() && !this.subject().isStateAffected(penetrateId)){
         const ironwillId = $gameStateInfo.getStateId(StateType.IRON_WILL);
-        if (target.isStateAffected(ironwillId)){
+        if (target && target.isStateAffected(ironwillId)){
             damage -= target.getStateEffectTotal(ironwillId);
         }
         return Math.max(damage - target.def,1);
@@ -862,6 +875,7 @@ Game_Action.prototype.executeDamage = function(result) {
 };
 
 Game_Action.prototype.executeHpDamage = function(result) {
+    if (result.target == null) return;
     let target = result.target;
     let value = result.hpDamage;
     if (this.isDrain()) {
@@ -1008,19 +1022,13 @@ Game_Action.prototype.itemEffectAddAttackState = function(target, effect) {
 Game_Action.prototype.itemEffectAddNormalState = function(result, effect) {
     // 状態異常カウンター判定
     const restrictionId = $gameStateInfo.getStateId(StateType.RESTRICTION);
-    if (result.target.isStateAffected(restrictionId)){
+    if (result.target && result.target.isStateAffected(restrictionId)){
         if (!this.subject().isStateResist(effect.dataId)){
-            const electroChainId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
-            // 拘束は対象を主体にする
-            if (electroChainId == effect.dataId){
-                result.target = this.subject();
-            } else{
-                this.subject().addState(effect.dataId,this.item().stateTurns,this.item().stateEffect,false,this.subject().battlerId());
-                result.pushRestrictedState(effect.dataId);
-            }
+            this.subject().addState(effect.dataId,this.item().stateTurns,this.item().stateEffect,false,this.subject().battlerId());
+            result.pushRestrictedState(effect.dataId);
         }
     }
-    if (result.target.isStateResist(effect.dataId)){
+    if (result.target && result.target.isStateResist(effect.dataId)){
         // バリア判定
         const barrierId = $gameStateInfo.getStateId(StateType.BARRIER);
         if (result.target.isStateAffected(barrierId)){
@@ -1060,7 +1068,7 @@ Game_Action.prototype.isStateConsciousResist = function(result, effect) {
 Game_Action.prototype.itemEffectRemoveState = function(result, effect) {
     var chance = effect.value1;
     if (Math.random() < chance) {
-        if (result.target.isStateAffected(effect.dataId)) {
+        if (result.target && result.target.isStateAffected(effect.dataId)) {
             result.pushRemovedState(effect.dataId);
         }
     }
@@ -1156,16 +1164,15 @@ Game_Action.prototype.popupData = function(actor) {
     if (this._results.length == 0){
         return null;
     }
-    var popup = [];
-    var results = this.results();
-    var data = $dataSkills[this.item().id];
-    let reDamage = false;
+    let popup = [];
+    let results = this.results();
+    let data = $dataSkills[this.item().id];
     results.forEach(result => {
         // ステート解除
         const removeStates = result.removedStateObjects();
         if (removeStates){
             removeStates.forEach(state => {
-                if (state.iconIndex > 0 && result.target.isStateAffected(state.id)){
+                if (state.iconIndex > 0 && result.target && result.target.isStateAffected(state.id)){
                     popup.push(new PopupTextData(result.target,PopupTextType.RemoveState,TextManager.getStateName(state.id)));
                 }
             });
@@ -1226,27 +1233,6 @@ Game_Action.prototype.popupData = function(actor) {
         if (result.chargeAttack){
             popup.push(new PopupTextData(actor,PopupTextType.RemoveState,TextManager.getStateName($gameStateInfo.getStateId(StateType.CHARGE))));
         }
-        // 拘束自動解除
-        var chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
-        var chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
-        if (actor.isStateAffected(chainSelfId)){
-            actor._bindBatllers.forEach(target => {
-                popup.push(new PopupTextData(target,PopupTextType.RemoveState,TextManager.getStateName(chainTargetId)));
-            });
-        }
-        // 拘束対象解除
-        if (result.target.isStateAffected(chainSelfId) && result.hpDamage > 0){
-            result.target._bindBatllers.forEach(target => {
-                popup.push(new PopupTextData(target,PopupTextType.RemoveState,TextManager.getStateName(chainSelfId)));
-            });
-        }
-        // 拘束を使用した本人に拘束付与
-        if (this.isContainsState(chainTargetId)){
-            var effects = _.every(this.results(),(r) => r.target.isStateResist(chainTargetId))
-            if (!effects){
-                popup.push(new PopupTextData(actor,PopupTextType.AddState,TextManager.getStateName(chainSelfId)));
-            }
-        }
         // 無敵発動で無敵が外れている
         if (result.invisible){
             if (!result.target.isStateAffected($gameStateInfo.getStateId(StateType.INVISIBLE))){
@@ -1280,32 +1266,7 @@ Game_Action.prototype.popupData = function(actor) {
     if (data && data.selfSkill){
         this.popupSelfSkill(popup,actor,data.selfSkill);
     }
-    // スキル波状
-    const waveId = $gameStateInfo.getStateId(StateType.WAVY);
-    if (actor.isStateAffected(waveId)){
-        let wavyList = actor.getStateDataAll(waveId);
-        wavyList.forEach(wavyData => {
-            if (wavyData.effect == data.id){
-                let wavySkill = $dataSkills[wavyData.slotId];
-                this.popupSelfSkill(popup,actor,wavySkill.selfSkill);
-            }
-        });
-    }
 
-    // エーテル
-    const etherId = $gameStateInfo.getStateId(StateType.ETHER);
-    if (actor.isStateAffected(etherId)){
-
-    }
-
-    // アクセル
-    const accelId = $gameStateInfo.getStateId(StateType.ACCEL);
-    if (actor.isStateAffected(accelId)){
-        let plusAccel = ((actor._turnCount - 1) * actor.getStateEffectTotal(accelId));
-        if (plusAccel <= 10){
-            popup.push(new PopupTextData(actor,PopupTextType.Text,TextManager.getStateMessage3(accelId),null));
-        }
-    }
 
     return popup;
 }
@@ -1395,6 +1356,25 @@ Game_Action.prototype.resetDischargeResult = function() {
         tempHpDamage += res.hpDamage;
         res.isDead = (res.target.hp <= tempHpDamage);
     });
+}
+
+Game_Action.prototype.chargeTurn = function() {
+    if (this.item() == null) return 0;
+    if (this.isSkill()){
+        return $dataSkills[this.item().id].chargeTurn;
+    }
+    return 0;
+}
+
+Game_Action.prototype.setAgi = function(agi) {
+    this._agi = agi;
+    if (this.item() && this.item().speed){
+        this._agi += this.item().speed;
+    }
+}
+
+Game_Action.prototype.agi = function() {
+    return this._agi;
 }
 
 const WeaponType = {

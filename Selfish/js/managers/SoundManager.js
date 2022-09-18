@@ -110,12 +110,6 @@ SoundManager.playAnswerQuiz = function() {
     }
 };
 
-SoundManager.playMissQuiz = function() {
-    if ($dataSystem){
-        AudioManager.playStaticSe(this.getSe($gameSE.missquiz));
-    }
-};
-
 SoundManager.footSound1 = function(pan,pitch) {
     if (pan === undefined){
         pan = 0;

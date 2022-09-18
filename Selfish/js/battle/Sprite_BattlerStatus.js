@@ -42,7 +42,7 @@ class Sprite_BattlerStatus extends Sprite{
         }
         this.setHp();
         this.setMp();
-        this.setTp();
+        //this.setTp();
         this.setStateIconSprite();
     
         this.setWeakSprite();
@@ -176,6 +176,7 @@ class Sprite_BattlerStatus extends Sprite{
     }
 
     setTp(){
+        /*
         const width = Math.floor( this._battler.maxTp() * 1 );
         const height = 8;
         const x = 80;
@@ -199,6 +200,7 @@ class Sprite_BattlerStatus extends Sprite{
         this._tpSprite.x = 200 / 2;
         this._tpSprite.y = y / 2;
         //this.addChild(this._tpSprite);
+        */
     }
 
 
@@ -286,6 +288,7 @@ class Sprite_BattlerStatus extends Sprite{
     }
 
     changeTp(){
+        /*
         if (!this._battler){
             return;
         }
@@ -314,9 +317,11 @@ class Sprite_BattlerStatus extends Sprite{
             }
         })
         this._tpAnim = tl;
+        */
     }
 
     changeTpEffect(isGlow){
+        /*
         if (this._battler.isActor() == false){
             return;
         }
@@ -335,10 +340,12 @@ class Sprite_BattlerStatus extends Sprite{
             this._tpEffect = null;
             this._statusMpSprite.filters = [];
         }
+        */
     }
 
     update(){
         super.update();
+        /*
         if (this._tpEffect){
             if (Graphics.frameCount % 6 == 0){
                 if (this._tpEffectTiming){
@@ -356,6 +363,7 @@ class Sprite_BattlerStatus extends Sprite{
                 }
             }
         }
+        */
         //if ($gameDefine.mobileMode){
             this._infoSprite.visible = (this._stateIconSprite.states().length > 0);
         //}

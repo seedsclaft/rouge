@@ -189,52 +189,148 @@ class Model_Map extends Model_Base{
 
     setBattleMembers(){
         let members = [];
-        const event = $gamePlayer.checkFrontEvent();
-        if (event && event._enemy) {
-            members.push(this.player());
-            members.push(event._enemy);
-        }
-        const nears = $gamePlayer.checkNearEvents();
-        nears.forEach(nearEvent => {
-            members.push(nearEvent._enemy);
+        members.push(this.player());
+        const _enemieEvents = $gameMap.getAllEnemyEvents();
+        _enemieEvents.forEach(enemyEvent => {
+            if (enemyEvent._state == State.Battle){
+                members.push(enemyEvent._enemy);
+            }
         });
-        this._battleMembers = members;
+        this._battleMembers = members.filter(a => a.canMove());
         this._battleMembers = _.sortBy(this._battleMembers,(a) => a.agi);
     }
 
     makeActions(){
-        const _enemy = $gamePlayer.frontEnemy();
         let battleActions = [];
         this._battleMembers.forEach(battler => {
+            if (battler._chargeTurn > 0){
+                battler._chargeTurn -= 1;
+                if (battler._chargeTurn == 0){
+                    battler._actions.forEach(action => {
+                        battleActions.push(action);
+                    });
+                    return;
+                }
+            }
             let actions = battler.makeActions();
             actions.forEach(action => { 
-                let target = null;
-                if (battler.isActor()){
-                    target = _enemy;
-                } else{
-                    target = this.player();
+                if (!battler.isActor()){
                     battler.setAction(action);
                 }
                 let battleAction = battler.battleAction();
+                if (battleAction == null) return;
                 if (DataManager.isSkill(battleAction)){
                     action.setSkill(battleAction.id);
                 } else{
                     action.setItem(battleAction.id);
                 }
-                action.makeActionResult([target]);
-                battleActions.push(action);
+                if (battler.canUse(action.item())){
+                    battler._chargeTurn = action.chargeTurn();
+                    action.setAgi(battler.agi);
+                    battleActions.push(action);
+                    battler.useItem(action.item());
+                }
             });
-
         });
         this._battleActions = battleActions;
+        this._battleActions = _.sortBy(this._battleActions,(a) => -a.agi());
+        console.log(this._battleActions)
     }
 
-    startBattle(){
-        const action = this._battleActions.shift();
-        const _results = action._results;
-        _results.forEach(result => {
-            if (result.hpDamage > 0){
+    makeActionResult(battler,action){
+        let target = null;
+        if (action.isForOpponent()){
+            target = this.makeOpponentTarget(battler,action);
+        } else{
+            target = this.makeFriendTarget(battler,action);
+        }
+        if (target){
+            action.makeActionResult([target]);
+        }
+    }
 
+    makeOpponentTarget(battler,action){
+        let target = null;
+        if (battler.isActor()){
+            let x = $gamePlayer.x;
+            let y = $gamePlayer.y;
+            const _direction = $gamePlayer.direction();
+            if (_direction ==DirectionType.Up){
+                y -= 1;
+            }
+            if (_direction ==DirectionType.Down){
+                y += 1;
+            }
+            if (_direction ==DirectionType.Right){
+                x += 1;
+            }
+            if (_direction ==DirectionType.Left){
+                x -= 1;
+            }
+            target = $gameMap.findEnemyByPosition(x,y);
+        } else{
+            let enemyEvent = $gameMap.getEnemyEvent(battler);
+            let x = enemyEvent.x;
+            let y = enemyEvent.y;
+            const _direction = enemyEvent.direction();
+            if (_direction ==DirectionType.Up){
+                y -= 1;
+            }
+            if (_direction ==DirectionType.Down){
+                y += 1;
+            }
+            if (_direction ==DirectionType.Right){
+                x += 1;
+            }
+            if (_direction ==DirectionType.Left){
+                x -= 1;
+            }
+            if (x == $gamePlayer.x && y == $gamePlayer.y){
+                target = this.player();
+            }
+            if (!target){
+                target = $gameMap.findEnemyByPosition(x,y);
+            }
+        }
+        return target;
+    }
+
+    makeFriendTarget(battler,action){
+        return battler;
+    }
+    /*
+    turnStateData(battler){
+        let turnStateData = {add:[],remove:[]};
+        if (battler){
+            turnStateData = battler.onTurnEnd();
+        }
+        return turnStateData;
+    }
+    */
+
+    removeState(action){
+        let results = action.results();
+        results.forEach(result => {
+            const removeStates = result.removedStateObjects();
+            if (removeStates){
+                removeStates.forEach(state => {
+                    result.target.removeState(state.id);
+                });
+            }
+        });
+    }
+
+    addState(action){
+        let results = action.results();
+        let skill = $dataSkills[action.item().id];
+        let turns = skill.stateTurns ? skill.stateTurns : 0;
+        let stateEffect = skill.stateEffect ? skill.stateEffect : 0;
+        results.forEach(result => {
+            let addStates = result.addedStateObjects();
+            if (addStates){
+                addStates.forEach(state => {
+                    result.target.addState(state.id,turns,stateEffect,false,0);
+                });
             }
         });
     }
@@ -242,5 +338,10 @@ class Model_Map extends Model_Base{
     endBattle(){
         this._battleMembers = [];
         this._battleActions = [];
+        this.initDamageData();
+    }
+
+    enemyEvent(){
+        return $gameMap.getAllEnemyEvents();
     }
 }

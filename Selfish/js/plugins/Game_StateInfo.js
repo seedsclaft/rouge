@@ -107,9 +107,6 @@ const StateType = {
 
     
 
-    DRAIN_HEAL :              "drainheal",      //ドレインヒール
-    CHAIN_SELF :              "chainself",      //拘束（する方）
-    CHAIN_TARGET :            "chaintarget",    //拘束（される方）
     PROVOCATION :             "provocation",    //狙われ率(増加)
     SHADOW :                  "shadow",         //狙われ率(減少)
     SALT_TARGET :             "salttarget",     //挑発
@@ -150,7 +147,6 @@ const StateType = {
     SUMMON :                  "summon",         //召喚
     SEAL_SKILL :              "sealskill",      //特定スキル封印
     MPCOST_MAX :              "mpcostmax",      //最大MPコスト消費
-    WAVY :                    "wavy",           //スキル波状
     VANTAGE :                 "vantage",        //待ち伏せ
     FINITE :                  "finite",         //宣告
     REACT :                   "react",          //リアクト
@@ -165,6 +161,12 @@ const StateType = {
     RESTRICTION:              "restriction",    //状態異常カウンター
 
     ONE_HANDED:                "Onehanded",      //片手武器
+    SHIELD:                  "Shield",      //シールド
+    MARKSMAN:                  "Marksman",      //弓
+
+    GUARD:                "Guard",      //ガード
+    ARROW:                "Arrow",      //弓構え
+
 }
 
 Game_StateInfo.prototype.getStateId = function(key) {

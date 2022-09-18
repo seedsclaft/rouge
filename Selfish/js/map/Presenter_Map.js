@@ -58,6 +58,7 @@ class Presenter_Map extends Presenter_Base {
             case MapCommand.MovePlayer:
             return this.commandMovePlayer();
             case MapCommand.Battle:
+                this._model.player().setBattleAction($dataSkills[1]);
             return this.commandBattle();
             case MapCommand.Skill1:
             return this.commandSkillUse(1);
@@ -111,45 +112,76 @@ class Presenter_Map extends Presenter_Base {
 
     commandMovePlayer(){
         $gamePlayer.moveStraight(Input.dir8);
-        $gameMap.moveStraightPlayer();
+        this.commandBattle();
+        /*
+        */
+        //$gameMap.moveStraightPlayer();
         this._view.updateFrontSprite();
     }
 
-    commandBattle(setSkilled){
-        console.error("command")
+    commandBattle(){
         const _player = this._model.player();
-        if (!setSkilled){
-            _player.setBattleAction($dataSkills[1]);
-        }
-        this._model.initDamageData();
-        const event = $gamePlayer.checkFrontEvent();
-        const nears = $gamePlayer.checkNearEvents();
-        const _playerLevel = _player.level;
-        let _enemy = null;
-        if (event) {
-            _enemy = event._enemy;
-        }
+
         this._model.setBattleMembers();
         this._model.makeActions();
 
-        let deadTarget = [];
-        const _actions = this._model._battleActions;
+        this._model.initDamageData();
+        const _playerLevel = _player.level;
+        this.appryBattleActions(this._model._battleActions);
+
+        this._model.endBattle();
+        $gameMap.moveStraightPlayer();
+        this._model.player().onTurnEnd();
+        this._view.updateFrontSprite();
+
+        if (_player.level > _playerLevel){
+            this._model.makeLevelUpData(_player.level - _playerLevel);
+            SoundManager.playLevelUp();
+            EventManager.startLogText("Level Up : " + _player.level);
+            this.commandLevelUp();
+        }
+    }
+
+    appryBattleActions(_actions){
+        const _player = this._model.player();
         
+        let damagedTarget = [];
+        let deadTarget = [];
         _actions.forEach(action => {
             let battler = action.subject();
             if (battler.isDead()){
                 return;
             }
+            if (battler._chargeTurn > 0){
+                return;
+            }
+            if (!battler.canUse(action.item())){
+                return;
+            }
+            this._model.makeActionResult(battler,action);
+            battler.setBattleAction(null);
             let _results = action._results;
             _results.forEach(result => {
                 let target = result.target;
+                if (!target){
+                    return;
+                }
                 action.applyResult(target,result);
+                if (result.missed){
+                    if (target.isActor()){
+                    } else{
+                        SoundManager.playMiss();
+                        this._view.enemyEffectMissed();
+                    }
+                }
                 if (result.hpDamage > 0){
                     target.performDamage();
                     if (target.isActor()){
                         this._model.pushDamageData(result.hpDamage);
                     } else{
+                        damagedTarget.push(target);
                         this._view.enemyEffectDamage(result.hpDamage);
+                        Input.clear();
                     }
                 }
                 if (_player.isDead()){
@@ -160,45 +192,27 @@ class Presenter_Map extends Presenter_Base {
                     target.performCollapse();
                 }
             });
+            this._model.removeState(action);
+            this._model.addState(action);
+            let popup = action.popupData();
+            console.log(popup)
+            this._view.popupActionResult(popup);
         });
-
         let totalDamage = this._model.totalDamage();
         if (totalDamage > 0){
             this._view.playerEffectDamage(totalDamage,1);
         }
-        this._view.updateStatus();
-
-        this._model.endBattle();
-        Input.clear();
-        $gameMap.moveStraightPlayer();
-        this._view.updateFrontSprite();
-        if (event && _enemy.isAlive()){
-            event.changeState(EnemyState.Battle);
-        }
-        let _enemyEvent = [];
-        if (event && event._enemy) {
-            _enemyEvent.push(event);
-        }
-        nears.forEach(nearEvent => {
-            _enemyEvent.push(nearEvent);
-        });
-        
-        _enemyEvent.forEach(enemyEvent => {
-            enemyEvent.setStopCount(0);        
-            enemyEvent.setMoveType(0);
+        damagedTarget.forEach(enemy => {
+            let enemyEvent = this._model.enemyEvent().find(a => a._enemy == enemy);
+            enemyEvent.changeState(State.Battle);
         });
         deadTarget.forEach(enemy => {
-            let enemyEvent = _enemyEvent.find(a => a._enemy == enemy);
+            let enemyEvent = this._model.enemyEvent().find(a => a._enemy == enemy);
             const key = [enemyEvent._mapId, enemyEvent._eventId, "C"];
             $gameSelfSwitches.setValue(key, true);
             this._model.gainExp(enemy.level());
         });
-        if (_player.level > _playerLevel){
-            this._model.makeLevelUpData(_player.level - _playerLevel);
-            SoundManager.playLevelUp();
-            EventManager.startLogText("Level Up : " + _player.level);
-            this.commandLevelUp();
-        }
+        this._view.updateStatus();
     }
 
     commandSkillUse(setId){
@@ -206,7 +220,16 @@ class Presenter_Map extends Presenter_Base {
         const _skill = setId == 1 ? _player.skillSet1() : _player.skillSet2();
         if (_skill != null){
             _player.setBattleAction(_skill);
-            this.commandBattle(true);
+            this.commandBattle();
+            let _effect = false;
+            if (DataManager.isSkill(_skill)){
+                _effect = _player.canUse($dataSkills[_skill.id]);
+            } else{
+                _effect = _player.canUse($dataItems[_skill.id]);
+            }
+            if (_effect){
+                this._view.effectStart(40,120,600);
+            }
         }
     }
 

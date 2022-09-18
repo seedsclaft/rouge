@@ -22,7 +22,6 @@ class Map_Scene extends Scene_Base{
         BackGroundManager.resetup();
         this.createEnemy();
         this.createOtherEvent();
-        EventManager.resetup();
         super.create();
     }
 
@@ -48,6 +47,7 @@ class Map_Scene extends Scene_Base{
         this._levelUpText = new Sprite(new Bitmap(Graphics.width,80));
         this.addChild(this._levelUpText);
         this._levelUpText.y = 80;
+        EventManager.resetup();
     }
 
     createEnemy(){
@@ -195,8 +195,10 @@ class Map_Scene extends Scene_Base{
         const event = $gamePlayer.checkFrontEvent();
         if(event && event.eventType() == EventType.Enemy){
             if (event.eventId() != this._lastEnemyEventId){
-                this._enemySpirite.setBattler(event._enemy);
-                gsap.to(this._enemySpirite,0.4,{opacity : 255});
+                if (event._enemy.isAlive()){
+                    this._enemySpirite.setBattler(event._enemy);
+                    gsap.to(this._enemySpirite,0.4,{opacity : 255});
+                }
                 this._lastEnemyEventId = event.eventId();
             }
         } else{
@@ -221,6 +223,10 @@ class Map_Scene extends Scene_Base{
         }
     }
 
+    updateOtherActions(actions){
+        this._mapSprite._minimap.updateOtherActions(actions);
+    }
+
     refreshMiniMap(){
         if ($gamePlayer._battleState == true){
             gsap.to(this._mapSprite._minimap._maskGraphic.scale,0,{x : 0.75,y:0.75});
@@ -235,24 +241,32 @@ class Map_Scene extends Scene_Base{
         if ($gamePlayer.moveSpeed > 4){
             return;
         }
-        if ($gamePlayer.checkMoveStraightPlayer()){
-            if ($gamePlayer.canPass($gamePlayer.x, $gamePlayer.y, $gamePlayer.direction())) {
-                this.setCommand(MapCommand.MovePlayer);
-            } else{            
-                const event = $gamePlayer.checkFrontEvent();
-                if(event && event.eventType() == EventType.Enemy){
-                    this.setCommand(MapCommand.Battle);
-                } else{
-                    gsap.to(this._enemySpirite,0.4,{opacity : 0});
+        let direction = $gamePlayer.direction();
+        if (!$gamePlayer.isMoving() && $gamePlayer.canMove()){
+            if (Input.dir4 == 2 || Input.dir4 == 8){
+                if (Input.dir4 == 2){
+                    direction = Direction.getBack(direction);
                 }
-                if(event && event.eventType() == EventType.Box){
-                    this.setCommand(MapCommand.Event);
+                
+                if ($gamePlayer.canPass($gamePlayer.x, $gamePlayer.y, direction)) {
+                    this.setCommand(MapCommand.MovePlayer);
+                } else
+                if (Input.dir4 == 8) {  
+                    const event = $gamePlayer.checkFrontEvent();
+                    if(event && event.eventType() == EventType.Enemy){
+                        this.setCommand(MapCommand.Battle);
+                    } else{
+                        gsap.to(this._enemySpirite,0.4,{opacity : 0});
+                    }
+                    if(event && event.eventType() == EventType.Box){
+                        this.setCommand(MapCommand.Event);
+                    }
                 }
             }
         }
-        if (this._lastDirection != $gamePlayer.direction()){
+        if (this._lastDirection != direction){
             this.updateFrontSprite();
-            this._lastDirection = $gamePlayer.direction();
+            this._lastDirection = direction;
         }
         if (this._lastBattleState != $gamePlayer._battleState){
             if ($gamePlayer._battleState == true){
@@ -443,8 +457,8 @@ class Map_Scene extends Scene_Base{
         this._enemySpirite.refreshStatus();
     }
 
-    effectStart(animationId){
-        EventManager.showEffekseer(animationId,640,320,1,1);
+    effectStart(animationId,x,y){
+        EventManager.showEffekseer(animationId,x,y,1,1);
     }
 
     playerEffectDamage(value,count){
@@ -455,6 +469,26 @@ class Map_Scene extends Scene_Base{
     enemyEffectDamage(value){
         const damageSprite = this._enemySpirite.setDamagePopup("hpDamage",value,1);
         this._enemySpirite.addChild(damageSprite);
+    }
+
+    enemyEffectMissed(){
+        const damageSprite = this._enemySpirite.setDamagePopup("missed",null,1);
+        this._enemySpirite.addChild(damageSprite);
+    }
+
+    popupActionResult(popupData){
+        if (popupData){
+            popupData.forEach(popup => {
+                let target = popup.battler; 
+                if (target.isActor()){
+                    let popupSprite = this._battleStatus.setupStatePopup(popup.type,popup.value);
+                    this._battleStatus.addChild(popupSprite);
+                } else{
+                    let popupSprite = this._enemySpirite.setupStatePopup(popup.type,popup.value);
+                    this._enemySpirite.addChild(popupSprite);
+                }
+            });
+        }
     }
 
     commandLevelUp(role,value){

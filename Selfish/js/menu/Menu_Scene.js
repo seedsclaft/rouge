@@ -239,6 +239,8 @@ class Menu_Scene extends Scene_Base{
     commandFeature(feature,x,y){
         this._featureWindow.show();
         //this._featureWindow.open();
+        x = 80;
+        y = 496;
         this._featureWindow.refresh(feature,x,y);
     }
 

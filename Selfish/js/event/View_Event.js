@@ -524,6 +524,7 @@ class View_Event {
         let sprite = new Sprite_Animation();
         let target = new Sprite();
         target.x = x;
+        console.log(x)
         this._layer.addChild(target);
         const animation = $dataAnimations[id];
         sprite.targetObjects = target;

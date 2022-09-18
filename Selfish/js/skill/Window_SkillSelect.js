@@ -22,7 +22,11 @@ class Window_SkillSelect extends Window_Selectable{
         });
         const _item = $gameParty.allItems();
         _item.forEach(item => {
-            this._allData.push({type:SkillSelectType.Item, item:item});
+            if (item.wtypeId && item.wtypeId == 3 && this._allData.find(a => a.item.id == item.id) != null){
+                return;
+            } else{
+                this._allData.push({type:SkillSelectType.Item, item:item});
+            }
         });
         /*
         const _equip = $gameParty.equipItems();
@@ -85,6 +89,9 @@ class Window_SkillSelect extends Window_Selectable{
             let name = item.name;
             if (_type == SkillSelectType.Item && $gameParty.numItems(item) > 1){
                 name += "("+$gameParty.numItems(item)+")";
+            }
+            if (_type == SkillSelectType.MyEquip && item.wtypeId && item.wtypeId == 3 && $gameParty.numItems(item) > 1){
+                name += "("+Number( $gameParty.numItems(item) + 1)+")";
             }
             this.drawText(name, rect.x + 36 + 28, rect.y + 1, rect.width,"left");
 

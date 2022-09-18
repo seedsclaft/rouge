@@ -623,6 +623,8 @@ Sprite_Minimap.prototype.initialize = function()
     this._scrollDiff = new Point();
 
     this.createSubSprites();
+    
+    this._otherActionSprites = [];
 
     this._baseOpacity = 255;
 };
@@ -960,7 +962,7 @@ Sprite_Minimap.prototype.updatePlayerSprite = function()
         }
         if (this._lastAngle == 6 && $gamePlayer.direction() == 4){
         
-            this._targetRotation += -1 * Math.PI;
+            //this._targetRotation += -1 * Math.PI;
         }
         if (this._lastAngle == 4 && $gamePlayer.direction() == 8){            
             
@@ -1001,7 +1003,6 @@ Sprite_Minimap.prototype.refresh = function()
     this.refreshTilemap();
     this.refreshParameters();
     this.refreshMapImage();
-    this.setMode();
 };
 
 /**
@@ -1294,16 +1295,48 @@ Sprite_Minimap.prototype.drawMapForegroundGrid = function(bitmap, x, y)
     bitmap.fillRect(dx, dy, dw, dh, Params.foregroundColor);
 };
 
-/**
- * 大きさモード変更
- */
-Sprite_Minimap.prototype.setMode = function(){
-};
-/**
- * 大きさモード変更
- */
-Sprite_Minimap.prototype.changeMode = function(mode){
-};
+Sprite_Minimap.prototype.updateOtherActions = function(actions){
+    this._otherActionSprites.forEach(element => {
+        if (element){
+            if (element.parent != null){
+                element.parent.removeChild(element);
+                element.destroy();
+            }
+        }
+    });
+    this._otherActionSprites = [];
+    actions.forEach(action=> {
+        if (action){
+            if (action.battler.isActor()){
+                let x = $gamePlayer.x;
+                let y = $gamePlayer.y;
+                let width = 40;
+                let height = 40;
+                let angle = 0;
+                let anchor = [0.5,0.5];
+                action.positions.forEach(position => {
+                    if (x != position[0]) width += 40;
+                    if (y != position[1]) height += 40;
+                    if (x != position[0]) angle = 270;
+                    if (y != position[1]) angle = 0;
+                    if (x != position[0]) anchor = [0,0.5];
+                    if (y != position[1]) anchor = [0.5,1];
+                });
+                let sprite = new Sprite(new Bitmap(width,height));
+                sprite.angle = angle;
+                sprite.x = this._playerSprite.x;
+                sprite.y = this._playerSprite.y;
+                sprite.anchor.x = anchor[0];
+                sprite.anchor.y = anchor[1];
+                sprite.opacity = 128;
+                sprite.bitmap.fillRect(0,0,width,height,"white");
+                this.addChild(sprite);
+                this._otherActionSprites.push(sprite);
+            }
+        }
+    });
+
+}
 
 Sprite_Minimap.prototype.terminateObjects = function(){
     if (this._tween){
@@ -1584,7 +1617,7 @@ Sprite_MinimapIcon.prototype.updateEventFlash = function()
     }
     if (this._object instanceof Game_Event){
         //更新するタイミングを統一
-        if (this._object._enemy != null && this._object._enemyState == EnemyState.Battle){
+        if (this._object._enemy != null && this._object._state == State.Battle){
             if (this._eventFlash == null){
                 this._eventFlash = new PIXI.Graphics();
                 this._eventFlash.beginFill(0xFFFFFF);
@@ -1627,7 +1660,7 @@ Sprite_MinimapIcon.prototype.updateEventFlash = function()
             }
         }
         if (Graphics.frameCount % 120 == 0){
-            if (this._object._enemy != null && this._object._enemyState == EnemyState.Battle){
+            if (this._object._enemy != null && this._object._state == State.Battle){
                 if (this._eventFlash){
                     this._eventFlash.alpha = 0.75;
                     this._eventFlash.scale.x = 0;
@@ -1696,7 +1729,7 @@ Sprite_MinimapIcon.prototype.updateEventFlash = function()
 
         
     if (this._eventArrow != null && this._eventFlash != null){
-        if (this._object._enemy != null && this._object._enemyState == EnemyState.Battle){
+        if (this._object._enemy != null && this._object._state == State.Battle){
             const x = this._eventFlash.parent.x;
             const y = this._eventFlash.parent.y;
             const angle = Math.atan2(y, x) * 180 / Math.PI;

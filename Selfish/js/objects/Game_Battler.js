@@ -118,7 +118,7 @@ Game_BattlerBase.prototype.initialize = function() {
 Game_BattlerBase.prototype.initMembers = function() {
     this._hp = 1;
     this._mp = 0;
-    this._tp = 1;
+    this._tp = 0;
     this._bindBatllers = [];
     this._hidden = false;
     this.clearParamPlus();
@@ -625,8 +625,6 @@ Game_BattlerBase.prototype.restriction = function() {
 
 Game_BattlerBase.prototype.addNewState = function(stateId) {
     if (stateId === this.deathStateId()) {
-        this.removeChainState();
-        this.removeChainSelfState();
         this.die();
     }
     const restricted = this.isRestricted();
@@ -1158,24 +1156,6 @@ Game_Battler.prototype.removeStatesByDamage = function() {
     return removeStateIds;
 };
 
-Game_Battler.prototype.removeChainState = function() {
-    const chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
-    if (this.isStateAffected(chainTargetId)){
-        this.removeState(chainTargetId)
-    }
-}
-
-Game_Battler.prototype.removeChainSelfState = function() {
-    const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
-    if (this.isStateAffected(chainSelfId)){
-        this.removeState(chainSelfId);
-        this._bindBatllers.forEach(battler => {
-            battler.removeState($gameStateInfo.getStateId(StateType.CHAIN_TARGET));
-        });
-        this._bindBatllers = [];
-    }
-}
-
 Game_Battler.prototype.makeActionTimes = function() {
     return this.actionPlusSet().reduce(function(r, p) {
         return Math.random() < p ? r + 1 : r;
@@ -1230,6 +1210,7 @@ Game_Battler.prototype.forceAction = function(skillId, targetIndex) {
 
 Game_Battler.prototype.useItem = function(item) {
     if (DataManager.isSkill(item)) {
+        console.error(item)
         this.paySkillCost(item);
         // 消費MP総計を加算
         // ノーコスト
@@ -1899,6 +1880,10 @@ Game_Actor.prototype.equipSlots = function() {
         slots.push(i);
     }
     if (slots.length >= 2 && this.isDualWield()) {
+        slots[1] = 1;
+    }
+    const _bow = this.weapons().find(a => a && a.wtypeId == 3);
+    if (slots.length >= 2 && _bow != null) {
         slots[1] = 1;
     }
     return slots;
@@ -2573,6 +2558,21 @@ Game_Actor.prototype.getSkillData = function(skillId,slotLv) {
     return skillId > 0 ? $dataSkills[skillId] : null;
 }
 
+Game_Actor.prototype.shieldValue = function() {
+    let value = 0;
+    const guardValue = this.getStateEffectTotal($gameStateInfo.getStateId(StateType.GUARD));
+    if (guardValue > 0){
+        const _shield = this.armors().find(a => a && a.etypeId == 2);
+        if (_shield){
+            const effectValue = this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SHIELD));
+            value = 45 + (0.2 * _shield.params[2] * (1.0 + effectValue * 1.5 / 100));
+        }
+    }
+    console.log(this._stateData)
+    return value;
+}
+
+
 
 //-----------------------------------------------------------------------------
 // Game_Enemy
@@ -3054,6 +3054,19 @@ Game_Enemy.prototype.setSummonedIndex = function(index) {
 
 Game_Enemy.prototype.battlerId = function() {
     return this._summonedIndex != 0 ? this._summonedIndex : this.index() * -1;
+}
+
+Game_Enemy.prototype.shieldValue = function() {
+    let value = 0;
+    const guardValue = this.getStateEffectTotal($gameStateInfo.getStateId(StateType.GUARD));
+    if (guardValue > 0){
+        const _shield = this.armors().find(a => a && a.etypeId == 2);
+        if (_shield){
+            const effectValue = this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SHIELD));
+            value = 45 + (0.2 * this.def * (1.0 + effectValue * 1.5 / 100));
+        }
+    }        
+    return value;
 }
 
 //-----------------------------------------------------------------------------

@@ -155,6 +155,7 @@ DataManager.createSkillDataPlus = function() {
                 if (element.repeatPlus){
                     element.repeats += element.repeatPlus;
                 }
+                element.chargeTurn = json.chargeTurn ? Number(json.chargeTurn) : 0;
             }
         }
     });
