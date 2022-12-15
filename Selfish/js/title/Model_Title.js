@@ -73,7 +73,7 @@ class Model_Title {
     }
 
     outputTextdata() {
-        //LocalizeUtility.outputTextdata();
+        LocalizeUtility.outputTextdata();
     }
 
     csvToTextdata(type) {

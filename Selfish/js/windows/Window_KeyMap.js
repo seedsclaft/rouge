@@ -22,7 +22,7 @@ class Window_KeyMap extends Window_Base{
         this.contents.clear();
         this._addX = 0;
         let x = this.drawTextEx(this._text, 0, 0);
-        this.x = 48 + ((x + this._addX)*0.9);
+        this.x = 924 - ((x + this._addX)*0.9);
 
         let scale = 0.9;
         if (this.x < 240){
@@ -31,15 +31,15 @@ class Window_KeyMap extends Window_Base{
         this.scale.x = this.scale.y = scale;
         if (scale < 0.9){
             this.x = this.x + ((0.9 - scale) * 880);
-            this.y = 664 + ((0.9 - scale) * 24);
+            this.y = 492 + ((0.9 - scale) * 24);
         } else{
-            this.y = 664;
+            this.y = 492;
         }
         if (this._lastNo != key){
             this._lastNo = key;
             this.alpha = 0;
-            this.x = 16;
-            gsap.to(this,0.25,{alpha:1,x:this.x});
+            this.x += 48;
+            gsap.to(this,0.25,{alpha:1,x:this.x - 48});
         }
     }
 

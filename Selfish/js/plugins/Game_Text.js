@@ -40,7 +40,7 @@ Game_Text.prototype.initialize = async function() {
         const textData = JSON.parse(data.text);
         this._data[data.id] = textData[0];
     });
-    var textdata = await this.huckTextData("systemtext");
+    const textdata = await this.huckTextData("systemtext");
     if (textdata){
         this._data = textdata;
     }

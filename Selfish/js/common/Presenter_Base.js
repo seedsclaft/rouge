@@ -9,6 +9,7 @@ class Presenter_Base {
         if (Presenter_Loading.busy()){
             return;
         }
+        if (!this._view._command || this._view._command.length == 0) return;        
     }
     
     async commandContinue () {

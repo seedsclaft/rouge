@@ -1,3 +1,11 @@
+ImageManager.loadIcon = function(filename, hue,resolve) {
+    return this.loadBitmap('img/icon/', filename, hue, false,resolve);
+}
+
+ImageManager.loadBackground = function(filename, hue,resolve) {
+    return this.loadBitmap('img/backgrounds/', filename, hue, false,resolve);
+}
+
 ImageManager.loadParticle = function(filename, hue,resolve) {
     return this.loadBitmap('img/particles/', filename, hue, false,resolve);
 }

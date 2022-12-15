@@ -81,7 +81,6 @@ class Game_SkillHelp{
 
     stypeText(skillId){
         const item = $dataSkills[skillId];
-        const limitBreakId = $gameStateInfo.getStateId(StateType.LIMIT_BREAK);
         let text = "";
         if (item.stypeId == Game_BattlerBase.SKILL_TYPE_MAGIC && item.damage.elementId > 0){
             text = TextManager.getText(700100);

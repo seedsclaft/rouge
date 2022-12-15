@@ -689,3 +689,11 @@ Game_Map.prototype.getAllEnemyEvents = function() {
     const _events = this._events.filter(a => a && a._enemy);
     return _events;
 }
+
+Game_Map.prototype.initMapCharactersCache = function () {
+    // ループ時を考慮して実際のマップサイズ+1の幅の領域を確保する
+    $gameTemp.setupMapCharactersCache(this.width() + 1, this.height() + 1);
+    for (const character of this.allCharacters()) {
+        character.updateMapCharactersCache();
+    }
+};

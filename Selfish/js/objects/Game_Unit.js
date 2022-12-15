@@ -582,6 +582,10 @@ Game_Party.prototype.consumeItem = function(item) {
     }
 };
 
+Game_Party.prototype.consumeArrow = function(item) {
+    this.loseItem(item, 1);
+};
+
 Game_Party.prototype.canUse = function(item) {
     return this.members().some(function(actor) {
         return actor.canUse(item);

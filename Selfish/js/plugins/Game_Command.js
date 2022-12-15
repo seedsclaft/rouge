@@ -10,15 +10,6 @@
  * @type struct<Command>[]
  * @default []
  * 
- * @param MenuSubCommandList
- * @desc メニューサブコマンド
- * @type struct<Command>[]
- * @default []
- * 
- * @param TermainalCommandList
- * @desc ターミナルコマンド
- * @type struct<Command>[]
- * @default []
  * 
  * */
 
@@ -33,6 +24,10 @@
  * 
  * @param helpTextId
  * @type number
+ * 
+ * @param iconPath
+ * @type file
+ * @dir img/icon/
  * 
  * @param enable
  * @type string
@@ -63,31 +58,13 @@ Game_Command.prototype.initialize = function() {
         data.key = data.key != "" ? data.key : "";
         data.textId = Number(data.textId);
         data.helpTextId = Number(data.helpTextId);
+        data.iconPath = data.iconPath != null ? String(data.iconPath) : null;
         data.enable = data.enable != "" ? String(data.enable) : null;
         data.isOpen = data.isOpen != "" ? String(data.isOpen) : null;
         list.push(data);
     });
     this._menuCommand = list;
 
-    var list = [];
-    JSON.parse(this._data.MenuSubCommandList).forEach(command => {
-        var data = JSON.parse(command);
-        data.key = data.key != "" ? data.key : "";
-        data.textId = Number(data.textId);
-        data.helpTextId = Number(data.helpTextId);
-        list.push(data);
-    });
-    this._menuSubCommand = list;
-
-    var list = [];
-    JSON.parse(this._data.TermainalCommandList).forEach(command => {
-        var data = JSON.parse(command);
-        data.key = data.key != "" ? data.key : "";
-        data.textId = Number(data.textId);
-        data.helpTextId = Number(data.helpTextId);
-        list.push(data);
-    });
-    this._terminalCommand = list;
 };
 
 Game_Command.prototype.menuCommand = function() {
@@ -97,13 +74,3 @@ Game_Command.prototype.menuCommand = function() {
 Game_Command.prototype.menuSubCommand = function() {
     return this._menuSubCommand;
 }
-
-Game_Command.prototype.terminalCommand = function() {
-    return this._terminalCommand;
-}
-
-Game_Command.prototype.getMenuCommandName = function(key) {
-    return _.find(this._menuCommand,(data) => data.key == key);
-}
-
-

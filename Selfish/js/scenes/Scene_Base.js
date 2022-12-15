@@ -200,7 +200,11 @@ Scene_Base.prototype.setEvent = function(command) {
 }
 
 Scene_Base.prototype.setCommand = function(command) {
-    this._command = command;
+    if (this._command == null){
+        this._command = [command];
+    } else{
+        this._command.push(command);
+    }
     this._commandUpdate();
 }
 
@@ -208,6 +212,20 @@ Scene_Base.prototype.clearCommand = function() {
     this._command = null;
     TouchInput.clear();
 }
+
+Scene_Base.prototype.createHelpWindow = function() {
+    const rect = this.helpWindowRect();
+    this._helpWindow = new Window_Help(rect);
+    this.addChild(this._helpWindow);
+};
+
+Scene_Base.prototype.helpWindowRect = function() {
+    const wx = 0;
+    const wy = Graphics.boxHeight - 40;
+    const ww = Graphics.boxWidth;
+    const wh = 40;
+    return new Rectangle(wx, wy, ww, wh);
+};
 
 // ローディング待ち
 Scene_Base.prototype.loading = async function(callback) {
@@ -280,6 +298,17 @@ Scene_Boot.prototype.start = async function() {
     Presenter_Loading.init();
     PopupInputManager.init();
 
+    $gameCommand.menuCommand().forEach(element => {
+        if (element.iconPath)
+        ImageManager.loadIcon(element.iconPath);
+    });
+    ImageManager.loadSystem("textplateC");
+    ImageManager.loadBackground("nexfan_01");
+    ImageManager.loadPicture("Actor0001_00_s")
+    ImageManager.loadPicture("Actor0002_00_s")
+    ImageManager.loadPicture("Actor0003_00_s")
+    ImageManager.loadPicture("Actor0004_00_s")
+    ImageManager.loadPicture("Actor0005_00_s")
     //Graphics._switchFPSCounter();
 };
 

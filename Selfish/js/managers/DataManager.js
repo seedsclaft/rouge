@@ -156,6 +156,8 @@ DataManager.createSkillDataPlus = function() {
                     element.repeats += element.repeatPlus;
                 }
                 element.chargeTurn = json.chargeTurn ? Number(json.chargeTurn) : 0;
+                element.rangeType = json.rangeType ? Number(json.rangeType) : 0;
+                element.range = json.range ? Number(json.range) : 0;
             }
         }
     });
@@ -416,6 +418,7 @@ DataManager.createGameObjects = function() {
     $gameAchievement   = new Game_Achievement();
     $gameText          = new Game_Text();
     $gameCommand       = new Game_Command();
+    $gameTacticsActorPosition   = new Game_TacticsActorPosition();
 };
 
 DataManager.setupBattleTest = function() {

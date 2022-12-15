@@ -678,14 +678,22 @@ Game_BattlerBase.prototype.skillTpCost = function(skill) {
 };
 
 Game_BattlerBase.prototype.canPaySkillCost = function(skill) {
+    if (skill.damage.elementId == 3){
+        if (this.weapons().find(a => a && a.wtypeId == 4) == false){
+            return false;
+        }
+    }
     return this._tp >= this.skillTpCost(skill) && this._mp >= this.skillMpCost(skill);
 };
 
 Game_BattlerBase.prototype.paySkillCost = function(skill) {
-    // ノーコスト
-    if (!this.isStateAffected($gameStateInfo.getStateId(StateType.NO_COST))){
-        this._mp -= this.skillMpCost(skill);
+    if (skill.damage.elementId == 3){
+        const _item = this.weapons().find(a => a && a.wtypeId == 4);
+        if (_item){
+            this.consumeArrow(_item);
+        }
     }
+    this._mp -= this.skillMpCost(skill);
     this._tp -= this.skillTpCost(skill);
 };
 
@@ -807,6 +815,7 @@ Game_Battler.prototype.initMembers = function() {
     //ターン行動数
     this._turnCount = 1;
     this._battleAction = null;
+    this._elementId = null;
 
 };
 
@@ -1210,16 +1219,7 @@ Game_Battler.prototype.forceAction = function(skillId, targetIndex) {
 
 Game_Battler.prototype.useItem = function(item) {
     if (DataManager.isSkill(item)) {
-        console.error(item)
         this.paySkillCost(item);
-        // 消費MP総計を加算
-        // ノーコスト
-        if (!this.isStateAffected($gameStateInfo.getStateId(StateType.NO_COST))){
-            // 覚醒スキルは加算しない
-            if (item.id < 1000){
-                this.gainTp(this.skillMpCost(item));
-            }
-        }
     } else if (DataManager.isItem(item)) {
         this.consumeItem(item);
     }
@@ -1227,6 +1227,13 @@ Game_Battler.prototype.useItem = function(item) {
 
 Game_Battler.prototype.consumeItem = function(item) {
     $gameParty.consumeItem(item);
+};
+
+Game_Battler.prototype.consumeArrow = function(item) {
+    if ($gameParty.numItems(item) == 0){
+        this.changeEquipById(1,0)
+    }
+    $gameParty.consumeArrow(item);
 };
 
 Game_Battler.prototype.gainHp = function(value) {
@@ -1512,10 +1519,6 @@ Game_Battler.prototype.isStatusParamUp = function(paramId,current) {
 }
 
 Game_Battler.prototype.isTpMax = function() {
-    const limitbreakId = $gameStateInfo.getStateId(StateType.LIMIT_BREAK);
-    if (this.isStateAffected(limitbreakId)){
-        return this._tp >= $gameDefine.limitBreakValue;
-    }
     return false;
 }
 
@@ -1556,18 +1559,6 @@ Game_Battler.prototype.features = function() {
                 }
             } else 
             if (stateData.id == $gameStateInfo.getStateId(StateType.IRON_WILL)){
-            } else 
-            if (stateData.id == $gameStateInfo.getStateId(StateType.NO_COST)){
-                // ノーコストはステート名で
-                features.push(TextManager.getStateName(stateData.id));    
-            } else 
-            if (stateData.id == $gameStateInfo.getStateId(StateType.LIMIT_BREAK)){
-                let limitBreakValue = $gameDefine.limitBreakValue - this.tp;
-                if (limitBreakValue <= 0){
-                    features.push(TextManager.getStateMessage1(stateData.id).format(0));
-                } else{
-                    features.push(TextManager.getStateMessage1(stateData.id).format(limitBreakValue));
-                }
             } else 
             if (stateData.id == $gameStateInfo.getStateId(StateType.SEAL_SKILL)){
                 features.push(TextManager.getStateMessage1(stateData.id).format(TextManager.getSkillName( stateData.effect )));
@@ -1624,6 +1615,29 @@ Game_Battler.prototype.roleAttackValue = function(weapon) {
     switch (weapon.wtypeId){
         case WeaponType.ONE_HANDED:
             return this.getStateEffect($gameStateInfo.getStateId( StateType.ONE_HANDED ));
+        case WeaponType.BOW:
+            return this.getStateEffect($gameStateInfo.getStateId( StateType.MARKSMAN ));
+    }
+    return 0;
+}
+
+Game_Battler.prototype.magicShieldValue = function() {
+    return this.getStateEffect($gameStateInfo.getStateId( StateType.MAGIC_RESIST ));
+}
+
+Game_Battler.prototype.magicShieldValue = function() {
+    return this.getStateEffect($gameStateInfo.getStateId( StateType.MAGIC_RESIST ));
+}
+
+Game_Battler.prototype.elementShieldValue = function(elementId) {
+    if (elementId == null) return 0;
+    switch (elementId){
+        case 11:
+        return this.getStateEffect($gameStateInfo.getStateId( StateType.FIRE_RESIST ));
+        case 12:
+        return this.getStateEffect($gameStateInfo.getStateId( StateType.ICE_RESIST ));
+        case 13:
+        return this.getStateEffect($gameStateInfo.getStateId( StateType.THUNDER_RESIST ));
     }
     return 0;
 }
@@ -1701,6 +1715,8 @@ Game_Actor.prototype.setup = function(actorId) {
 
     this._statePlus = {
     }
+    
+    this._elementId = actor.elementId;
 };
 
 Game_Actor.prototype.addStatePlus = function(id,value) {
@@ -2568,11 +2584,8 @@ Game_Actor.prototype.shieldValue = function() {
             value = 45 + (0.2 * _shield.params[2] * (1.0 + effectValue * 1.5 / 100));
         }
     }
-    console.log(this._stateData)
     return value;
 }
-
-
 
 //-----------------------------------------------------------------------------
 // Game_Enemy

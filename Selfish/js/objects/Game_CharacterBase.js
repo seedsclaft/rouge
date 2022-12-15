@@ -527,11 +527,11 @@ Game_Event.prototype.checkMoveType = function() {
     return this._moveType;
 }
 
-Game_Event.prototype.setMoveType = function(moveType) {
+Game_Character.prototype.setMoveType = function(moveType) {
     this._moveType = moveType;
 };
 
-Game_Event.prototype.changeState = function(state) {
+Game_Character.prototype.changeState = function(state) {
     this._state = state;
     switch (state){
         case State.Battle:
@@ -663,6 +663,7 @@ var State = {
     Wait : 1,
     Caution : 2,
     Battle : 3,
-    Stun: 4,
-    Dead: 5
+    //Arrow : 4,
+    Stun: 5,
+    Dead: 6
 }

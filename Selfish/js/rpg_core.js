@@ -84,7 +84,7 @@ Bitmap.prototype.drawLowerTriangle = function(x,y,w,h,color) {
     context.fill();
     //this._setDirty();
 };
-
+/*
 Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align,outline,hotOutline) {
     // [Note] Different browser makes different rendering with
     //   textBaseline == 'top'. So we use 'alphabetic' here.
@@ -115,6 +115,7 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align,out
     context.restore();
     this._baseTexture.update();
 };
+*/
 
 Bitmap.prototype._makeFontNameText = function() {
     const italic = this.fontItalic ? "Italic " : "";
@@ -531,7 +532,7 @@ Window.prototype._createFrameSprite = function() {
         this._frameSprite.addChild(new Sprite());
     }
     //Windowフレームを削除
-    this._frameSprite.alpha = 0;
+    //this._frameSprite.alpha = 0;
     this._container.addChild(this._frameSprite);
 };
 

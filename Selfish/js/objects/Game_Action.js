@@ -807,15 +807,22 @@ Game_Action.prototype.evalDamageFormula = function(target) {
         const _atk = this._subject.getAttackValue(0);
         const _damageRate = Number( eval(_item.damage.formula) );
         const _defRate = 100 - (target.def) * 0.12;
-        let _damage = Math.floor( _atk * _damageRate * (_defRate / 100));
-        
-        const _shieldRate = target.shieldValue();
-        if (_shieldRate > 0){
-            _damage = Math.floor( _atk * _damageRate * (_defRate / 100) * (_shieldRate / 100));
+        let damage = 0;
+        if (_item.stypeId == 1){
+            damage = Math.floor( _atk * _damageRate * (_defRate / 100));
+            const _shieldRate = target.shieldValue();
+            if (_shieldRate > 0){
+                damage = Math.floor( _atk * _damageRate * (_defRate / 100) * (_shieldRate / 100));
+            }
+        } else 
+        if (_item.stypeId == 2){
+            const _shieldRate = target.magicShieldValue();
+            const _elementRate = target.elementShieldValue(_item.damage.elementId);
+            damage = Math.floor( _damageRate * (1 - (_shieldRate / 100)) * (1 - (_elementRate / 100)));
+            console.log(damage)
         }
-
         const sign = ([3, 4].contains(_item.damage.type) ? -1 : 1);
-        let value = Math.max(_damage, 0) * sign;
+        let value = Math.max(damage, 0) * sign;
 		if (isNaN(value)) value = 0;
 		return value;
     } catch (e) {
@@ -1379,5 +1386,7 @@ Game_Action.prototype.agi = function() {
 
 const WeaponType = {
     None:0,
-    ONE_HANDED:1
+    ONE_HANDED:1,
+    TWO_HANDED:2,
+    BOW:3
 }

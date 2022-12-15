@@ -134,7 +134,7 @@ class Title_Scene extends Scene_Base{
         DataManager.setupNewGame();
         this._commandWindow.hide();
         this._versionSprite.hide();
-        SceneManager.goto(Map_Scene);
+        SceneManager.goto(Tactics_View);
     }
 
     commandContinue(){

@@ -52,7 +52,7 @@ class Presenter_Menu extends Presenter_Base{
             _player.changeEquip(_index,null);
         } else{
             if (_player.canEquip(select.item)){
-                const isArrow = select.item.wtypeId && select.item.wtypeId == 3;
+                const isArrow = select.item.wtypeId && select.item.wtypeId == 4;
                 if (isArrow) {
                     const _slotIndex = 1;
                     _player.changeEquip(_slotIndex,select.item);

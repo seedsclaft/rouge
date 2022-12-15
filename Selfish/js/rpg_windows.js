@@ -44,6 +44,7 @@ Window_Help.prototype.initialize = function() {
     this._text = '';
     this.opacity = 0;
     this.padding = 0;
+    this.refresh();
 };
 
 Window_Help.prototype.setText = function(text) {
@@ -71,7 +72,7 @@ Window_Help.prototype.setItem = function(item) {
 
 Window_Help.prototype.refresh = function() {
     this.contents.clear();
-    //this.drawBack(0,0,this.width,this.height,0x000000,255);
+    this.drawBack(0,0,this.width,this.height,0x000000,255);
     this.drawTextEx(this._text, 32, 0);
 };
 

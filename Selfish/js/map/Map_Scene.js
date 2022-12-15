@@ -110,6 +110,12 @@ class Map_Scene extends Scene_Base{
         }
         Presenter_Loading.close();
         this.createAllWindows();
+        // マップ遷移時に全てのキャラクターの一時データを初期化する(メモリリーク対策)
+        $gameTemp.initCharacterTempDatas();
+        // マップ遷移時にマップキャラクターのキャッシュをクリアする
+        $gameMap.initMapCharactersCache();
+        // マップ遷移時にプレイヤーと既に衝突しているイベントは起動対象外にする
+        $gamePlayer.initCollideTriggerEventIds();
         this.setCommand(MapCommand.Start);
     }
 
@@ -221,6 +227,10 @@ class Map_Scene extends Scene_Base{
         } else {
             gsap.to(this._otherSprite,0.4,{alpha : 0,});
         }
+    }
+
+    updateTargetSprites(battlers){
+        this._mapSprite._minimap.updateTargetSprites(battlers);
     }
 
     updateOtherActions(actions){
@@ -455,6 +465,7 @@ class Map_Scene extends Scene_Base{
     updateStatus(){
         this._battleStatus._battlerStatusSprite.refreshStatus();
         this._enemySpirite.refreshStatus();
+        this.updateTargetSprites([$gameParty.battleMembers()[0]]);
     }
 
     effectStart(animationId,x,y){
@@ -466,11 +477,26 @@ class Map_Scene extends Scene_Base{
         this._battleStatus.addChild(damageSprite);
     }
 
+    playerEffectHeal(value,count){
+        const damageSprite = this._battleStatus.setDamagePopup("hpHeal",value,count);
+        this._battleStatus.addChild(damageSprite);
+    }
+
     enemyEffectDamage(value){
         const damageSprite = this._enemySpirite.setDamagePopup("hpDamage",value,1);
         this._enemySpirite.addChild(damageSprite);
     }
 
+    enemyEffectHeal(value){
+        const damageSprite = this._enemySpirite.setDamagePopup("hpHeal",value,1);
+        this._enemySpirite.addChild(damageSprite);
+    }
+
+    playerEffectMissed(){
+        const damageSprite = this._battleStatus.setDamagePopup("missed",null,1);
+        this._battleStatus.addChild(damageSprite);
+    }
+    
     enemyEffectMissed(){
         const damageSprite = this._enemySpirite.setDamagePopup("missed",null,1);
         this._enemySpirite.addChild(damageSprite);

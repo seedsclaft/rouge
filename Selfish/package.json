@@ -4,8 +4,8 @@
     "chromium-args": "--force-color-profile=srgb",
     "window": {
         "title": "Selfish",
-        "width": 1280,
-        "height": 720,
+        "width": 960,
+        "height": 540,
         "position": "center",
         "icon": "icon/icon.png"
     }

@@ -58,6 +58,7 @@ class Presenter_Map extends Presenter_Base {
             case MapCommand.MovePlayer:
             return this.commandMovePlayer();
             case MapCommand.Battle:
+                $gamePlayer.changeState(State.Battle);
                 this._model.player().setBattleAction($dataSkills[1]);
             return this.commandBattle();
             case MapCommand.Skill1:
@@ -112,6 +113,7 @@ class Presenter_Map extends Presenter_Base {
 
     commandMovePlayer(){
         $gamePlayer.moveStraight(Input.dir8);
+        $gamePlayer.changeState(State.Wait);
         this.commandBattle();
         /*
         */
@@ -159,7 +161,11 @@ class Presenter_Map extends Presenter_Base {
                 return;
             }
             this._model.makeActionResult(battler,action);
-            battler.setBattleAction(null);
+            if (battler._isArrow || battler._isChant){
+
+            } else{
+                battler.setBattleAction(null);
+            }
             let _results = action._results;
             _results.forEach(result => {
                 let target = result.target;
@@ -169,6 +175,7 @@ class Presenter_Map extends Presenter_Base {
                 action.applyResult(target,result);
                 if (result.missed){
                     if (target.isActor()){
+                        this._view.playerEffectMissed();
                     } else{
                         SoundManager.playMiss();
                         this._view.enemyEffectMissed();
@@ -183,6 +190,14 @@ class Presenter_Map extends Presenter_Base {
                         this._view.enemyEffectDamage(result.hpDamage);
                         Input.clear();
                     }
+                } else
+                if (result.hpDamage < 0){
+                    if (target.isActor()){
+                        this._model.pushDamageData(result.hpDamage);
+                    } else{
+                        damagedTarget.push(target);
+                        this._view.enemyEffectHeal(result.hpDamage);
+                    }
                 }
                 if (_player.isDead()){
                     SceneManager.goto(Scene_Gameover);
@@ -195,13 +210,15 @@ class Presenter_Map extends Presenter_Base {
             this._model.removeState(action);
             this._model.addState(action);
             let popup = action.popupData();
-            console.log(popup)
             this._view.popupActionResult(popup);
         });
         let totalDamage = this._model.totalDamage();
         if (totalDamage > 0){
             this._view.playerEffectDamage(totalDamage,1);
-        }
+        } else
+        if (totalDamage < 0){
+            this._view.playerEffectHeal(totalDamage,1);
+        } 
         damagedTarget.forEach(enemy => {
             let enemyEvent = this._model.enemyEvent().find(a => a._enemy == enemy);
             enemyEvent.changeState(State.Battle);
@@ -220,6 +237,7 @@ class Presenter_Map extends Presenter_Base {
         const _skill = setId == 1 ? _player.skillSet1() : _player.skillSet2();
         if (_skill != null){
             _player.setBattleAction(_skill);
+            $gamePlayer.changeState(State.Battle);
             this.commandBattle();
             let _effect = false;
             if (DataManager.isSkill(_skill)){

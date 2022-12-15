@@ -77,9 +77,22 @@ const StateType = {
     FROZEN :        "frozen",    //凍結
     INSTANT_DEATH :        "instantdeath",    //即死
 
-    WAIT :          "wait",      //次の順番に
-    LIMIT_BREAK :          "limitbreak",      //覚醒スキル
+    FIRE_RESIST:                "FireResist",      //炎耐性
+    ICE_RESIST:                "IceResist",      //氷耐性
+    THUNDER_RESIST:                "ThunderResist",      //雷耐性
 
+    FIRE_STATUS :            "FireStatus",   //炎適正
+    THUNDER_STATUS :         "ThunderStatus",   //雷適正
+    ICE_STATUS :             "IceStatus",   //氷適正
+    WHITE_STATUS :             "WhiteStatus",   //白適正
+    BLACK_STATUS :             "BlackStatus",   //黒適正
+
+    
+    HP_UPPER_STATUS :            "HpUpperStatus",   //Hp成長補正
+    MP_UPPER_STATUS :            "MpUpperStatus",   //Mp成長補正
+    ATK_UPPER_STATUS :            "AtkUpperStatus",   //Atk成長補正
+    SPD_UPPER_STATUS :            "SpdUpperStatus",   //Spd成長補正
+    GRD_UPPER_STATUS :            "GrdUpperStatus",   //Grd成長補正
 
     HP_BUFF_ADD :       "hpbuffA",       //HPアップ(加算)
     HP_BUFF_RATE :      "hpbuffR",       //HPアップ(倍率)
@@ -128,7 +141,6 @@ const StateType = {
     SUBSTITUTE :              "substitute",     //かばう
     RESIST_STATE :            "resiststate",    //ステート無効
     CHAIN :                   "chain",          //チェイン
-    NO_COST :                 "nocost",         //ノーコスト
     REGENE_HP :               "regenehp",       //リジェネHp
     ETHER :                   "ether",          //エーテル
     ADD_TURN_EFFECT :         "addTurnEffect",  //効果ターン数増加
@@ -160,12 +172,16 @@ const StateType = {
     SELFISH:                  "selfish",    　　//セルフィッシュ
     RESTRICTION:              "restriction",    //状態異常カウンター
 
-    ONE_HANDED:                "Onehanded",      //片手武器
-    SHIELD:                  "Shield",      //シールド
-    MARKSMAN:                  "Marksman",      //弓
+    ONE_HANDED:                 "Onehanded",    //近接
+    SHIELD:                     "Shield",       //防御
+    MARKSMAN:                   "Marksman",     //弓
+    SNEAK:                      "Sneak",        //盗賊
+    DESTRUCTION:                "Destruction",  //破壊
+    RESTORATION:                      "Restoration",        //回復
 
     GUARD:                "Guard",      //ガード
     ARROW:                "Arrow",      //弓構え
+    MAGIC_RESIST:                "MagicResist",      //魔法耐性
 
 }
 

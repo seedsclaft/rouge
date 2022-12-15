@@ -31,7 +31,9 @@ class Presenter_Title extends Presenter_Base{
         if (PopupManager.busy()){
             return;
         }
-        switch (this._view._command){
+        const _currentCommand = this._view._command.pop();
+        console.log(_currentCommand)
+        switch (_currentCommand){
             case TitleCommand.NewGame:
             return this.commandNewGame();
             case TitleCommand.Continue:

@@ -1295,6 +1295,43 @@ Sprite_Minimap.prototype.drawMapForegroundGrid = function(bitmap, x, y)
     bitmap.fillRect(dx, dy, dw, dh, Params.foregroundColor);
 };
 
+Sprite_Minimap.prototype.updateTargetSprites = function(battlers){
+    this._otherActionSprites.forEach(element => {
+        if (element){
+            if (element.parent != null){
+                element.parent.removeChild(element);
+                element.destroy();
+            }
+        }
+    });
+    this._otherActionSprites = [];
+    battlers.forEach(battler => {
+        if (battler._isArrow || battler._isChant){
+            let battleAction = battler.battleAction();
+            if (battleAction == null) return; 
+            if (DataManager.isSkill(battleAction)){
+                let skill = $dataSkills[battleAction.id];
+                let range = skill.range;
+                let width = 40;
+                let height = 40;
+                let angle = 90;
+                let anchor = [1,0.5];
+                width *= range;
+                let sprite = new Sprite(new Bitmap(width,height));
+                sprite.angle = angle;
+                sprite.x = this._playerSprite.x;
+                sprite.y = this._playerSprite.y;
+                sprite.anchor.x = anchor[0];
+                sprite.anchor.y = anchor[1];
+                sprite.opacity = 128;
+                sprite.bitmap.fillRect(0,0,width,height,"white");
+                this.addChild(sprite);
+                this._otherActionSprites.push(sprite);
+            }
+        }
+    });
+}
+
 Sprite_Minimap.prototype.updateOtherActions = function(actions){
     this._otherActionSprites.forEach(element => {
         if (element){

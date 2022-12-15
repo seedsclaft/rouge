@@ -189,7 +189,9 @@ class Model_Map extends Model_Base{
 
     setBattleMembers(){
         let members = [];
-        members.push(this.player());
+        if ($gamePlayer._state == State.Battle){
+            members.push(this.player());
+        }
         const _enemieEvents = $gameMap.getAllEnemyEvents();
         _enemieEvents.forEach(enemyEvent => {
             if (enemyEvent._state == State.Battle){
@@ -220,7 +222,29 @@ class Model_Map extends Model_Base{
                 let battleAction = battler.battleAction();
                 if (battleAction == null) return;
                 if (DataManager.isSkill(battleAction)){
-                    action.setSkill(battleAction.id);
+                    if ($dataSkills[battleAction.id].stypeId == 2){
+                        if (battler.canUse($dataSkills[battleAction.id])){
+                            if (battler._isChant == false){
+                                battler._isChant = true;
+                                battler.useItem($dataSkills[battleAction.id]);
+                                return;
+                            }
+                            action.setSkill(battleAction.id);
+                        }
+                    } else
+                    if ($dataSkills[battleAction.id].damage.elementId == 3){
+                        if (battler.weapons().find(a => a && a.wtypeId == 4)){
+                            if (battler._isArrow == false){
+                                battler._isArrow = true;
+                                return;
+                            }
+                            action.setSkill(battleAction.id);
+                        } else{                        
+                            return;
+                        }
+                    } else{
+                        action.setSkill(battleAction.id);
+                    }
                 } else{
                     action.setItem(battleAction.id);
                 }
@@ -228,13 +252,19 @@ class Model_Map extends Model_Base{
                     battler._chargeTurn = action.chargeTurn();
                     action.setAgi(battler.agi);
                     battleActions.push(action);
-                    battler.useItem(action.item());
+                    if ($dataSkills[battleAction.id].stypeId == 2){
+                        battler._isChant = false;
+                    } else{
+                        battler.useItem(action.item());
+                    }
+                    if ($dataSkills[battleAction.id].damage.elementId == 3 && battler._isArrow == true){ 
+                        battler._isArrow = false;
+                    }
                 }
             });
         });
         this._battleActions = battleActions;
         this._battleActions = _.sortBy(this._battleActions,(a) => -a.agi());
-        console.log(this._battleActions)
     }
 
     makeActionResult(battler,action){
@@ -251,45 +281,53 @@ class Model_Map extends Model_Base{
 
     makeOpponentTarget(battler,action){
         let target = null;
+        let rangeType = action.item().rangeType;
+        let range = action.item().range;
         if (battler.isActor()){
             let x = $gamePlayer.x;
             let y = $gamePlayer.y;
             const _direction = $gamePlayer.direction();
-            if (_direction ==DirectionType.Up){
-                y -= 1;
+            for (let i = 0;i < range;i++){
+                if (target) break;
+                if (_direction ==DirectionType.Up){
+                    y -= 1;
+                }
+                if (_direction ==DirectionType.Down){
+                    y += 1;
+                }
+                if (_direction ==DirectionType.Right){
+                    x += 1;
+                }
+                if (_direction ==DirectionType.Left){
+                    x -= 1;
+                }
+                target = $gameMap.findEnemyByPosition(x,y);
             }
-            if (_direction ==DirectionType.Down){
-                y += 1;
-            }
-            if (_direction ==DirectionType.Right){
-                x += 1;
-            }
-            if (_direction ==DirectionType.Left){
-                x -= 1;
-            }
-            target = $gameMap.findEnemyByPosition(x,y);
         } else{
             let enemyEvent = $gameMap.getEnemyEvent(battler);
             let x = enemyEvent.x;
             let y = enemyEvent.y;
             const _direction = enemyEvent.direction();
-            if (_direction ==DirectionType.Up){
-                y -= 1;
-            }
-            if (_direction ==DirectionType.Down){
-                y += 1;
-            }
-            if (_direction ==DirectionType.Right){
-                x += 1;
-            }
-            if (_direction ==DirectionType.Left){
-                x -= 1;
-            }
-            if (x == $gamePlayer.x && y == $gamePlayer.y){
-                target = this.player();
-            }
-            if (!target){
-                target = $gameMap.findEnemyByPosition(x,y);
+            for (let i = 0;i < range;i++){
+                if (target) break;
+                if (_direction ==DirectionType.Up){
+                    y -= 1;
+                }
+                if (_direction ==DirectionType.Down){
+                    y += 1;
+                }
+                if (_direction ==DirectionType.Right){
+                    x += 1;
+                }
+                if (_direction ==DirectionType.Left){
+                    x -= 1;
+                }
+                if (x == $gamePlayer.x && y == $gamePlayer.y){
+                    target = this.player();
+                }
+                if (!target){
+                    target = $gameMap.findEnemyByPosition(x,y);
+                }
             }
         }
         return target;
@@ -297,6 +335,10 @@ class Model_Map extends Model_Base{
 
     makeFriendTarget(battler,action){
         return battler;
+    }
+
+    appryBattleActions(actions){
+
     }
     /*
     turnStateData(battler){
