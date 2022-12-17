@@ -296,13 +296,9 @@ Window_Base.prototype.pendingColor = function() {
 };
 
 Window_Base.prototype.drawItemName = function(item, x, y, width,isSelect) {
-    if (isSelect === undefined){
-        isSelect = false;
-    }
-    width = width || 312;
     if (item) {
         const iconBoxWidth = Window_Base._iconWidth;
-        this.drawSkillIcon(item.iconIndex,x + 20, y + 3);
+        //this.drawSkillIcon(item.iconIndex,x, y + 3);
         const isNew = _.find($gameParty._newSkillIdList,(s) => s == item.id);
         if (isNew){
             this.contents.fontSize = 12;
@@ -312,7 +308,7 @@ Window_Base.prototype.drawItemName = function(item, x, y, width,isSelect) {
             this.resetTextColor();
         }
         this.contents.fontSize = 22;
-        this.drawText(TextManager.getSkillName(item.id), x + iconBoxWidth + 24, y, width - iconBoxWidth);
+        this.drawText(TextManager.getSkillName(item.id), x + iconBoxWidth + 4, y, width - iconBoxWidth);
         
         if (isSelect){
             this.contents.fontSize = 16;
@@ -351,7 +347,7 @@ Window_Base.prototype.drawGauge = function(x, y, width, rate, color1, color2,nee
 };
 
 Window_Base.prototype.drawSkillIcon = function(iconIndex, x, y) {
-    var bitmap = ImageManager.loadSystem('iconplus');
+    var bitmap = ImageManager.loadSystem('IconSet');
     var pw = Window_Base._iconWidth;
     var ph = Window_Base._iconHeight;
     var sx = iconIndex % 16 * pw;

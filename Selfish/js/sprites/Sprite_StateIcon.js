@@ -30,7 +30,7 @@ Sprite_StateIcon.prototype.initMembers = function() {
 };
 
 Sprite_StateIcon.prototype.loadBitmap = function() {
-    this.bitmap = ImageManager.loadSystem('iconPlus');
+    this.bitmap = ImageManager.loadSystem('IconSet');
     this.setFrame(0, 0, 0, 0);
     this._sprite = new Sprite();
     this._sprite.x = 2;

@@ -87,7 +87,7 @@ class Sprite_EventMenu extends Sprite {
 
     createLogButton(){
         this._logButton = new Sprite_Button();
-        this._logButton.bitmap = ImageManager.loadSystem('iconplus');
+        this._logButton.bitmap = ImageManager.loadSystem('IconSet');
         const w = Window_Base._iconWidth;
         const h = Window_Base._iconHeight;
         this._logButton.setFrame(1 * w,12 * h ,w,h);

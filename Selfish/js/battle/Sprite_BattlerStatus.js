@@ -74,7 +74,7 @@ class Sprite_BattlerStatus extends Sprite{
 
     updateSkillSet(){
         if (this._battler.isActor()){
-            const bitmap = ImageManager.loadSystem("iconplus");
+            const bitmap = ImageManager.loadSystem("IconSet");
             const pw = ImageManager.iconWidth;
             const ph = ImageManager.iconHeight;
             const set1 = this._battler.skillSet1();

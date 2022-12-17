@@ -51,14 +51,18 @@ class Tactics_Presenter extends Presenter_Base{
         switch (_currentCommand){
             case TacticsCommand.Start:
                 return this.commandStart();
-            case TacticsCommand.Train:
-                return this.commandTrain();
+            case TacticsCommand.CommandOk:
+                return this.commandCommandOk();
             case TacticsCommand.SelectOk:
                 return this.commandSelectOk();
             case TacticsCommand.SelectCancel:
                 return this.commandSelectCancel();
+            case TacticsCommand.SelectClear:
+                return this.commandSelectClear();
             case TacticsCommand.SelectEnd:
                 return this.commandSelectEnd();
+            case TacticsCommand.DecideMember:
+                return this.commandDecideMember();
         }
         this._view.clearCommand();
     }
@@ -71,10 +75,14 @@ class Tactics_Presenter extends Presenter_Base{
         this._view.setSelectActor(_speiteList);
         this._view.setCommandData(this._model.commandList());
         this._view.createObjectAfter();
+        this._view.setMagicCategory(this._model.magicCategory());
+        this._view.setAlchemyMagicList(this._model.alchemyMagicList());
     }
 
-    commandTrain(){;
-        this._view.commandTrain();
+    commandCommandOk(){;
+        const _category = this._view.selectCategory();
+        const _selected = this._model.selectedData(_category);
+        this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
     }
 
     commandSelectOk(){
@@ -90,11 +98,28 @@ class Tactics_Presenter extends Presenter_Base{
     }
 
     commandSelectCancel(){
-        this._model.clearSelectData();
-        this._view.commandSelectCancel();
+        const _category = this._view.selectCategory();
+        this._view.commandSelectCancel(this._model.selectedData(_category).length > 0,this._model.selectedActorNameList(_category));
+    }
+
+    commandSelectClear(){
+        const _category = this._view.selectCategory();
+        const _selected = this._model.selectedData(_category);
+        this._model.clearSelectData(_category);
+        this._view.commandSelectClear(_selected,this._model.actorSpriteList());
     }
 
     commandSelectEnd(){
+    }
+
+    commandDecideMember(){
+        const _category = this._view.selectCategory();
+        this._model.decidedMember(_category);
+        this._view.commandDecideMember(this._model.selectedData(_category));
+
+        if (_category == "alchemy"){
+            this._view.commandSelectAlchemy(this._model.alchemyMagicList());
+        }
     }
 
     commandRefresh(){

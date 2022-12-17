@@ -14,8 +14,7 @@ class PopupManager {
 
         let useOpt = { ...popupOption, ...option };
         this._window.initHandlers();
-        this._window.setMainText(mainText);
-        this._window.setSubText(useOpt.subText);
+        this._window.setTextData(mainText,useOpt.subText);
         this._window.select(useOpt.select);
         this._endCall = useOpt.endCall;
     }

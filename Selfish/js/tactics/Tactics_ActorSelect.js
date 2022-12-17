@@ -67,6 +67,13 @@ class Tactics_ActorSelect extends Window_Selectable{
 
     //}
 
+    removeActorList(actorIdList){
+        for (let i = 0;i < actorIdList.length;i++){
+            let data = this._data.find(a => a.actor.actorId() == actorIdList[i]);
+            this._data = _.without(this._data,data);
+        }
+        this.refresh();
+    }
 
     terminate(){
         gsap.killTweensOf(this._cursorSprite);

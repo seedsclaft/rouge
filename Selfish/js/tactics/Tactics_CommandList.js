@@ -13,6 +13,10 @@ class Tactics_CommandList extends Window_HorzCommand{
         this.refresh();
     }
 
+    currentCommand() {
+        return this._commandData[this.index()];
+    };
+
     maxCols() {
         return 7;
     };

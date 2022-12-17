@@ -48,8 +48,9 @@ $gameAchievement  = null;
 $dataOption       = null;
 $gameText         = null;
 $gameCommand      = null;
+$gameAlchemy      = null;
+$gameSearch       = null;
 $gamePause        = false;
-
 
 DataManager._errors = [];
 
@@ -156,7 +157,6 @@ DataManager.createSkillDataPlus = function() {
                     element.repeats += element.repeatPlus;
                 }
                 element.chargeTurn = json.chargeTurn ? Number(json.chargeTurn) : 0;
-                element.rangeType = json.rangeType ? Number(json.rangeType) : 0;
                 element.range = json.range ? Number(json.range) : 0;
             }
         }
@@ -405,11 +405,13 @@ DataManager.createGameObjects = function() {
     $gamePlayer        = new Game_Player();
     $gameDefine        = new Game_Define();
     $gameColor         = new Game_Color();
+    $gameElement       = new Game_Element();
     $gameBGM           = new Game_BGM();
     $gameSE            = new Game_SE();
     $gameStateInfo     = new Game_StateInfo();
     $gameKeyMap        = new Game_KeyMap();
-    $gameSkillExp      = new Game_SkillExp();
+    $gameAlchemy       = new Game_Alchemy();
+    $gameSearch        = new Game_Search();
     $gameHelp          = new Game_Help();
     $gameTips          = new Game_Tips();
     $gameBackGround    = new Game_BackGround();

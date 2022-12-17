@@ -177,6 +177,8 @@ const scriptUrls = [
 	"js/tactics/Tactics_EnergyInfo.js",
 	"js/tactics/Tactics_ActorSelect.js",
 	"js/tactics/Tactics_ActorSpriteList.js",
+	"js/tactics/Tactics_AlchemyMagicList.js",
+	"js/tactics/Tactics_MagicCategory.js",
 	"js/scenes/Scene_Base.js",
 	"js/filters/DrawActorFilter.js",
 	"js/filters/DrawMobFilter.js",

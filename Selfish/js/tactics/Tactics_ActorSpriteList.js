@@ -10,7 +10,7 @@ class Tactics_ActorSpriteList extends Sprite{
         this.addChild(this._arrowSprite);
         this._arrowSprite.anchor.x = 0.5;
         this._arrowSprite.anchor.y = 0.5;
-        this._arrowSprite.opacity = 0;
+        this.deactivate();
     }
 
     setData(data){
@@ -36,13 +36,16 @@ class Tactics_ActorSpriteList extends Sprite{
         });
     }
 
-    selectingIndex(selectIndex){
-        this._arrowSprite.opacity = 255;
-        const _position = this._data[selectIndex].position;
-        this._arrowSprite.x = 0 + _position.x + (this._actorSprites[selectIndex].width * _position.scale * 0.5);
-        this._arrowSprite.y = -24 + _position.y - (this._actorSprites[selectIndex].height * _position.scale);
+    actorSprites(selectIndex){
+        return this._actorSprites.filter(a => a.opacity != 0)[selectIndex];
+    }
 
-        return
+    selectingIndex(selectIndex){
+        this.activate();
+        const _index = this._actorSprites.findIndex(a => a == this.actorSprites(selectIndex));
+        const _position = this._data[_index].position;
+        this._arrowSprite.x = 0 + _position.x + (this.actorSprites(selectIndex).width * _position.scale * 0.5);
+        this._arrowSprite.y = -24 + _position.y - (this.actorSprites(selectIndex).height * _position.scale);
     }
 
     setSelectedIndex(selectIndex,isSelected){
@@ -53,8 +56,32 @@ class Tactics_ActorSpriteList extends Sprite{
         }
     }
 
-    refresh(){
+    addActorList(actorIdList){
+        for (let i = 0;i < actorIdList.length;i++){
+            let index = this._data.findIndex(a => a.actor.actorId() == actorIdList[i]);
+            this._actorSprites[index].opacity = 255;
+            this._actorSprites[index].setBlendColor([0, 0, 0, 0]);
+        }
+        this.refresh();
+    }
 
+    removeActorList(actorIdList){
+        for (let i = 0;i < actorIdList.length;i++){
+            let index = this._data.findIndex(a => a.actor.actorId() == actorIdList[i]);
+            this._actorSprites[index].opacity = 0;
+        }
+        this.refresh();
+    }
+
+    activate(){
+        this._arrowSprite.visible = true;
+    }
+
+    deactivate(){
+        this._arrowSprite.visible = false;
+    }
+    
+    refresh(){
     }
 
     terminate(){

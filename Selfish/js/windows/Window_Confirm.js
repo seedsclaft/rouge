@@ -4,21 +4,21 @@
 
 class Window_Confirm extends Window_Command{
     constructor(){
-        super(new Rectangle (-40,240,1280 + 120,200));
-        this.openness = 0;
+        const _marginX = 40;
+        const _height = 184;
+        super(new Rectangle (-1 * _marginX,Graphics.height / 2 - _height / 2,Graphics.width + _marginX * 2,_height));
+        //this.openness = 0;
         this._commandText = {};
         this._lastIndex = this.index();
         this._canRepeat = false;
         this._cursorSprite.opacity = 0;
     }
 
-    setMainText(mainText){
+    setTextData(mainText,subText){
         this._mainText = mainText;
-    }
-
-    setSubText(subText){
         this._subText = subText;
     }
+
 
     setCommandText(key,text){
         this._commandText[key] = text;
@@ -29,13 +29,13 @@ class Window_Confirm extends Window_Command{
         super.refresh();
         if (this._mainText){
             if (this._subText){
-                var text = this.convertEscapeCharacters(this._mainText);
-                this.drawText(text,40,8,1280,'center');
-                var text2 = this.convertEscapeCharacters(this._subText);
-                this.drawText(text2,40,40,1280,'center');
+                const text = this.convertEscapeCharacters(this._mainText);
+                this.drawText(text,40,8,Graphics.width,'center');
+                const text2 = this.convertEscapeCharacters(this._subText);
+                this.drawText(text2,40,40,Graphics.width,'center');
             } else{
-                var text = this.convertEscapeCharacters(this._mainText);
-                this.drawText(text,40,24,1280,'center');
+                const text = this.convertEscapeCharacters(this._mainText);
+                this.drawText(text,40,24,Graphics.width,'center');
             }
         }
     }
@@ -52,7 +52,7 @@ class Window_Confirm extends Window_Command{
     }
 
     itemWidth(){
-        return 280;
+        return 200;
     }
 
     itemHeight(){
@@ -71,11 +71,9 @@ class Window_Confirm extends Window_Command{
         let rect = new Rectangle();
         rect.width = this.itemWidth();
         rect.height = this.itemHeight();
-        rect.x = 360 * index + 360;
-        if (Object.keys(this._handlers).length == 1){
-            rect.x += 360 / 2;
-        }
-        rect.y = 112;
+        const offsetX = (Graphics.width) - Object.keys(this._handlers).length * this.itemWidth();
+        rect.x = this.itemWidth() * index + 20 + offsetX / 2;
+        rect.y = this._height - 88;
         return rect;
     }
 
