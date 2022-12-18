@@ -173,7 +173,7 @@ class Tactics_View extends Scene_Base {
 
     setSelectActor(data){
         if (this._actorSelect == null){
-            this._actorSelect = new Tactics_ActorSelect(0,0,960,80);
+            this._actorSelect = new Tactics_ActorSelect(0,0,2,2);
             this._actorSelect.setHandler('ok',     this.setCommand.bind(this,TacticsCommand.SelectOk));
             this._actorSelect.setHandler('cancel', this.setCommand.bind(this,TacticsCommand.SelectCancel));
             this._actorSelect.setHandler('save',   this.setCommand.bind(this,TacticsCommand.SelectEnd));
@@ -186,12 +186,12 @@ class Tactics_View extends Scene_Base {
 
     setMagicCategory(data){
         if (this._magicCategory == null){
-            this._magicCategory = new Tactics_MagicCategory(120,96,320,64);
+            this._magicCategory = new Tactics_MagicCategory(120,128,72,264);
             this._magicCategory.setHandler('index',  this.refreshCategoryIndex.bind(this));
-            
             this.addChild(this._magicCategory);
         }
         this._magicCategory.setMagicCategory(data);
+        this._magicCategory.hide();
     }
 
     refreshCategoryIndex(){
@@ -201,10 +201,22 @@ class Tactics_View extends Scene_Base {
 
     setAlchemyMagicList(data){
         if (this._alchemyMagicList == null){
-            this._alchemyMagicList = new Tactics_AlchemyMagicList(120,120,540,320);
+            this._alchemyMagicList = new Tactics_AlchemyMagicList(184,128,640,360);
             this.addChild(this._alchemyMagicList);
         }
         this._alchemyMagicList.setAlchemyMagic(data);
+        this._alchemyMagicList.hide();
+    }
+
+    setSearchList(data){
+        if (this._searchList == null){
+            this._searchList = new Tactics_SearchList(120,128,640,360);
+            this._searchList.setHandler("ok", this.setCommand.bind(this,TacticsCommand.SearchMember));
+            this._searchList.setHandler("cancel", this.setCommand.bind(this,TacticsCommand.SelectCancel));
+            this.addChild(this._searchList);
+        }
+        this._searchList.setSearch(data);
+        this._searchList.hide();
     }
 
     selectActorId(){
@@ -269,6 +281,11 @@ class Tactics_View extends Scene_Base {
         this._magicCategory.activate();
     }
 
+    commandCommandSearch(){
+        this._searchList.show();
+        this._searchList.activate();
+        this._searchList.select(0);
+    }
 
     update(){
         super.update();
@@ -309,5 +326,6 @@ const TacticsCommand = {
     SelectEnd :33,
     DecideMember :51,
     TrainMagic :71,
+    SearchMember :91,
     Refresh : 100
 }

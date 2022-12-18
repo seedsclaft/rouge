@@ -339,10 +339,6 @@ EventManager.setSpriteHue = function(hue) {
 }
 
 EventManager.startFadeIn = function(duration) {
-    if (SceneManager._scene instanceof Map_Scene && !$gameScreen.screenVisible()){    
-        this._eventView.startFade(duration,255);
-        return;
-    }
     this._eventView.startFade(duration,0);
 }
 
@@ -733,22 +729,6 @@ EventManager.resetScale = function(faceName) {
 
 EventManager.resetPosition = function(faceName) {
     this._eventView.resetPosition(faceName); 
-}
-
-EventManager.checkDestinationEvent = function(x,y) {
-    if ($gamePlayer._destinationEvent == null){
-        return null;
-    }
-    const data = _.find($gamePlayer._destinationEvent,(event) => _.contains(event.x,x) && _.contains(event.y,y));
-    if (data && data.mapId){
-        if ($gameMap.mapId() != data.mapId){
-            return null;
-        }
-    }
-    if (data){
-        return data;
-    }
-    return null;
 }
 
 EventManager.showJingle = function() {

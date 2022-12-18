@@ -14,6 +14,10 @@
  * @param skill
  * @type skill
  * 
+ * @param cost
+ * @type number
+ * @default 0
+ * 
  * @param fire
  * @type number
  * @default 0

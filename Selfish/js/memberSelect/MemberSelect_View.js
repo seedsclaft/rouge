@@ -31,7 +31,7 @@ class MemberSelect_View extends Scene_Base {
         this._listWindow.setHandler('right',     this.changeActor.bind(this,1));
         this._listWindow.setHandler('left',     this.changeActor.bind(this,-1));
         this._listWindow.setHandler('index',     this.changeSelectIndex.bind(this));
-        //this._listWindow.setHandler('cancel',     this.popScene.bind(this));
+        this._listWindow.setHandler('cancel',     this.popScene.bind(this));
         this.addChild(this._listWindow);
         /*
         this._statusWindow = new Window_HelpStatus(264,64,1080,540);

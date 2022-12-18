@@ -3,14 +3,9 @@ class Model_Base {
     }
     
     bgName(){
-        if (this._tempBgName){
-            return this._tempBgName;
-        }
-        return $gamePlayer._lastMapBG1;
     }
 
     stageData(){
-        return DataManager.getStageInfos($gameParty._stageNo);
     }
 
     continuePositionData(){

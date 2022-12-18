@@ -17,9 +17,6 @@ class Tactics_MagicCategory extends Window_Selectable{
         return this._data.length;
     };
 
-    maxCols(){
-        return 5;
-    }
 
     drawItem(index){
         const _category = this._data[index];

@@ -63,6 +63,8 @@ class Tactics_Presenter extends Presenter_Base{
                 return this.commandSelectEnd();
             case TacticsCommand.DecideMember:
                 return this.commandDecideMember();
+            case TacticsCommand.SearchMember:
+                return this.commandSearchMember();
         }
         this._view.clearCommand();
     }
@@ -77,13 +79,21 @@ class Tactics_Presenter extends Presenter_Base{
         this._view.createObjectAfter();
         this._view.setMagicCategory(this._model.magicCategory());
         this._view.setAlchemyMagicList(this._model.alchemyMagicList());
+        this._view.setSearchList(this._model.searchList());
     }
 
     commandCommandOk(){;
         const _category = this._view.selectCategory();
         const _selected = this._model.selectedData(_category);
-        this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
-    }
+        if (_category == "status"){
+            SceneManager.push(MemberSelect_View);
+        } else
+        if (_category == "search" && _selected.length == 0){
+            this._view.commandCommandSearch();
+        } else{
+            this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
+        }
+   }
 
     commandSelectOk(){
         const _actorId = this._view.selectActorId();
@@ -122,8 +132,13 @@ class Tactics_Presenter extends Presenter_Base{
         }
     }
 
+    commandSearchMember(){;
+        const _category = this._view.selectCategory();
+        const _selected = this._model.selectedData(_category);
+        this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
+   }
+
     commandRefresh(){
         this._view.refresh(this._model.refreshData());
     }
-
 }

@@ -57,8 +57,6 @@ BackGroundManager.changeBackGround = function(name1,name2) {
     this._backGroundView.changeBackGround1(name1);
     this._backGroundView.changeBackGround2(name2);
 
-    $gamePlayer._lastMapBG1 = name1;
-    $gamePlayer._lastMapBG2 = name2;
 }
 
 BackGroundManager.autotileType = function(z) {
@@ -85,10 +83,6 @@ BackGroundManager.changeBackGroundByTile = function() {
         changeBgName = $dataMap.battleback1Name;
     } else if ($gameMap.regionList() && $gameMap.regionList().length > 0){
         changeBgName = $gameMap.regionList()[this.regionId()-1];
-    }
-    if (changeBgName != $gamePlayer._lastMapBG1){
-        this._backGroundView.changeBackGroundByTile($gamePlayer._lastMapBG1,changeBgName);
-        $gamePlayer._lastMapBG1 = changeBgName;
     }
 }
 

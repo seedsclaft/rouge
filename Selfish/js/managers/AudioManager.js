@@ -51,9 +51,6 @@ AudioManager.fadeOutBgm = function(duration) {
     if (this._bgmBuffer && this._currentBgm) {
         this._bgmBuffer.fadeOut(duration);
         this._currentBgm = null;
-        if (SceneManager._scene instanceof Map_Scene){
-            $gameSystem._mapBgm = null;
-        }
     }
 };
 
@@ -61,10 +58,6 @@ AudioManager.fadeOutBgs = function(duration) {
     if (this._bgsBuffer && this._currentBgs) {
         this._bgsBuffer.fadeOut(duration);
         this._currentBgs = null;
-        if (SceneManager._scene instanceof Map_Scene){
-            $gameSystem._mapBgs = null;
-            Debug.error($gameSystem._mapBgs)
-        }
     }
 };
 
@@ -136,9 +129,6 @@ AudioManager.updateVolumeOption = function() {
 
 // 再生メソッドを上書き
 AudioManager.playBgm = async function(bgm, pos, volumeRate) {
-    if (SceneManager._scene instanceof Map_Scene){
-        $gameSystem._mapBgm = bgm;
-    }
     if (!volumeRate){
         volumeRate = 1.0;
     }
@@ -170,9 +160,6 @@ AudioManager.playBgm = async function(bgm, pos, volumeRate) {
 };
 
 AudioManager.playBgmOnce = async function(bgm, pos, volumeRate) {
-    if (SceneManager._scene instanceof Map_Scene){
-        $gameSystem._mapBgm = bgm;
-    }
     if (!volumeRate){
         volumeRate = 1.0;
     }
@@ -260,9 +247,6 @@ AudioManager.playBgs = function(bgs, pos, volumeRate) {
             this._bgsBuffer.play(true, pos || 0);
         }
     }
-    if (SceneManager._scene instanceof Map_Scene){
-        $gameSystem._mapBgs = bgs;
-    }
     this.updateCurrentBgs(bgs, pos);
 };
 
@@ -295,9 +279,6 @@ AudioManager.stopBgs = function() {
         this._bgsBuffer.destroy();
         this._bgsBuffer = null;
         this._currentBgs = null;
-        if (SceneManager._scene instanceof Map_Scene){
-            $gameSystem._mapBgs = null;
-        }
     }
 };
 

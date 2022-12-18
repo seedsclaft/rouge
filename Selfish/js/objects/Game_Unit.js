@@ -183,29 +183,15 @@ Game_Party.prototype.initialize = function() {
     this._destinationX = 0;
     this._destinationY = 0;
     this._learnedSkills = [];
-
-    this._stageStepCount = 0;
-
-    this._commonEventNum = {};
-    this._commonEventRead = {};
     
     //スキルNew済みIDリスト
     this._newSkillIdList = [];
 
-    //進行中ステージNo
-    this._stageNo = 0;
-
-    //受けられるステージリスト
-    this._stageList = [];
-
-
     // 撃破敵リスト
     this._enemyInfoData = [];
-
     
     //読んだTipsリスト
     this._readTipsId = [];
-
 
     //読んだチュートリアルリスト
     this._readTutorialKey = [];
@@ -268,13 +254,6 @@ Game_Party.prototype.checkReadTutorial = function(key) {
     return _.contains(this._readTutorialKey,key);
 }
 
-Game_Party.prototype.stageNo = function() {
-    return this._stageNo;
-}
-
-Game_Party.prototype.setStageNo = function(num) {
-    return this._stageNo = num;
-}
 
 Game_Party.prototype.enemyInfoData = function() {
     return this._enemyInfoData;
@@ -290,7 +269,6 @@ Game_Party.prototype.initAllItems = function() {
     this._items = {};
     this._weapons = {};
     this._armors = {};
-    this._stages = {};
 };
 
 Game_Party.prototype.exists = function() {
@@ -357,13 +335,6 @@ Game_Party.prototype.armors = function() {
     return list;
 };
 
-Game_Party.prototype.stages = function() {
-    var list = [];
-    for (var id in this._stages) {
-        list.push($dataStage[id]);
-    }
-    return list;
-};
 
 Game_Party.prototype.equipItems = function() {
     return this.weapons().concat(this.armors());
@@ -437,10 +408,6 @@ Game_Party.prototype.setupBattleTestItems = function() {
         }
     }, this);
 };
-
-Game_Party.prototype.setupBattleTestStage = function() {
-    this._stageNo = 1;
-}
 
 Game_Party.prototype.highestLevel = function() {
     return Math.max.apply(null, this.members().map(function(actor) {
@@ -539,28 +506,6 @@ Game_Party.prototype.gainItem = function(item, amount, includeEquip) {
     }
 };
 
-Game_Party.prototype.gainStage = function(id) {
-    let lastNumber = this._stages[id];
-    let newNumber = 1;
-    if (lastNumber){
-        newNumber = lastNumber + 1;
-    } else{
-        if (this._newStageIdList == null){
-            this._newStageIdList = [];
-        }
-        this._newStageIdList.push(id);
-        this._newStageIdList = _.without(this._newStageIdList,1);
-    }
-    this._stages[id] = newNumber;
-};
-
-Game_Party.prototype.hasStage = function(id) {
-    return this._stages && this._stages[id] != null;
-};
-
-Game_Party.prototype.hasNewStage = function() {
-    return this._newStageIdList && this._newStageIdList.length > 0;
-}
 
 Game_Party.prototype.discardMembersEquip = function(item, amount) {
     var n = amount;
@@ -727,13 +672,6 @@ Game_Party.prototype.resetBattleParameter = function() {
     });
 };
 
-// ステージ終了時のステータスにする
-Game_Party.prototype.resetStageParameter = function() {
-    if (this.stageLength() != 0){
-        return this._stageStepCount / this.stageLength();
-    }
-    return 0;
-};
 
 // 全員攻撃アップ
 Game_Party.prototype.involvementPlus = function() {

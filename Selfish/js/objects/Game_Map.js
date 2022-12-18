@@ -656,7 +656,6 @@ Game_Map.prototype.moveStraightPlayer = function() {
         }
         enemyEvent._enemy.onTurnEnd();
     });
-    $gamePlayer._battleState = battleState;
 }
 
 Game_Map.prototype.autoplay = function() {

@@ -22,9 +22,12 @@ class Tactics_Model {
                 {
                     skill:$dataSkills[alchemy.skill],
                     needRank:alchemy.needRank,
+                    cost:alchemy.cost
                 }
             )
         });
+
+        console.log($gameParty)
     }
     
     positionSelectData(data){
@@ -41,6 +44,10 @@ class Tactics_Model {
 
     alchemyMagicList(){
         return this._alchemyMagicList;
+    }
+
+    searchList(){
+        return $gameSearch.data();
     }
     
 

@@ -71,9 +71,7 @@ class View_BackGround {
             this._backSprite1.bitmap = ImageManager.loadBattleback1($dataSystem.battleback1Name);
             //this._backSprite2.bitmap = ImageManager.loadBattleback2($dataSystem.battleback2Name);  
         }  
-        this._backSprite1.bitmap = ImageManager.loadBattleback1($gamePlayer._lastMapBG1);
-        //.bitmap = ImageManager.loadBattleback2($gamePlayer._lastMapBG2); 
-    
+        
         this._scene = SceneManager._scene;
         this._scene.addChild(this._layer);
         this.startTint(0,$gameScreen.tone());

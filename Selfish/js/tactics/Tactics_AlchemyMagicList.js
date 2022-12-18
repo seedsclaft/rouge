@@ -29,10 +29,13 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
             this.drawText(TextManager.getSkillName(_alchemy.skill.id), rect.x, rect.y,rect.width);
             if (_alchemy.needRank) {
                 _alchemy.needRank.forEach((rank,index) => {
-                    if (rank)
-                    this.drawText(rank, rect.x + 240 + 40 * index, rect.y,rect.width);
+                    if (rank == 0){
+                        rank = "－";
+                    }
+                    this.drawText(rank, rect.x + 264 + 40 * index, rect.y,40,"center");
                 });
             }
+            this.drawText(_alchemy.cost + "pt", rect.x, rect.y,rect.width,"right");
         
         }
     }

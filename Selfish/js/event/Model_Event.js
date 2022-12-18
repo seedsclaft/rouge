@@ -4,21 +4,6 @@ class Model_Event extends Model_Base {
     }
 
     gainCommonEventFlag (eventName) {
-        // イベント単位での話した回数
-        if (!$gameParty._commonEventNum[eventName]){
-            $gameParty._commonEventNum[eventName] = 1;
-        } else{
-            $gameParty._commonEventNum[eventName] += 1;
-        }
-        // 全部を通して話した回数
-        if (!$gameParty._commonEventRead){
-            $gameParty._commonEventRead = {};
-        }
-        if (!$gameParty._commonEventRead[eventName]){
-            $gameParty._commonEventRead[eventName] = 1;
-        } else{
-            $gameParty._commonEventRead[eventName] += 1;
-        }
     }
 
     loadEventFile (filename) {
@@ -44,51 +29,6 @@ class Model_Event extends Model_Base {
                 event.list.forEach(element => {
                     if (!eventReadInfo[event.name]){
                         eventReadInfo[event.name] = 1;
-                    }
-                    if (element.code == 111){
-                        if (element.parameters.length > 1){//} && element.parameters[1].includes("$gameParty._commonEventNum")){
-                            var sentence = String(element.parameters[1]);
-                            if (sentence.includes("$gameParty._commonEventNum")){
-                                var eventname = sentence.replace("$gameParty._commonEventNum[\"","");
-                                var index = eventname.indexOf("\"");
-                                eventname = eventname.substring(0,index);
-
-                                if (!eventReadInfo[eventname]){
-                                    eventReadInfo[eventname] = 1;
-                                }
-                                if (element.parameters[1].includes("> 1")){
-                                    if (eventReadInfo[eventname] < 2){
-                                        eventReadInfo[eventname] = 2;
-                                    }
-                                }
-                                if (element.parameters[1].includes("% 2")){
-                                    if (eventReadInfo[eventname] < 2){
-                                        eventReadInfo[eventname] = 2;
-                                    }
-                                }
-                                if (element.parameters[1].includes("> 2")){
-                                    if (eventReadInfo[eventname] < 3){
-                                        eventReadInfo[eventname] = 3;
-                                    }
-                                }
-                                if (element.parameters[1].includes("> 3")){
-                                    if (eventReadInfo[eventname] < 4){
-                                        eventReadInfo[eventname] = 4;
-                                    }
-                                }
-                                if (element.parameters[1].includes("> 4")){
-                                    if (eventReadInfo[eventname] < 5){
-                                        eventReadInfo[eventname] = 5;
-                                    }
-                                }
-                                if (element.parameters[1].includes("> 5")){
-                                    if (eventReadInfo[eventname] < 6){
-                                        eventReadInfo[eventname] = 6;
-                                    }
-                                }
-
-                            }
-                        }
                     }
                     if (element.code == 411){
                         //console.log("else")
