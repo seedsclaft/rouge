@@ -63,14 +63,20 @@ class Tactics_Presenter extends Presenter_Base{
                 return this.commandSelectEnd();
             case TacticsCommand.DecideMember:
                 return this.commandDecideMember();
+            case TacticsCommand.AlchemySelect:
+                return this.commandAlchemySelect();
+            case TacticsCommand.DecideAlchemy:
+                return this.commandDecideAlchemy();
             case TacticsCommand.SearchMember:
                 return this.commandSearchMember();
+            case TacticsCommand.Turnend:
+                return this.commandTurnend();
         }
         this._view.clearCommand();
     }
 
     commandStart(){
-        this._view.setEnergyData(999999);
+        this._view.setEnergyData(this._model.energy());
         this._view.setTurnInfoData(this._model.turnInfo());
         const _speiteList = this._model.actorSpriteList();
         this._view.setActorSpriteList(_speiteList);
@@ -85,6 +91,9 @@ class Tactics_Presenter extends Presenter_Base{
     commandCommandOk(){;
         const _category = this._view.selectCategory();
         const _selected = this._model.selectedData(_category);
+        if (_category == "turnend"){
+            this._view.commandCommandTurnend();
+        } else
         if (_category == "status"){
             SceneManager.push(MemberSelect_View);
         } else
@@ -131,12 +140,28 @@ class Tactics_Presenter extends Presenter_Base{
             this._view.commandSelectAlchemy(this._model.alchemyMagicList());
         }
     }
+    
+    commandAlchemySelect(){
+        const _alchemy = this._view.selectAlchemy();
+        this._model.addAlchemy(_alchemy.skill.id);
+        this._view.commandAlchemySelect(_alchemy.skill.id);
+    }
+
+    commandDecideAlchemy(){
+        const _alchemyName = this._model.selectAlchemyName();
+        this._view.commandDecideAlchemy(_alchemyName != null,_alchemyName);
+    }
 
     commandSearchMember(){;
         const _category = this._view.selectCategory();
         const _selected = this._model.selectedData(_category);
         this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
-   }
+    }
+
+    commandTurnend(){
+        this._model.turnend();
+        SceneManager.goto(Strategy_View);
+    }
 
     commandRefresh(){
         this._view.refresh(this._model.refreshData());

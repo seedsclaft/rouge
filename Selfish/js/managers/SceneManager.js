@@ -22,27 +22,6 @@ SceneManager.onBeforeSceneStart = function() {
     }
 };
 
-SceneManager.changeScene = function() {
-    if (this.isSceneChanging() && !this.isCurrentSceneBusy()) {
-        if (this._scene) {
-            //console.log(this._scene)
-            // destroyは各シーンのterminateで行う
-            this._scene.terminate(); // 移動前のシーン
-            this.onSceneTerminate();
-        }
-        this._scene = this._nextScene; // 次のシーンをセット
-        this._nextScene = null;
-        if (this._scene) {
-            //console.log(this._scene)
-            this._scene.create();
-            this.onSceneCreate();
-        }
-        if (this._exiting) {
-            this.terminate();
-        }
-    }
-};
-
 SceneManager.updateScene = async function() {
     if (this._scene) {
         if (this._scene.isStarted()) {

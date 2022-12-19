@@ -60,42 +60,9 @@ class Sprite_BattlerStatus extends Sprite{
     }
 
     setSkillSet(){
-        if (this._battler.isActor()){
-            this._skillSet1 = new Sprite(new Bitmap(480,40));
-            this._skillSet2 = new Sprite(new Bitmap(480,40));
-            this._skillSet1.x = 40;
-            this._skillSet1.y = -64;
-            this._skillSet2.x = 40;
-            this._skillSet2.y = -20;
-            this.addChild(this._skillSet1);
-            this.addChild(this._skillSet2);
-        }
     }
 
     updateSkillSet(){
-        if (this._battler.isActor()){
-            const bitmap = ImageManager.loadSystem("IconSet");
-            const pw = ImageManager.iconWidth;
-            const ph = ImageManager.iconHeight;
-            const set1 = this._battler.skillSet1();
-            this._skillSet1.bitmap.clear();
-            if (set1 != null){
-                let iconIndex = set1.iconIndex;
-                const sx = (iconIndex % 16) * pw;
-                const sy = Math.floor(iconIndex / 16) * ph;
-                this._skillSet1.bitmap.blt(bitmap,sx, sy, pw, ph, 0, 2);
-                this._skillSet1.bitmap.drawText(set1.name,40,0,480,40);
-            }
-            const set2 = this._battler.skillSet2();
-            this._skillSet2.bitmap.clear();
-            if (set2 != null){
-                let iconIndex = set2.iconIndex;
-                const sx = (iconIndex % 16) * pw;
-                const sy = Math.floor(iconIndex / 16) * ph;
-                this._skillSet2.bitmap.blt(bitmap,sx, sy, pw, ph, 0, 2);
-                this._skillSet2.bitmap.drawText(set2.name,40,0,480,40);
-            }
-        }
     }
 
     setHp(){

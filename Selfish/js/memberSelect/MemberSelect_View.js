@@ -24,9 +24,9 @@ class MemberSelect_View extends Scene_Base {
     }
 
     createDisplayObjects(){
-        this.createScreenSprite();
+        //this.createScreenSprite();
         this.createWindowLayer();
-        this._listWindow = new MemberSelect_ActorList(0,0,960,540);
+        this._listWindow = new MemberSelect_ActorList(496,40,400,440);
         this._listWindow.setHandler('ok',     this.selectActor.bind(this));
         this._listWindow.setHandler('right',     this.changeActor.bind(this,1));
         this._listWindow.setHandler('left',     this.changeActor.bind(this,-1));

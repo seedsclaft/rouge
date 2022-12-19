@@ -1,18 +1,17 @@
 class Tactics_Model {
     constructor() {
-        this._selectedData = {};
-        $gameCommand.menuCommand().forEach(command => {
-            this._selectedData[command.key] = [];
-        });
+        if ($gameParty._stageData._init == false){
+            $gameParty._stageData.initialize();
+        }
+        this._selectedData = $gameParty._stageData._selectedData;
 
         const _actorList = $gameParty.members();
         let _position = $gameTacticsActorPosition.data();
         _position = _.shuffle( _position );
-        let data = [];
         _actorList.forEach((actor,index) => {
-            data.push({actor:actor,position:_position[index]})
+            actor.setPosition(_position[index]);
         });
-        this._members = this.positionSelectData(data);
+        this._members = this.positionSelectData(_actorList);
         this._selectedMembers = [];
 
 
@@ -27,11 +26,15 @@ class Tactics_Model {
             )
         });
 
-        console.log($gameParty)
+        this._selectAlchemy = [];
+    }
+
+    energy(){
+        return $gameParty.gold();
     }
     
     positionSelectData(data){
-        return data.sort((a,b) => a.position.x - b.position.x);
+        return data.sort((a,b) => a.position().x - b.position().x);
     }
     
     commandList(){
@@ -49,10 +52,13 @@ class Tactics_Model {
     searchList(){
         return $gameSearch.data();
     }
-    
 
+    selectAlchemy(){
+        return this._selectAlchemy;
+    }
+    
     turnInfo(){
-        return 8;
+        return $gameParty._stageData._turns;
     }
 
     refreshData(){
@@ -66,7 +72,6 @@ class Tactics_Model {
     actorSpriteList(){
         return this._members;
     }
-
 
     actorPositionData(){
         return $gameTacticsActorPosition.data();
@@ -96,7 +101,7 @@ class Tactics_Model {
         let members = [];
         const selectIds = this._selectedData[category];
         for (let i = 0;i < selectIds.length;i++){
-            let member = this._selectedMembers.find(a => a.actor.actorId() == selectIds[i]);
+            let member = this._selectedMembers.find(a => a.actorId() == selectIds[i]);
             this._members.push(member);
             this._selectedMembers = _.without(this._selectedMembers,member);
             members.push(member);
@@ -110,12 +115,26 @@ class Tactics_Model {
         let members = [];
         const selectIds = this._selectedData[category];
         for (let i = 0;i < selectIds.length;i++){
-            let member = this._members.find(a => a.actor.actorId() == selectIds[i]);
+            let member = this._members.find(a => a.actorId() == selectIds[i]);
             this._selectedMembers.push(member);
             this._members = _.without(this._members,member);
             members.push(member);
         }
         this._members = this.positionSelectData(this._members);
         return members;
+    }
+
+    addAlchemy(alchemy){
+        this._selectAlchemy.push(alchemy);
+        console.log(
+        this._selectAlchemy)
+    }
+
+    selectAlchemyName(){
+        return this._selectAlchemy.map(a => $dataSkills[a].name).join(",");
+    }
+
+    turnend(){
+        $gameParty._stageData._selectedData = this._selectedData;
     }
 }

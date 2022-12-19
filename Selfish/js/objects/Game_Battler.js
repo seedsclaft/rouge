@@ -806,26 +806,14 @@ Game_Battler.prototype.initMembers = function() {
     this._effectType = null;
     this._selected = false;
     
-    this._needMpGain = true;
 
-    //カウンター状態（APリセットしない）
-    this._counter = false;
     this._battleOrder = 0;
 
     //ターン行動数
     this._turnCount = 1;
-    this._battleAction = null;
     this._elementId = null;
 
 };
-
-Game_Battler.prototype.battleAction = function() {
-    return this._battleAction;
-}
-
-Game_Battler.prototype.setBattleAction = function(battleAction) {
-    this._battleAction = battleAction;
-}
 
 Game_Battler.prototype.battlerId = function() {
     return this.isActor() == true ? this.actorId() : this.index() * -1;
@@ -1291,18 +1279,6 @@ Game_Battler.prototype.regenerateAll = function() {
     }
 };
 
-Game_Battler.prototype.onBattleStart = function() {
-    this._needMpGain = true;
-};
-
-Game_Battler.prototype.needMpGain = function() {
-    return this._needMpGain;
-};
-
-Game_Battler.prototype.setNeedMpGain = function(needMpGain) {
-    this._needMpGain = needMpGain;
-};
-
 Game_Battler.prototype.onAllActionsEnd = function() {
     this.removeStatesAuto(RemoveStateAutoType.ACT_END);
 };
@@ -1454,22 +1430,11 @@ Game_Battler.prototype.getSkillCountTotal = function(id) {
 
 Game_Battler.prototype.getSkillCount = function(id) { 
     let count = 0;
-    // PT共通の熟練度を取得
-    $gameActors._data.forEach(element => {
-        if (element && element._ownSkills[id] && element.actorId() <= 5){
-            if (element._ownSkills[id].count > count){
-                count = element._ownSkills[id].count;
-            }
-        }
-    });
     return count;
 }
 
 Game_Battler.prototype.getSkillSpCount = function(id) { 
     let count = 0;
-    if (this._ownSkills && this._ownSkills[id]){
-        count = this._ownSkills[id].sp;
-    }
     return count;
 }
 
@@ -1684,9 +1649,7 @@ Game_Actor.prototype.initMembers = function() {
     this._actionInputIndex = 0;
     this._lastBattleSkillId = 0;
 
-    this._selectSkill = null;
 
-    this._ownSkills = {};
 
 };
 
@@ -1709,15 +1672,22 @@ Game_Actor.prototype.setup = function(actorId) {
     this.refreshPassive();
 
 
-    // setSkills
-    this._skillSet1 = {};
-    this._skillSet2 = {};
 
     this._statePlus = {
     }
     
     this._elementId = actor.elementId;
+
+    this._positionData = null;
 };
+
+Game_Actor.prototype.position = function() {
+    return this._positionData;
+}
+
+Game_Actor.prototype.setPosition = function(position) {
+    this._positionData = position;
+}
 
 Game_Actor.prototype.addStatePlus = function(id,value) {
     if (this._statePlus[id] == null){
@@ -1726,32 +1696,6 @@ Game_Actor.prototype.addStatePlus = function(id,value) {
     this._statePlus[id] += value;
 }
 
-Game_Actor.prototype.skillSet1 = function() {
-    if (this._skillSet1){
-        if (this._skillSet1.isSkill){
-            return $dataSkills[this._skillSet1.itemId];
-        } else{
-            return $dataItems[this._skillSet1.itemId];
-        }
-    }
-    return null;
-}
-
-Game_Actor.prototype.skillSet2 = function() {
-    if (this._skillSet2){
-        if (this._skillSet2.isSkill){
-            return $dataSkills[this._skillSet2.itemId];
-        } else{
-            return $dataItems[this._skillSet2.itemId];
-        }
-    }
-    return null;
-}
-
-Game_Actor.prototype.setSlotSkill = function(slot,itemId,isSkill) {
-    if (slot == 1) this._skillSet1 = {isSkill:isSkill, itemId:itemId};
-    if (slot == 2) this._skillSet2 = {isSkill:isSkill, itemId:itemId};
-}
 
 Game_Actor.prototype.actorId = function() {
     return this._actorId;
@@ -2520,14 +2464,6 @@ Game_Actor.prototype.passiveSkills = function() {
         }
     });
     return skills;
-}
-
-Game_Actor.prototype.setSelectSkill = function(skill) {
-    this._selectSkill = skill;
-}
-
-Game_Actor.prototype.selectSkill = function() {
-    return this._selectSkill;
 }
 
 Game_Actor.prototype.getReserveSkillData = function(elementId) {

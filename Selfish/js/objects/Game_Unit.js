@@ -180,8 +180,6 @@ Game_Party.prototype.initialize = function() {
     this._menuActorId = 0;
     this._actors = [];
     this.initAllItems();
-    this._destinationX = 0;
-    this._destinationY = 0;
     this._learnedSkills = [];
     
     //スキルNew済みIDリスト
@@ -201,6 +199,8 @@ Game_Party.prototype.initialize = function() {
 
     // ヘルプ情報
     this._helpKeyData = [];
+
+    this._stageData = new Game_Stage();
     this.getHelpKeyData();
 };
 
@@ -639,17 +639,6 @@ Game_Party.prototype.removeBattleStates = function() {
 };
 
 Game_Party.prototype.requestMotionRefresh = function() {
-};
-
-//0818 移動先設定
-Game_Party.prototype.setDestination = function(x,y) {
-    this._destinationX = x;
-    this._destinationY = y;
-};
-
-Game_Party.prototype.clearDestination = function() {
-    this._destinationX = null;
-    this._destinationY = null;
 };
 
 Game_Party.prototype.addLearnSkill = function(skillId) {

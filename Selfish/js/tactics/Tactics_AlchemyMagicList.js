@@ -3,6 +3,7 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
         super(new Rectangle( x, y, width, height ));
         this._data = [];
         this._magicList = [];
+        this._selected = [];
     }
 
     setAlchemyMagic(data){
@@ -26,6 +27,9 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
             const rect = this.itemLineRect(index);
             this.resetTextColor();
             this.contents.fontSize = 21;
+            if (this._selected.contains(_alchemy.skill.id)){
+                this.drawBack(rect.x,rect.y,rect.width,rect.height,0xFFFFFF,64);
+            }
             this.drawText(TextManager.getSkillName(_alchemy.skill.id), rect.x, rect.y,rect.width);
             if (_alchemy.needRank) {
                 _alchemy.needRank.forEach((rank,index) => {
@@ -54,7 +58,13 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
     //_updateCursor(){
 
     //}
+    setSelected(id){
+        this._selected.push(id);
+    }
 
+    item(){
+        return this._magicList.length > this.index() ? this._magicList[this.index()] : null;
+    }
 
     terminate(){
         gsap.killTweensOf(this._cursorSprite);

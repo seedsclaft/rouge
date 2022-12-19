@@ -1,11 +1,10 @@
 //-----------------------------------------------------------------------------
-// MemberSelect_StatusItem
+// PopupStatus_ActorList
 //
-// The window for selecting a skill on the skill screen.
 
-class MemberSelect_ActorList extends Window_Selectable{
+class PopupStatus_ActorList extends Window_Selectable{
     constructor(x, y, width,height){
-        super(new Rectangle( 0, 0, 0,0));
+        super(new Rectangle(0,0,0,0));
         this._data = [];
         this._selectId = [];
         this._cursorSprite.opacity = 0;
@@ -15,8 +14,10 @@ class MemberSelect_ActorList extends Window_Selectable{
         this._actorSprite.x = 40;
         this._actorSprite.y = 64;
         this.addChild(this._actorSprite);
-        this._actorListItem = new MemberSelect_ActorListItem(x,y,width,height);
+        this._actorListItem = new PopupStatus_ActorListItem(x,y,width,height);
         this.addChild(this._actorListItem);
+
+        this._lvUpData = null;
     }
 
     setData(data){
@@ -58,7 +59,7 @@ class MemberSelect_ActorList extends Window_Selectable{
         const actor = this._data[index];
         if (actor){
             this._actorSprite.bitmap = ImageManager.loadPicture(actor.faceName().replace("yhmv","yh"));
-            this._actorListItem.setActor(actor);
+            this._actorListItem.setActor(actor,this._lvUpData);
         }
     }
 
@@ -76,5 +77,21 @@ class MemberSelect_ActorList extends Window_Selectable{
     }
 
     _updateCursor(){
+    }
+
+    stratLvup(endCall){
+        let listX = this._actorListItem.x;
+        this._actorListItem.x = 960;
+        gsap.to(this._actorListItem,0.5,{x:listX});
+        let speiteX = this._actorSprite.x;
+        this._actorSprite.x = -240;
+        gsap.to(this._actorSprite,0.5,{x:speiteX,onComplete:function(){
+            if (endCall) endCall();
+        }});
+    }
+
+    setLvupAfter(lvUpData){
+        this._lvUpData = lvUpData;
+        this.refresh();
     }
 }

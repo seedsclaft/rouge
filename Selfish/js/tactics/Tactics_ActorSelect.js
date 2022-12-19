@@ -61,7 +61,7 @@ class Tactics_ActorSelect extends Window_Selectable{
     }
 
     actor(){
-        return this._data[this.index()].actor;
+        return this._data[this.index()];
     }
     //_updateCursor(){
 
@@ -69,7 +69,7 @@ class Tactics_ActorSelect extends Window_Selectable{
 
     removeActorList(actorIdList){
         for (let i = 0;i < actorIdList.length;i++){
-            let data = this._data.find(a => a.actor.actorId() == actorIdList[i]);
+            let data = this._data.find(a => a.actorId() == actorIdList[i]);
             this._data = _.without(this._data,data);
         }
         this.refresh();

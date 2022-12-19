@@ -187,7 +187,6 @@ class Tactics_View extends Scene_Base {
     setMagicCategory(data){
         if (this._magicCategory == null){
             this._magicCategory = new Tactics_MagicCategory(120,128,72,264);
-            this._magicCategory.setHandler('index',  this.refreshCategoryIndex.bind(this));
             this.addChild(this._magicCategory);
         }
         this._magicCategory.setMagicCategory(data);
@@ -202,10 +201,30 @@ class Tactics_View extends Scene_Base {
     setAlchemyMagicList(data){
         if (this._alchemyMagicList == null){
             this._alchemyMagicList = new Tactics_AlchemyMagicList(184,128,640,360);
+            this._alchemyMagicList.setHandler("ok", this.setCommand.bind(this,TacticsCommand.AlchemySelect));
+            this._alchemyMagicList.setHandler("cancel", this.setCommand.bind(this,TacticsCommand.DecideAlchemy));
+            this._alchemyMagicList.setHandler("pageup", this.changeCategory.bind(this,1));
+            this._alchemyMagicList.setHandler("pagedown", this.changeCategory.bind(this,-1));
             this.addChild(this._alchemyMagicList);
         }
         this._alchemyMagicList.setAlchemyMagic(data);
         this._alchemyMagicList.hide();
+    }
+
+    changeCategory(value){
+        if (value > 0){
+            this._magicCategory.cursorUp();
+        } else
+        if (value < 0){
+            this._magicCategory.cursorDown();
+        }
+        this.refreshCategoryIndex();
+        this._alchemyMagicList.activate();
+    }
+
+    commandAlchemySelect(alchemyId){
+        this._alchemyMagicList.setSelected(alchemyId);
+        this._alchemyMagicList.activate();
     }
 
     setSearchList(data){
@@ -225,6 +244,10 @@ class Tactics_View extends Scene_Base {
 
     selectCategory(){
         return this._commandList.currentSymbol();
+    }
+
+    selectAlchemy(){
+        return this._alchemyMagicList.item();
     }
 
     commandSelectOk(isSelected){
@@ -248,12 +271,12 @@ class Tactics_View extends Scene_Base {
             const _popup = PopupManager;
             _popup.setPopup(mainText,{select:0,subText:null});
             _popup.setHandler(text1,'ok',() => {
-                this.setCommand(TacticsCommand.SelectClear);
                 this._commandList.activate();
+                this.setCommand(TacticsCommand.SelectClear);
             });
             _popup.setHandler(text2,'cancel',() => {
-                this.setCommand(TacticsCommand.DecideMember);
                 this._commandList.activate();
+                this.setCommand(TacticsCommand.DecideMember);
             });
             _popup.open();
         } else{
@@ -278,7 +301,29 @@ class Tactics_View extends Scene_Base {
         this._alchemyMagicList.show();
         this._alchemyMagicList.activate();
         this._magicCategory.show();
-        this._magicCategory.activate();
+        //this._magicCategory.activate();
+    }
+
+    commandDecideAlchemy(isEnable,alchemyNameList){
+        if (isEnable){
+            const mainText = TextManager.getText(10300).replace("/d",alchemyNameList);
+            const text1 = TextManager.getCancelText();
+            const text2 = TextManager.getDecideText();
+            const _popup = PopupManager;
+            _popup.setPopup(mainText,{select:0,subText:null});
+            _popup.setHandler(text1,'ok',() => {
+                this._commandList.activate();
+                this.setCommand(TacticsCommand.AlchemySelect);
+            });
+            _popup.setHandler(text2,'cancel',() => {
+                this._commandList.activate();
+                this._alchemyMagicList.hide();
+                this._magicCategory.hide();
+            });
+            _popup.open();
+        } else{
+            this._commandList.activate();
+        }
     }
 
     commandCommandSearch(){
@@ -287,6 +332,21 @@ class Tactics_View extends Scene_Base {
         this._searchList.select(0);
     }
 
+    commandCommandTurnend(){
+        const mainText = TextManager.getText(10200);
+        const text1 = TextManager.getCancelText();
+        const text2 = TextManager.getDecideText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:null});
+        _popup.setHandler(text1,'ok',() => {
+            this._commandList.activate();
+        });
+        _popup.setHandler(text2,'cancel',() => {
+            this.setCommand(TacticsCommand.Turnend);
+        });
+        _popup.open();
+    }
+    
     update(){
         super.update();
     }
@@ -326,6 +386,9 @@ const TacticsCommand = {
     SelectEnd :33,
     DecideMember :51,
     TrainMagic :71,
+    AlchemySelect :81,
+    DecideAlchemy :82,
     SearchMember :91,
+    Turnend :111,
     Refresh : 100
 }

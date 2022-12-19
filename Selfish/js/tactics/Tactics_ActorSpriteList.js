@@ -21,8 +21,8 @@ class Tactics_ActorSpriteList extends Sprite{
 
     createActorSprite(data){
         this._data.forEach(d => {
-            let position = d.position;
-            let actor = d.actor;
+            let position = d.position();
+            let actor = d;
 
             let sprite = new Sprite();
             sprite.bitmap = ImageManager.loadPicture(actor.faceName() + "_00_s");
@@ -43,7 +43,7 @@ class Tactics_ActorSpriteList extends Sprite{
     selectingIndex(selectIndex){
         this.activate();
         const _index = this._actorSprites.findIndex(a => a == this.actorSprites(selectIndex));
-        const _position = this._data[_index].position;
+        const _position = this._data[_index].position();
         this._arrowSprite.x = 0 + _position.x + (this.actorSprites(selectIndex).width * _position.scale * 0.5);
         this._arrowSprite.y = -24 + _position.y - (this.actorSprites(selectIndex).height * _position.scale);
     }
@@ -58,7 +58,7 @@ class Tactics_ActorSpriteList extends Sprite{
 
     addActorList(actorIdList){
         for (let i = 0;i < actorIdList.length;i++){
-            let index = this._data.findIndex(a => a.actor.actorId() == actorIdList[i]);
+            let index = this._data.findIndex(a => a.actorId() == actorIdList[i]);
             this._actorSprites[index].opacity = 255;
             this._actorSprites[index].setBlendColor([0, 0, 0, 0]);
         }
@@ -67,7 +67,7 @@ class Tactics_ActorSpriteList extends Sprite{
 
     removeActorList(actorIdList){
         for (let i = 0;i < actorIdList.length;i++){
-            let index = this._data.findIndex(a => a.actor.actorId() == actorIdList[i]);
+            let index = this._data.findIndex(a => a.actorId() == actorIdList[i]);
             this._actorSprites[index].opacity = 0;
         }
         this.refresh();
