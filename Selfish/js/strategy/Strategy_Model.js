@@ -7,16 +7,21 @@ class Strategy_Model {
         return this.commandList()[this._commandIndex];
     }
 
+    commandNext(){
+        this._commandIndex++;
+    }
+
     energy(){
         return $gameParty.gold();
     }
 
     turnInfo(){
-        return $gameParty._stageData._turns;
+        return $gameStage.turns();
     }
 
     selectedData(category){
-        return $gameParty._stageData._selectedData[category];
+        console.error($gameStage.selectedData())
+        return $gameStage.selectedData()[category];
     }
 
     commandList(){
@@ -25,7 +30,9 @@ class Strategy_Model {
 
     selectedMember(){
         const _command = this.currentCommand();
-        const _selected = this.selectedData(_command.key)
+        const _selected = this.selectedData(_command.key);
+        console.log(_command)
+        console.log(_selected)
         let member = [];
         _selected.forEach(actorId => {
             member.push($gameActors.actor(actorId));
@@ -46,7 +53,7 @@ class Strategy_Model {
 
         actor.changeExp(100);
         const _command = this.currentCommand();
-        $gameParty._stageData._selectedData[_command.key] = _.without(actor.actorId(),$gameParty._stageData._selectedData[_command.key]);
+        $gameStage.selectedData()[_command.key] = _.without(actor.actorId(),$gameStage.selectedData()[_command.key]);
      
         lvUpData = {
             lv:lvUpData.lv - actor.level,
@@ -57,5 +64,47 @@ class Strategy_Model {
             def:lvUpData.def - actor.def
         };
         return lvUpData;
+    }
+
+    alchemy(){
+        $gameStage.alchemyData().forEach(alchemyId => {
+            $gameParty.addLearnSkill(alchemyId);
+        });
+    }
+
+    alchemyNameList(){
+        return $gameStage.alchemyData().map(a => $dataSkills[a].name).join(",");
+    }
+
+    recovery(){
+        const _command = this.currentCommand();
+        const _selectedData = $gameStage.selectedData()[_command.key];
+        _selectedData.forEach(actorId => {
+            $gameActors.actor(actorId).recoverAll();
+        });
+    }
+
+    recoveryNameList(){
+        const _command = this.currentCommand();
+        const _selectedData = $gameStage.selectedData()[_command.key];
+        return _selectedData.map(a => $gameActors.actor(a).name()).join(",");
+    }
+
+    battleStart(){
+        const _command = this.currentCommand();
+        const _selectedData = $gameStage.selectedData()[_command.key];
+        const _member = $gameParty.members();
+        _member.forEach(member => {
+            $gameParty.removeActor(member.actorId());
+        });
+        _selectedData.forEach(actorId => {
+            $gameParty.addActor(actorId);
+        });
+        
+        const _searchId = $gameStage.searchId();
+        const _searchData = $gameSearch.getData(_searchId);
+        let troop = new Game_Troop();
+        troop.setup(_searchData.bossEnemy,_searchData.bossLv);
+        $gameTroop = troop;
     }
 }

@@ -200,7 +200,6 @@ Game_Party.prototype.initialize = function() {
     // ヘルプ情報
     this._helpKeyData = [];
 
-    this._stageData = new Game_Stage();
     this.getHelpKeyData();
 };
 
@@ -381,7 +380,6 @@ Game_Party.prototype.name = function() {
 Game_Party.prototype.setupBattleTest = function() {
     this.setupBattleTestMembers();
     this.setupBattleTestItems();
-    this.setupBattleTestStage();
 };
 
 Game_Party.prototype.setupBattleTestMembers = function() {
@@ -423,7 +421,6 @@ Game_Party.prototype.addActor = function(actorId) {
         this._actors.push(actorId);
         $gamePlayer.refresh();
         $gameMap.requestRefresh();
-        $gameActors.actor(actorId).exChangeslotData();
     }
 };
 

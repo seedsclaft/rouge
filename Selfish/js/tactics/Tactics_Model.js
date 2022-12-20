@@ -1,9 +1,7 @@
 class Tactics_Model {
     constructor() {
-        if ($gameParty._stageData._init == false){
-            $gameParty._stageData.initialize();
-        }
-        this._selectedData = $gameParty._stageData._selectedData;
+        this._selectedData = $gameStage.selectedData();
+        console.log(this._selectedData)
 
         const _actorList = $gameParty.members();
         let _position = $gameTacticsActorPosition.data();
@@ -58,7 +56,7 @@ class Tactics_Model {
     }
     
     turnInfo(){
-        return $gameParty._stageData._turns;
+        return $gameStage._turns;
     }
 
     refreshData(){
@@ -124,17 +122,23 @@ class Tactics_Model {
         return members;
     }
 
-    addAlchemy(alchemy){
-        this._selectAlchemy.push(alchemy);
-        console.log(
-        this._selectAlchemy)
+    addAlchemy(alchemyId){
+        this._selectAlchemy.push(alchemyId);
     }
 
     selectAlchemyName(){
         return this._selectAlchemy.map(a => $dataSkills[a].name).join(",");
     }
 
+    setAlchemy(){
+        $gameStage.setAlchemy(this._selectAlchemy);
+    }
+
+    setSearchId(serachId){
+        $gameStage.setSearchId(serachId);
+    }
+
     turnend(){
-        $gameParty._stageData._selectedData = this._selectedData;
+        $gameStage.setSelectedData(this._selectedData);
     }
 }

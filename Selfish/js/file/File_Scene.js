@@ -187,10 +187,6 @@ class Save_Scene extends File_Scene {
             SceneManager.push(Scene_Save._nextScene);
             Scene_Save._nextScene = null;
             $gamePlayer.clearTransferInfo();
-            if ($gameParty.stageNo() && $gameParty.stageNo() > 0){
-                const endEvent = DataManager.getStageInfos($gameParty.stageNo()).endEvent;
-                EventManager.setup(endEvent);
-            }
         } else{
             super.popScene();
             //SceneManager.pop();

@@ -235,27 +235,3 @@ Window_BattleEnemy.prototype.updateBackOpacity = function() {
 };
 Window_BattleEnemy.prototype.loadWindowskin = function() {
 };
-
-Window_BattleEnemy.prototype._createAllParts = function() {
-    this._createContainer();
-    /*
-    this._createBackSprite();
-    this._createFrameSprite();
-    this._createContentsBackSprite();
-    this._createPauseSignSprites();
-    this._createCursorSprite();
-    this._createArrowSprites();
-    */
-    this._createClientArea();
-    this._createContentsSprite();
-};
-
-Window_BattleEnemy.prototype._refreshAllParts = function() {
-    /*
-    this._refreshBack();
-    this._refreshFrame();
-    this._refreshCursor();
-    this._refreshPauseSign();
-    this._refreshArrows();
-    */
-};

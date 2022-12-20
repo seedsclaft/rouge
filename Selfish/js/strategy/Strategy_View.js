@@ -60,6 +60,39 @@ class Strategy_View extends Scene_Base {
         });
     }
 
+    commandAlchemyStart(nameList){
+        const mainText = TextManager.getText(11000).replace("/d",nameList);
+        const text = TextManager.getDecideText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:null});
+        _popup.setHandler(text,'ok',() => {
+            this.setCommand(StrategyCommand.AlchemyResult);
+        });
+        _popup.open();
+    }
+
+    commandRecoveryStart(nameList){
+        const mainText = TextManager.getText(11010).replace("/d",nameList);
+        const text = TextManager.getDecideText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:null});
+        _popup.setHandler(text,'ok',() => {
+            this.setCommand(StrategyCommand.RecoveryResult);
+        });
+        _popup.open();
+    }
+
+    commandSearchStart(){
+        const mainText = TextManager.getText(11020);
+        const text = TextManager.getDecideText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:null});
+        _popup.setHandler(text,'ok',() => {
+            this.setCommand(StrategyCommand.BattleStart);
+        });
+        _popup.open();
+    }
+
     swipHelp(moveX){
     }
 
@@ -77,5 +110,8 @@ const StrategyCommand = {
     TrainStart :11,
     TrainResult :12,
     AlchemyStart : 21,
+    AlchemyResult : 22,
+    RecoveryResult : 31,
+    BattleStart : 32,
     Refresh : 100
 }

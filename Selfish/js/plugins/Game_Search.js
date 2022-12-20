@@ -11,6 +11,9 @@
  * */
 
 /*~struct~Search:
+ * @param id
+ * @type number
+ * 
  * @param rankMin
  * @type number
  * @default 0
@@ -64,6 +67,7 @@ Game_Search.prototype.initialize = function() {
     this._data = [];
     JsonEx.parse(data.SearchList).forEach(search => {
         let data = JSON.parse(search);
+        data.id = Number(data.id);
         data.rate = Number(data.rate);
         data.rankMin = Number(data.rankMin);
         data.rankMax = Number(data.rankMax);
@@ -79,6 +83,10 @@ Game_Search.prototype.initialize = function() {
 
 Game_Search.prototype.data = function() {
     return this._data;
+}
+
+Game_Search.prototype.getData = function(id) {
+    return this._data.find(a => a.id == id);
 }
 
 

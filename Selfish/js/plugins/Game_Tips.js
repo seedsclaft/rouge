@@ -88,7 +88,7 @@ Game_Tips.prototype.findTips = function() {
 Game_Tips.prototype.checkTips = function(tipsId) {
     switch (tipsId){
         case 1: // ステージが２・味方の誰か毒状態
-        return $gameParty.stageNo() == 2 && _.find($gameParty.members(),(member) => member.isStateAffected($gameStateInfo.getStateId(StateType.POISON)));
+        return false;
     }
     return false;
 }

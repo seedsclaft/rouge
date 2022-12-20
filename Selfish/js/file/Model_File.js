@@ -4,7 +4,7 @@ class Model_File extends Model_Base {
     }
 
     lastStageNo (){
-        return $gameParty.stageNo();
+        return 1;
     }
     
     saveFiles(){

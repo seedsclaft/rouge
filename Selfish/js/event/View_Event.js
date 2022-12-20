@@ -492,9 +492,9 @@ class View_Event {
             animation.y = y;
             animation.scale.x = scaleX;
             animation.scale.y = scaleY;
-            anim.setup(animation, $dataAnimationsMv[id], false, 0 ,noSoundFlag);
+            anim.setup(animation, $dataAnimations[id], false, 0 ,noSoundFlag);
             animation.addChild(anim);
-            gsap.to(anim,$dataAnimationsMv[id].frames.length * 4 / 60,{onComplete:() => {
+            gsap.to(anim,$dataAnimations[id].frames.length * 4 / 60,{onComplete:() => {
                 animation.removeChild(anim);
                 this._layer.removeChild(animation);
                 animation.destroy();

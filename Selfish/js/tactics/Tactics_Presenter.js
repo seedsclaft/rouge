@@ -67,6 +67,8 @@ class Tactics_Presenter extends Presenter_Base{
                 return this.commandAlchemySelect();
             case TacticsCommand.DecideAlchemy:
                 return this.commandDecideAlchemy();
+            case TacticsCommand.AlchemyEnd:
+                return this.commandAlchemyEnd();
             case TacticsCommand.SearchMember:
                 return this.commandSearchMember();
             case TacticsCommand.Turnend:
@@ -112,6 +114,10 @@ class Tactics_Presenter extends Presenter_Base{
             this._model.removeSelectData(_category,_actorId);
         } else{
             this._model.addSelectData(_category,_actorId);
+            if (_category == "search"){
+                const _serach = this._view.selectSearch();
+                this._model.setSearchId(_serach.id);
+            }
         }
         this._view.commandSelectOk(_isSelected);
     }
@@ -150,6 +156,10 @@ class Tactics_Presenter extends Presenter_Base{
     commandDecideAlchemy(){
         const _alchemyName = this._model.selectAlchemyName();
         this._view.commandDecideAlchemy(_alchemyName != null,_alchemyName);
+    }
+
+    commandAlchemyEnd(){
+        this._model.setAlchemy();
     }
 
     commandSearchMember(){;

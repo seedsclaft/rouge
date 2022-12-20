@@ -8,7 +8,7 @@ class ResourceLoadManager {
         let enemies = [];
 
 
-        let animation = $dataAnimationsMv[3];
+        let animation = $dataAnimations[3];
         this.gainMvAnimationSound(animation,animations,sounds);
 
         $gameTroop.members().forEach(enemy => {
@@ -22,14 +22,12 @@ class ResourceLoadManager {
                 if (!animId){
                     return;
                 }
-                let animation = $dataAnimationsMv[animId];
+                let animation = $dataAnimations[animId];
                 this.gainMvAnimationSound(animation,animations,sounds);
             });
         });
 
-        const stageId = $gameParty.stageNo();
-        const stage = DataManager.getStageInfos(stageId);
-        const needBgm = [stage.bgm];
+        const needBgm = [];
 
         animations = _.uniq(animations);
         enemies = _.uniq(enemies);
@@ -72,7 +70,7 @@ class ResourceLoadManager {
                     if (!animId){
                         return;
                     }
-                    let animation = $dataAnimationsMv[animId];
+                    let animation = $dataAnimations[animId];
                     this.gainMvAnimationSound(animation,animations,sounds);
                 });
             }
@@ -95,7 +93,7 @@ class ResourceLoadManager {
         if (!animId){
             return {animation:animations,sound:sounds};
         }
-        let animation = $dataAnimationsMv[animId];
+        let animation = $dataAnimations[animId];
         this.gainMvAnimationSound(animation,animations,sounds);
         return {animation:animations,sound:sounds};
     }
@@ -106,32 +104,10 @@ class ResourceLoadManager {
         let enemies = [];
 
 
-        let animation = $dataAnimationsMv[3];
+        let animation = $dataAnimations[3];
         this.gainMvAnimationSound(animation,animations,sounds);
         
-        const troopId = DataManager.getStageInfos($gameParty.stageNo()).bossId;
-        let testTroop = new Game_Troop();
-        testTroop.setup(troopId);
-        Debug.log(testTroop)
-        testTroop.members().forEach(enemy => {
-            const enemyData = $dataEnemies[enemy.enemyId()];
-            enemies.push(enemyData);
-            enemyData.actions.forEach(action => {
-                let animationId = $dataSkills[action.skillId].animation;
-                if (animationId == -1){
-                    animationId = enemyData.attackId;
-                }
-                if (!animationId){
-                    return;
-                }
-                let animation = $dataAnimationsMv[animationId];
-                this.gainMvAnimationSound(animation,animations,sounds);
-            });
-        });
-
-        const stageId = $gameParty.stageNo();
-        const stage = DataManager.getStageInfos(stageId);
-        const needBgm = [stage.bgm];
+        const needBgm = [];
 
         animations = _.uniq(animations);
         enemies = _.uniq(enemies);
@@ -141,15 +117,19 @@ class ResourceLoadManager {
     }
     
     static gainMvAnimationSound(mvAnimation,animations,sounds){
-        mvAnimation.timings.forEach(timing => {
-            if (timing.se){
-                sounds.push(timing.se);
-            }
-        });
-        if (mvAnimation.animation1Name){
+        console.log(mvAnimation)
+        if (mvAnimation){
+            mvAnimation.soundTimings.forEach(timing => {
+                if (timing.se){
+                    sounds.push(timing.se);
+                }
+            });
+
+        }
+        if (mvAnimation && mvAnimation.animation1Name){
             animations.push(mvAnimation.animation1Name);
         }
-        if (mvAnimation.animation2Name){
+        if (mvAnimation && mvAnimation.animation2Name){
             animations.push(mvAnimation.animation2Name);
         }
     }

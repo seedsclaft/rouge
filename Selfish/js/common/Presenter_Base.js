@@ -34,8 +34,6 @@ class Presenter_Base {
         const isVisible = $gameScreen.screenVisible();
         switch (resumeScene){
             case 'Battle_Scene':
-            case 'Scene_Battle':
-                const stageEvent = $gameParty.stageEvent();
 
                 SceneManager.push(Battle_Scene);
                 break;

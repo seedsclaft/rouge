@@ -55,6 +55,10 @@ class Strategy_Presenter extends Presenter_Base{
                 return this.commandTrainStart();
             case StrategyCommand.TrainResult:
                 return this.commandTrainResult();
+            case StrategyCommand.AlchemyResult:
+                return this.commandAlchemyResult();
+            case StrategyCommand.BattleStart:
+                return this.commandBattleStart();
         }
         this._view.clearCommand();
     }
@@ -75,11 +79,12 @@ class Strategy_Presenter extends Presenter_Base{
     }
 
     commandTrainStart(){
-        const _before = this._model.selectedMember();
-        if (_before.length > 0){
+        const _selected = this._model.selectedMember();
+        if (_selected.length > 0){
             PopupLevelUpManager.init();
-            this._view.commandTrainStart(_before);
+            this._view.commandTrainStart(_selected);
         } else{
+            this._model.commandNext();
             this.commandAlchemyStart();
         }
     }
@@ -90,7 +95,48 @@ class Strategy_Presenter extends Presenter_Base{
     }
 
     commandAlchemyStart(){
+        const _selected = this._model.selectedMember();
+        console.error(_selected)
+        if (_selected.length > 0){
+            const _alchemyName = this._model.alchemyNameList();
+            this._model.alchemy();
+            this._view.commandAlchemyStart(_alchemyName);
+        } else{
+            this._model.commandNext();
+            this.commandRecoveryStart();
+        }
+    }
 
+    commandAlchemyResult(){
+        this._model.commandNext();
+        this.commandRecoveryStart();
+    }
+
+    commandRecoveryStart(){
+        const _selected = this._model.selectedMember();
+        if (_selected.length > 0){
+            const _recoveryName = this._model.recoveryNameList();
+            this._model.recovery();
+            this._view.commandRecoveryStart(_recoveryName);
+        } else{
+            this._model.commandNext();
+            this.commandSearchStart();
+        }
+    }
+
+    commandSearchStart(){
+        const _selected = this._model.selectedMember();
+        if (_selected.length > 0){
+            this._view.commandSearchStart();
+        } else{
+            this._model.commandNext();
+            //this.commandSearchStart();
+        }
+    }
+
+    commandBattleStart(){
+        this._model.battleStart();
+        SceneManager.push(Battle_Scene);
     }
 
     commandRefresh(){

@@ -52,7 +52,7 @@ class Layer_BattleTroop extends Sprite{
         }
         const target = _.find(this._enemySprites,(a) => a._battler == battler);
         if (target){
-            const animation = $dataAnimationsMv[animationId];
+            const animation = $dataAnimations[animationId];
             delay = animation.position === 3 ? 0 : delay;
             scale = scale != 1 ? scale : 1;
             const result = target.startAnimation(animation, mirror, delay,scale,nosound);

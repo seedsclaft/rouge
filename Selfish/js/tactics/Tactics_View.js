@@ -230,7 +230,10 @@ class Tactics_View extends Scene_Base {
     setSearchList(data){
         if (this._searchList == null){
             this._searchList = new Tactics_SearchList(120,128,640,360);
-            this._searchList.setHandler("ok", this.setCommand.bind(this,TacticsCommand.SearchMember));
+            this._searchList.setHandler("ok", () => {
+                this._searchList.hide();
+                this.setCommand(TacticsCommand.SearchMember);
+            });
             this._searchList.setHandler("cancel", this.setCommand.bind(this,TacticsCommand.SelectCancel));
             this.addChild(this._searchList);
         }
@@ -250,6 +253,10 @@ class Tactics_View extends Scene_Base {
         return this._alchemyMagicList.item();
     }
 
+    selectSearch(){
+        return this._searchList.item();
+    }
+
     commandSelectOk(isSelected){
         const _index = this._actorSelect.index();
         this._actorSpriteList.setSelectedIndex(_index,isSelected);
@@ -265,7 +272,7 @@ class Tactics_View extends Scene_Base {
     commandSelectCancel(isEnable,selectedActorNameList){
         this._actorSelect.deactivate();
         if (isEnable){
-            const mainText = selectedActorNameList + TextManager.getText(10100).replace("/d",TextManager.getText(this._commandList.currentCommand().textId));
+            const mainText = selectedActorNameList + TextManager.getText(10010).replace("/d",TextManager.getText(this._commandList.currentCommand().textId));
             const text1 = TextManager.getCancelText();
             const text2 = TextManager.getDecideText();
             const _popup = PopupManager;
@@ -306,7 +313,7 @@ class Tactics_View extends Scene_Base {
 
     commandDecideAlchemy(isEnable,alchemyNameList){
         if (isEnable){
-            const mainText = TextManager.getText(10300).replace("/d",alchemyNameList);
+            const mainText = TextManager.getText(10030).replace("/d",alchemyNameList);
             const text1 = TextManager.getCancelText();
             const text2 = TextManager.getDecideText();
             const _popup = PopupManager;
@@ -319,6 +326,7 @@ class Tactics_View extends Scene_Base {
                 this._commandList.activate();
                 this._alchemyMagicList.hide();
                 this._magicCategory.hide();
+                this.setCommand(TacticsCommand.AlchemyEnd);
             });
             _popup.open();
         } else{
@@ -333,7 +341,7 @@ class Tactics_View extends Scene_Base {
     }
 
     commandCommandTurnend(){
-        const mainText = TextManager.getText(10200);
+        const mainText = TextManager.getText(10020);
         const text1 = TextManager.getCancelText();
         const text2 = TextManager.getDecideText();
         const _popup = PopupManager;
@@ -388,6 +396,7 @@ const TacticsCommand = {
     TrainMagic :71,
     AlchemySelect :81,
     DecideAlchemy :82,
+    AlchemyEnd :83,
     SearchMember :91,
     Turnend :111,
     Refresh : 100

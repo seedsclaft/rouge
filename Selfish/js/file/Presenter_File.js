@@ -69,7 +69,6 @@ class Presenter_File extends Presenter_Base {
         AudioManager.purgeBgm($gameBGM.getBgm('title'));
 
         $gameParty.allMembers().forEach(actor => {
-            actor.exChangeslotData();
             actor.clearAllPassiveState();
         });
         $gameParty.resetBattleParameter();
@@ -85,9 +84,6 @@ class Presenter_File extends Presenter_Base {
     }
 
     releaseResourceData(){
-        if ($gameParty.stageNo() == this._lastStageNo){
-            return;
-        }
         const resouces = ResourceLoadManager.getStageResource(this._lastStageNo);
         if (resouces){
             // アニメーションを解放

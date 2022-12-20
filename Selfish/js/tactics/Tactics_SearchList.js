@@ -9,6 +9,10 @@ class Tactics_SearchList extends Window_Selectable{
         super.refresh();
     }
 
+    item(){
+        return this._data != null ? this._data[this.index()] : 0;
+    }
+
     maxItems() {
         return this._data != null ? this._data.length : 0;
     };

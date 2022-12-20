@@ -43,13 +43,13 @@ $gameTips         = null;
 $gameBackGround   = null;
 $gameTutorial     = null;
 $gameChallenge    = null;
-$gameEventBattle  = null;
 $gameAchievement  = null;
 $dataOption       = null;
 $gameText         = null;
 $gameCommand      = null;
 $gameAlchemy      = null;
 $gameSearch       = null;
+$gameStage        = null;
 $gamePause        = false;
 
 DataManager._errors = [];
@@ -421,6 +421,7 @@ DataManager.createGameObjects = function() {
     $gameText          = new Game_Text();
     $gameCommand       = new Game_Command();
     $gameTacticsActorPosition   = new Game_TacticsActorPosition();
+    $gameStage = new Game_Stage();
 };
 
 DataManager.setupBattleTest = function() {

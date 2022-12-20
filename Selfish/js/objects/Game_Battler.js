@@ -948,8 +948,7 @@ Game_Battler.prototype.refreshPassive = function() {
                 flag = this.mp >= 3;
                 break;
             case 'losetype1':
-                const loseType = DataManager.getStageInfos($gameParty.stageNo()).loseType;
-                flag = (loseType == GameStageLoseType.TROOPMEMBERLOST);
+                flag = false;
                 break;
             case 'startOnly':
                 flag = this._turnCount == 1;
@@ -1279,6 +1278,10 @@ Game_Battler.prototype.regenerateAll = function() {
     }
 };
 
+Game_Battler.prototype.onBattleStart = function() {
+};
+
+
 Game_Battler.prototype.onAllActionsEnd = function() {
     this.removeStatesAuto(RemoveStateAutoType.ACT_END);
 };
@@ -1463,8 +1466,7 @@ Game_Battler.prototype.isEnablePasiveSkill = function(skillData) {
                 flag = this.mp >= 3;
                 break;
             case 'losetype1':
-                const loseType = DataManager.getStageInfos($gameParty.stageNo()).loseType;
-                flag = (loseType == GameStageLoseType.TROOPMEMBERLOST);
+                flag = false;
                 break;
             case 'startOnly':
                 flag = this._turnCount == 1;
@@ -2881,22 +2883,6 @@ Game_Enemy.prototype.meetsSwitchCondition = function(param,action) {
     //生存敵総数が3以下召喚できる状態である
     if (param == $gameDefine.summonSwitchId){
         return ($gameTroop.aliveMembers().length < 5);
-    }
-    //イベントバトルの進捗数値が１である
-    if (param == $gameDefine.eventBattleSwitchId1){
-        return ($gameEventBattle.eventIndex() == 1);
-    }
-    //イベントバトルの進捗数値が２である
-    if (param == $gameDefine.eventBattleSwitchId2){
-        return ($gameEventBattle.eventIndex() == 2);
-    }
-    //イベントバトルの進捗数値が３である
-    if (param == $gameDefine.eventBattleSwitchId3){
-        return ($gameEventBattle.eventIndex() == 3);
-    }
-    //イベントバトルの進捗数値が４である
-    if (param == $gameDefine.eventBattleSwitchId4){
-        return ($gameEventBattle.eventIndex() == 4);
     }
     //スキルで付与するステートが誰かにかかっている
     if (param == $gameDefine.anyOneSameStateIdSwitchId){

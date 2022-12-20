@@ -38,13 +38,7 @@ Window_PartyCommand.prototype.itemRect = function(index) {
 Window_PartyCommand.prototype.refresh = function() {
     this.createContents();
     Window_Command.prototype.refresh.call(this);
-    const loseType = DataManager.getStageInfos($gameParty.stageNo()).loseType;
-    // 直に変更
-    if (loseType == GameStageLoseType.TROOPMEMBERLOST){
-        this.drawText(TextManager.getText(601111),40,20,960,'center');
-    } else{
-        this.drawText(TextManager.getText(601110),40,20,960,'center');
-    }
+    this.drawText(TextManager.getText(601110),40,20,960,'center');
 }
 
 Window_PartyCommand.prototype.maxCols = function() {
@@ -95,27 +89,4 @@ Window_PartyCommand.prototype.update = function() {
     }
 }
 
-Window_PartyCommand.prototype._createAllParts = function() {
-    this._createContainer();
-    /*
-    this._createPauseSignSprites();
-    this._createArrowSprites();
-    this._createContentsBackSprite();
-    */
-    this._createClientArea();
-    this._createBackSprite();
-    this._createCursorSprite();
-    this._createFrameSprite();
-    this._createContentsSprite();
-};
-
-Window_PartyCommand.prototype._refreshAllParts = function() {
-    /*
-    this._refreshPauseSign();
-    this._refreshArrows();
-    */
-    this._refreshBack();
-    this._refreshFrame();
-    //this._refreshCursor();
-};
 Window_PartyCommand._lastCommand = 0;
