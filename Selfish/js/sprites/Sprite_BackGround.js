@@ -29,67 +29,7 @@ class Sprite_BackGround extends TilingSprite {
         this.scale.y = scaleY;
     }
 
-    moveFront(rate){
-        this.seekAnim();
-        this.killAnim();
-        let anim = new TimelineMax();
-        anim.to(this, 0.12 * rate, {
-            pixi:{y:this.y-6}
-        }).to(this ,0.12 * rate,{
-            pixi:{y:this.y}
-        })
-        this._anim.push(anim);
-    }
 
-    moveLeft(rate){
-        const origin = this.origin;
-        const baseWidth = this.bitmap.width;
-        let width = baseWidth;
-        if ((origin.x )% baseWidth != 0){
-            width += ((origin.x) % baseWidth) + baseWidth;
-        }
-        let lastOriginX = origin.x;
-        if (lastOriginX % baseWidth != 0){
-            lastOriginX -= (lastOriginX % baseWidth); 
-        }
-        const per = Math.floor(lastOriginX / baseWidth);
-        if (per != 0){
-            lastOriginX -= per * baseWidth; 
-        }
-        const self = this;
-        let anim = gsap.to(origin, 0.5 * rate, {
-            x:origin.x-width,
-            onComplete:function(){
-                self.origin.x = lastOriginX;
-            }
-        })
-        this._anim.push(anim);
-    }
-
-    moveRight(rate){
-        const origin = this.origin;
-        const baseWidth = this.bitmap.width;
-        let width = baseWidth;
-        if ((origin.x )% baseWidth != 0){
-            width -= ((origin.x) % baseWidth) - baseWidth;
-        }
-        let lastOriginX = origin.x;
-        if (lastOriginX % baseWidth != 0){
-            lastOriginX -= (lastOriginX % baseWidth); 
-        }
-        const per = Math.floor(lastOriginX / baseWidth);
-        if (per != 0){
-            lastOriginX -= per * baseWidth; 
-        }
-        const self = this;
-        let anim = gsap.to(origin, 0.5 * rate, {
-            x:origin.x+width,
-            onComplete:function(){
-                self.origin.x = lastOriginX;
-            }
-        })
-        this._anim.push(anim);
-    }
 
     fadeIn(duration,opacity){
         this.killAnim();
@@ -212,7 +152,7 @@ class Sprite_BackGround extends TilingSprite {
 
     update(){
         super.update();
-        if (this._bitmap._baseTexture != null && this._init == false){
+        if (this._bitmap && this._bitmap._baseTexture != null && this._init == false){
             this.resetPosition();
             this._init = true;
         }

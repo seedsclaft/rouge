@@ -25,21 +25,6 @@ class Sprite_BattlerStatus extends Sprite{
 
     setup(battler){
         this._battler = battler;
-        if (this._isInit == true){
-            const width = Math.floor( this._battler.mhp * 4 );
-            const height = 12;
-            this._hpGaugeSpriteBack.bitmap = new Bitmap(width,height);
-            this._hpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
-            
-            const x = 80;
-            this._hpGaugeSpriteBack.x = x + -1 * width / 4;
-            this._hpGaugeSprite.bitmap = new Bitmap(width - 4,height - 2);
-            this._hpGaugeSprite.bitmap.gradientFillRect(0, 0, width - 4, height - 2,$gameColor.getColor('hpgauge2'),$gameColor.getColor('hpgauge1'));
-            this._hpGaugeSprite.scale.x = this._battler.hp / this._battler.mhp;
-            this._hpGaugeSprite.x = x + 2 + -1 * width / 4;
-            this.setHpBitmap(this._battler.hp);
-            return;
-        }
         this.setHp();
         this.setMp();
         //this.setTp();
@@ -47,7 +32,6 @@ class Sprite_BattlerStatus extends Sprite{
     
         this.setWeakSprite();
 
-        this.setSkillSet();
     
         this._isInit = true;
     }
@@ -59,18 +43,12 @@ class Sprite_BattlerStatus extends Sprite{
         this.addChild(this._nameSprite);
     }
 
-    setSkillSet(){
-    }
-
-    updateSkillSet(){
-    }
-
     setHp(){
         if (this._battler.isActor()){
-            const width = Math.floor( this._battler.mhp * 2 );
-            const height = 12;
-            const x = 80;
-            const y = 62;
+            const width = 80;
+            const height = 6;
+            const x = 0;
+            const y = 64;
             this._hpGaugeSpriteBack = new Sprite(new Bitmap(width,height));
             this._hpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
             this._hpGaugeSpriteBack.pivot.x = 0;
@@ -86,36 +64,38 @@ class Sprite_BattlerStatus extends Sprite{
             this.addChild(this._hpGaugeSprite);
             this._hpSprite = new Sprite();
             this.setHpBitmap(this._battler.hp);
-            this._hpSprite.x = 200 / 2;
-            this._hpSprite.y = y / 2;
+            this._hpSprite.x = x - 80;
+            this._hpSprite.y = y - 32;
             this.addChild(this._hpSprite);
         } else{
-            const width = Math.floor( this._battler.mhp * 4 );
-            const height = 12;
-            const x = 80;
-            const y = 62;
+            const width = 80;
+            const height = 6;
+            const x = 0;
+            const y = 0;
             this._hpGaugeSpriteBack = new Sprite(new Bitmap(width,height));
             this._hpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
-            this._hpGaugeSpriteBack.pivot.x = 0.5;
+            this._hpGaugeSpriteBack.pivot.x = 0;
             this.addChild(this._hpGaugeSpriteBack);
             this._hpGaugeSpriteBack.x = x;
             this._hpGaugeSpriteBack.y = y;
             this._hpGaugeSprite = new Sprite(new Bitmap(width - 4,height - 2));
             this._hpGaugeSprite.bitmap.gradientFillRect(0, 0, width - 4, height - 2,$gameColor.getColor('hpgauge2'),$gameColor.getColor('hpgauge1'));
-            this._hpGaugeSprite.pivot.x = 0.5;
+            this._hpGaugeSprite.pivot.x = 0;
             this._hpGaugeSprite.x = x + 2;
             this._hpGaugeSprite.y = y + 1;
             this._hpGaugeSprite.scale.x = this._battler.hp / this._battler.mhp;
             this.addChild(this._hpGaugeSprite);
             this._hpSprite = new Sprite();
+            this._hpSprite.scale.x = this._hpSprite.scale.y = 1;
             this.setHpBitmap(this._battler.hp);
-            this._hpSprite.x = 200 / 2;
-            this._hpSprite.y = y / 2;
+            this._hpSprite.x = x - 80;
+            this._hpSprite.y = y - 32;
             this.addChild(this._hpSprite);
         }
     }
 
     setMp(){
+
         const width = Math.floor( this._battler.mmp * 1 );
         const height = 8;
         const x = 80;
@@ -123,7 +103,7 @@ class Sprite_BattlerStatus extends Sprite{
         this._mpGaugeSpriteBack = new Sprite(new Bitmap(width,height));
         this._mpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
         this._mpGaugeSpriteBack.pivot.x = 0;
-        this.addChild(this._mpGaugeSpriteBack);
+        //this.addChild(this._mpGaugeSpriteBack);
         this._mpGaugeSpriteBack.x = x;
         this._mpGaugeSpriteBack.y = y;
         
@@ -133,7 +113,7 @@ class Sprite_BattlerStatus extends Sprite{
         this._mpGaugeSprite.x = x + 2;
         this._mpGaugeSprite.y = y + 1;
         this._mpGaugeSprite.scale.x = this._battler.mp / this._battler.mmp;
-        this.addChild(this._mpGaugeSprite);
+        //this.addChild(this._mpGaugeSprite);
         this._mpSprite = new Sprite();
         this.setMpBitmap(this._battler.mp);
         this._mpSprite.x = 200 / 2;
@@ -448,13 +428,13 @@ class Sprite_BattlerStatus extends Sprite{
         if (hp < this._battler.hp){
             return;
         }
-        const _text = hp + " / " + this._battler.mhp;
+        const _text = hp;
         if (this._battler.isStatusParamUp(0,hp)){
-            this._hpSprite.bitmap = this.createBitmapPlus(_text,21,'center');
+            this._hpSprite.bitmap = this.createBitmapPlus(_text,16,'right');
         } else if (this._battler.isDying(hp)){
-            this._hpSprite.bitmap = this.createBitmapDying(_text,21,'center');
+            this._hpSprite.bitmap = this.createBitmapDying(_text,16,'right');
         } else{
-            this._hpSprite.bitmap = this.createBitmap(_text,21,'center');
+            this._hpSprite.bitmap = this.createBitmap(_text,16,'right');
         }
     }
     setMpBitmap(mp){

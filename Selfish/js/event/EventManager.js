@@ -211,31 +211,6 @@ EventManager.remove = function() {
     this._scene = null;
 }
 
-// プレイヤーの移動
-EventManager.moveActors = function(direction,isMoveBg) {
-    if (isMoveBg === undefined){
-        isMoveBg = true;
-    }
-    //時間係数
-    var speedRate = 4.0 / $gamePlayer.moveSpeed();
-    if (direction == 8){ 
-        if (isMoveBg){
-            BackGroundManager.moveFront(speedRate);
-        }
-    } else
-    if (direction == 4){
-        this._eventView.transLeft(speedRate);
-        if (isMoveBg){
-            BackGroundManager.moveLeft(speedRate);
-        }
-    } else
-    if (direction == 6){
-        this._eventView.transRight(speedRate);
-        if (isMoveBg){
-            BackGroundManager.moveRight(speedRate);
-        }
-    }
-}
 
 // イベントピクチャを取得
 EventManager.getEventPicture = function(labelName) {

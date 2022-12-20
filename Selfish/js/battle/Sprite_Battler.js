@@ -282,13 +282,12 @@ Sprite_Actor.prototype.initMembers = function() {
 };
 
 Sprite_Actor.prototype.createBackSprite = function() {
-    //this._backSprite = new Window_Base(0,-16,216,88);
     this._backSprite = new Sprite(new Bitmap(216 + 24,88));
     this._backSprite.x = 0;
     this._backSprite.y = -8 + 4;
-    this._backSprite.bitmap.context.setTransform(1,0,-0.25,1,0,0);
+    //this._backSprite.bitmap.context.setTransform(1,0,-0.25,1,0,0);
     this._backSprite.bitmap.fillRect(0,-16,216 + 24,96,'black');
-    this._backSprite.bitmap.context.setTransform(1,0,0,1,0,0);
+    //this._backSprite.bitmap.context.setTransform(1,0,0,1,0,0);
     this._backSprite.opacity = 64;
     this.addChild(this._backSprite);
 };
@@ -297,8 +296,6 @@ Sprite_Actor.prototype.createMainSprite = function() {
     this._mainSprite = new Sprite();
     this._mainSprite.anchor.x = 0.5;
     this._mainSprite.anchor.y = 0.5;
-    this._mainSprite.scale.x = 0.5;
-    this._mainSprite.scale.y = 0.5;
     this._mainSprite.y = 0//Window_Base._faceHeight / 2;
     this.addChild(this._mainSprite);
     this._effectTarget = this._mainSprite;
@@ -313,8 +310,8 @@ Sprite_Actor.prototype.createStateSprite = function() {
 Sprite_Actor.prototype.createBattlerStatusSprite = function() {
     this._battlerStatusSprite = new Sprite_BattlerStatus();
     this.addChild(this._battlerStatusSprite);
-    this._battlerStatusSprite.x = -48;
-    this._battlerStatusSprite.y = -8;
+    this._battlerStatusSprite.x = 104;
+    this._battlerStatusSprite.y = 0;
 };
 
 Sprite_Actor.prototype.setBattler = function(battler) {
@@ -332,7 +329,7 @@ Sprite_Actor.prototype.setBattler = function(battler) {
 };
 
 Sprite_Actor.prototype.setActorHome = function(index) {
-    this.setHome(index * 280 + 120, Graphics.boxHeight - 120);
+    this.setHome(760, index * 96);
 };
 
 Sprite_Actor.prototype.setElementRect = function() {
@@ -350,17 +347,17 @@ Sprite_Actor.prototype.startMotion = function() {
 
 Sprite_Actor.prototype.updateBitmap = function() {
     Sprite_Battler.prototype.updateBitmap.call(this);
-    var name = this._actor.faceName();
+    let name = this._actor.faceName();
     if (this._battlerName !== name) {
         this._battlerName = name;
         
         this._mainSprite.bitmap = ImageManager.loadFace(name);
-        this._mainSprite.setFrame(0, 0, Window_Base._faceWidth * 1.5, Window_Base._faceHeight * 2);    
+        this._mainSprite.setFrame(0, 0, Window_Base._faceWidth, Window_Base._faceHeight);    
         this._mainSprite.scale.x = 0.75;
         this._mainSprite.scale.y = 0.75;
         this._mainSprite.anchor.y = 1;
-        this._mainSprite.x = 20;
-        this._mainSprite.y = 168;  
+        this._mainSprite.x = 64;
+        this._mainSprite.y = 80;  
     }
 };
 
@@ -561,7 +558,6 @@ Sprite_Enemy.prototype.initMembers = function() {
     this.createTargetSprite();
     this.createMainSprite();
     this.createStateSprite();
-    this.createBattlerStatusSprite();
 };
 
 Sprite_Enemy.prototype.createMainSprite = function() {
@@ -581,12 +577,10 @@ Sprite_Enemy.prototype.createTargetSprite = function() {
 }
 
 Sprite_Enemy.prototype.createBattlerStatusSprite = function() {
-    this._battlerStatusSprite = new Sprite_BattlerStatus();
-    this.addChild(this._battlerStatusSprite);
-    this._battlerStatusSprite.anchor.x = 0.5;
-    this._battlerStatusSprite.anchor.y = 0.5;
-    this._battlerStatusSprite.x = -160;
-    this._battlerStatusSprite.y = -40;
+};
+
+Sprite_Enemy.prototype.setBattlerStatus = function(battlerStatusSprite) {
+    this._battlerStatusSprite = battlerStatusSprite;
 };
 
 Sprite_Enemy.prototype.createStateSprite = function() {
@@ -598,16 +592,14 @@ Sprite_Enemy.prototype.createStateSprite = function() {
 Sprite_Enemy.prototype.setBattler = function(battler) {
     Sprite_Battler.prototype.setBattler.call(this, battler);
     this._enemy = battler;
-    this.setHome(battler.screenX() - 24, battler.screenY() - 24);
+    this.setHome(battler.screenX(), battler.screenY() + 64);
     this._setPosition = true;
-    this._battlerStatusSprite.setup(battler);
     this._targetSprite.setEnemy(battler);
     let upscale = 1;
     const scale = $dataEnemies[this._enemy.enemyId()].scale;
     if (scale != 1){
         upscale = scale;
     }
-    upscale *= 1.5;
     this._mainSprite.scale.x = upscale;
     this._mainSprite.scale.y = upscale;
     this._stateSprite.setup(battler);
@@ -875,10 +867,18 @@ Sprite_Enemy.prototype.refreshStatus = function() {
     this._battlerStatusSprite.changeMp();
 }
 
-Sprite_Enemy.prototype.resetPosition = function(num) {
+Sprite_Enemy.prototype.resetPosition = function(line) {
     this.x = this._homeX + this._offsetX;
     this.y = this._homeY + this._offsetY;
-    //this.setHome($gameTroop.troop().members[num].x,$gameTroop.troop().members[num].y)
+    if (line != null){
+        this.y += line * -80;
+        this.scale.x = this.scale.y = 1.0 - line * 0.15;
+        if (line > 0 && this._homeX > 480){
+            this.x -= (this._homeX-480) * line * 0.2;
+        } else{
+            this.x += (480-this._homeX) * line * 0.2;
+        }
+    }
 }
 
 Sprite_Enemy.prototype.stopAddict = function() {

@@ -128,7 +128,7 @@ const scriptUrls = [
 	"js/title/Model_Title.js",
 	"js/title/Window_TitleCommandList.js",
 	"js/title/Window_DebugCommand.js",
-	"js/battle/Battle_Scene.js",
+	"js/battle/Battle_View.js",
 	"js/battle/Presenter_Battle.js",
 	"js/battle/Model_Battle.js",
 	"js/battle/Layer_BattleParty.js",

@@ -6,9 +6,37 @@ class Model_Battle extends Model_Base {
         super();
         this.initMembers();
     }
+    
+    troop(){
+        return $gameTroop;
+    }
+
+    backGround1(){
+        if (DataManager.isBattleTest()){
+            return $dataSystem.battleback1Name;
+        }
+        return $gameMap.battleback1Name();
+    }
+
+    backGround2(){
+        if (DataManager.isBattleTest()){
+            return $dataSystem.battleback2Name;
+        }
+        return $gameMap.battleback2Name();
+    }
+
+    enemyData(){
+        return this.troop().members();
+    }
+
+    actorData(){
+        return $gameParty.members();
+    }
 
     initMembers(){
-        this._battleTest = false;
+        if (DataManager.isBattleTest()){
+            $gameTroop.setup([$dataSystem.testTroopId,1,2],$gameVariables.value(1));
+        }
         this._actionForcedBattler = null;
         this._battleMembers = [];
         this._actionBattler = null;
@@ -40,17 +68,6 @@ class Model_Battle extends Model_Base {
             $gameTroop.setup(troopId,$gameVariables.value(1));
         }
         this._calledStartFlag = false;
-        if (this.isLastBattle()){
-            let actor = $gameActors.actor(5);
-            actor.learnSkill(252);
-            actor.learnSkill(253);
-            $gameTroop.members()[0]._ap = actor._ap + 4;
-            actor.changeSlotSkill(0,251);
-            actor.changeSlotSkill(1,251);
-            actor.changeSlotSkill(2,251);
-            actor.changeSlotSkill(3,251);
-            actor.changeSlotSkill(4,251);
-        }
     }
 /*
     resume(){
@@ -63,13 +80,6 @@ class Model_Battle extends Model_Base {
         $gameSystem.setBattleCalledMenu(flag);
     }
 
-    isBattleTest(){
-        return this._battleTest;
-    }
-
-    setBattleTest(battleTest){
-        this._battleTest = battleTest;
-    }
 
     actionBattler(){
         return this._actionBattler ? this._actionBattler : null;

@@ -1,21 +1,12 @@
 //-----------------------------------------------------------------------------
-// Battle_Scene
+// Battle_View
 //
 // The scene class of the battle screen.
 
-class Battle_Scene extends Scene_Base{
+class Battle_View extends Scene_Base{
     constructor(){
         super();
-        this._resourcedata = null;
-        this._resourceCount = 0;
         this._presenter = new Presenter_Battle(this);
-        this._category = 0;
-    
-        this.changeStep(SceneBattleStep.NONE);
-    }
-
-    changeStep(step){
-        this._step = step;
     }
 
     create(){
@@ -37,24 +28,30 @@ class Battle_Scene extends Scene_Base{
         return true;
     }
 
-    async start(){
+    start(){
         super.start();
-        Presenter_Loading.open();
-        if (SceneManager._previousClass.name && SceneManager._previousClass.name == "Terminal_Scene"){
-            await this.loading(this.waitResourceLoad.bind(this));
-        }
-        if (SceneManager._previousClass.name && SceneManager._previousClass.name == "Load_Scene"){
-            await this.loading(this.waitResourceLoad.bind(this));
-        }
-        Presenter_Loading.close();
-    
-        this.createLayerBattleTroop();
-        this.createAllWindows();
-        EventManager.resetup();
-        if($gameDefine.mobileMode == true){
-            this.createBattleDockButton();
-        }
         this.setCommand({command:BattleCommand.Start});
+    }
+
+    setBackGround(backGround1,backGround2){
+        BackGroundManager.changeBackGround(backGround1,backGround2);
+        BackGroundManager.resetPosition();
+    }
+
+    setEnemy(enemyList){
+        if (this._layerBattleTroop == null){
+            this._layerBattleTroop = new Layer_BattleTroop(enemyList);
+            this.setEnemyHandlers();
+            this.addChild(this._layerBattleTroop);
+        }
+    }
+
+    setActor(actorList){
+        if (this._layerBattleParty == null){
+            this._layerBattleParty = new Layer_BattleParty(actorList);
+            this.addChild(this._layerBattleParty);
+        }
+
     }
 
     recreateStartObject(){
@@ -325,11 +322,16 @@ class Battle_Scene extends Scene_Base{
     }
 
     updateSkillAddict(){
-        if (!this._enemyWindow.active){
+        /*
+        if (this._enemyWindow && !this._enemyWindow.active){
             this._layerBattleTroop.stopSkillAddict();
             return;
         }
-        this._layerBattleTroop.setSkillAddict(this._skillWindow.actor());
+        if (this._layerBattleTroop){
+            this._layerBattleTroop.setSkillAddict(this._skillWindow.actor());
+
+        }
+        */
     }
 
     refreshStatus(){

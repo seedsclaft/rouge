@@ -21,29 +21,10 @@ BackGroundManager.backSprite1 = function() {
     return this._backGroundView.backSprite1();
 }
 
-BackGroundManager.moveFront = function(rate) {
-    this._backGroundView.moveFront(rate);
-}
-
-BackGroundManager.moveFrontStage = function(rate) {
-    this._backGroundView.moveFrontStage(rate);
-}
-
-BackGroundManager.moveFrontStageRepeat = function(rate,repeatWait) {
-    this._backGroundView.moveFrontStageRepeat(rate,repeatWait);
-}
-
 BackGroundManager.moveStop = function() {
     this._backGroundView.moveStop();
 }
 
-BackGroundManager.moveLeft = function(rate) {
-    this._backGroundView.moveLeft(rate);
-}
-
-BackGroundManager.moveRight = function(rate) {
-    this._backGroundView.moveRight(rate);
-}
 
 BackGroundManager.startTint = function(color,duration) {
     this._backGroundView.startTint(duration,color);
@@ -56,6 +37,7 @@ BackGroundManager.update = function() {
 BackGroundManager.changeBackGround = function(name1,name2) {
     this._backGroundView.changeBackGround1(name1);
     this._backGroundView.changeBackGround2(name2);
+    console.log(name1)
 
 }
 
@@ -77,14 +59,6 @@ BackGroundManager.regionId = function() {
     }
 };
 
-BackGroundManager.changeBackGroundByTile = function() {
-    let changeBgName = "";
-    if (this.regionId() == 0){
-        changeBgName = $dataMap.battleback1Name;
-    } else if ($gameMap.regionList() && $gameMap.regionList().length > 0){
-        changeBgName = $gameMap.regionList()[this.regionId()-1];
-    }
-}
 
 //
 BackGroundManager.setStageMode = function() {

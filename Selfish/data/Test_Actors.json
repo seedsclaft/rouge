@@ -1,8 +1,0 @@
-[
-null,
-{"id":1,"battlerName":"","characterIndex":0,"characterName":"","classId":1,"equips":[37,27,0],"faceIndex":0,"faceName":"Actor0001","traits":[],"initialLevel":1,"maxLevel":30,"name":"ヘカテー","nickname":"","note":"{\n\"x\":\"0\",\n\"y\":\"648\",\n\"elementId\":\"1\"\n}","profile":""},
-{"id":2,"battlerName":"","characterIndex":0,"characterName":"","classId":2,"equips":[37,27,0],"faceIndex":0,"faceName":"Actor0002","traits":[],"initialLevel":1,"maxLevel":30,"name":"アリス","nickname":"","note":"{\n\"x\":\"0\",\n\"y\":\"648\",\n\"elementId\":\"2\"\n}","profile":""},
-{"id":3,"battlerName":"","characterIndex":0,"characterName":"","classId":3,"equips":[37,27,0],"faceIndex":0,"faceName":"Actor0003","traits":[],"initialLevel":1,"maxLevel":30,"name":"クレア","nickname":"","note":"{\n\"x\":\"0\",\n\"y\":\"648\",\n\"elementId\":\"3\"\n}","profile":""},
-{"id":4,"battlerName":"","characterIndex":0,"characterName":"","classId":4,"equips":[0,0,0,0,0],"faceIndex":0,"faceName":"Actor0004","traits":[],"initialLevel":1,"maxLevel":99,"name":"シスターちゃん","nickname":"","note":"{\n\"x\":\"0\",\n\"y\":\"648\",\n\"elementId\":\"4\"\n}","profile":""},
-{"id":5,"battlerName":"","characterIndex":0,"characterName":"","classId":5,"equips":[0,0,0,0,0],"faceIndex":0,"faceName":"Actor0005","traits":[],"initialLevel":1,"maxLevel":99,"name":"ニュクス","nickname":"","note":"{\n\"x\":\"0\",\n\"y\":\"648\",\n\"elementId\":\"5\"\n}","profile":""}
-]

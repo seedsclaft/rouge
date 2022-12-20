@@ -282,7 +282,7 @@ Scene_Boot.prototype.start = async function() {
     SoundManager.preloadImportantSounds();
     if (DataManager.isBattleTest()) {
         DataManager.setupBattleTest();
-        SceneManager.goto(Battle_Scene);
+        SceneManager.goto(Battle_View);
     } else if (DataManager.isEventTest()) {
         DataManager.setupEventTest();
         SceneManager.goto(Map_Scene);

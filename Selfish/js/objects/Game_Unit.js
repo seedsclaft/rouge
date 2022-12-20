@@ -777,46 +777,53 @@ Game_Troop.prototype.troopId = function() {
     return this._troopId;
 };
 
-Game_Troop.prototype.setup = function(troopId,enemyLevel) {
+Game_Troop.prototype.setup = function(troopIdList,enemyLevel) {
     this.clear();
-    this._troopId = troopId;
+    this._troopId = troopIdList[0];
     this._enemies = [];
-    this.troop().members.forEach(function(member) {
-        if ($dataEnemies[member.enemyId]) {
-            var enemyId = member.enemyId;
-            var x = member.x;
-            var y = member.y;
-            var enemy = new Game_Enemy(enemyId, x, y,enemyLevel);
-            if (member.hidden) {
-                enemy.hide();
+    troopIdList.forEach((troopId,index) => {
+        $dataTroops[troopId].members.forEach(member => {
+            if ($dataEnemies[member.enemyId]) {
+                let enemyId = member.enemyId;
+                let x = member.x;
+                let y = member.y;
+                let enemy = new Game_Enemy(enemyId, x, y,enemyLevel,index);
+                if (member.hidden) {
+                    enemy.hide();
+                }
+                this._enemies.push(enemy);
             }
-            this._enemies.push(enemy);
-        }
+        }, this);
     }, this);
     this.makeUniqueNames();
 };
 
 Game_Troop.prototype.makeUniqueNames = function() {
-    var table = this.letterTable();
-    this.members().forEach(function(enemy) {
+    const table = this.letterTable();
+    for (const enemy of this.members()) {
         if (enemy.isAlive() && enemy.isLetterEmpty()) {
-            var name = enemy.originalName();
-            var n = this._namesCount[name] || 0;
+            const name = enemy.originalName();
+            const n = this._namesCount[name] || 0;
             enemy.setLetter(table[n % table.length]);
             this._namesCount[name] = n + 1;
         }
-    }, this);
-    this.members().forEach(function(enemy) {
-        var name = enemy.originalName();
+    }
+    this.updatePluralFlags();
+};
+
+Game_Troop.prototype.updatePluralFlags = function() {
+    for (const enemy of this.members()) {
+        const name = enemy.originalName();
         if (this._namesCount[name] >= 2) {
             enemy.setPlural(true);
         }
-    }, this);
+    }
 };
 
 Game_Troop.prototype.letterTable = function() {
-    return $gameSystem.isCJK() ? Game_Troop.LETTER_TABLE_FULL :
-            Game_Troop.LETTER_TABLE_HALF;
+    return $gameSystem.isCJK()
+        ? Game_Troop.LETTER_TABLE_FULL
+        : Game_Troop.LETTER_TABLE_HALF;
 };
 
 Game_Troop.prototype.troopName = function() {

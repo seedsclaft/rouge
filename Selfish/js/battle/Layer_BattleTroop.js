@@ -2,24 +2,36 @@ class Layer_BattleTroop extends Sprite{
     constructor(enemies){
         super();
         this._enemySprites = null;
+        this._gaugeSprites = [];
         this._moveTarget = null;
         this._checkAnimation = [];
         this.createEnemies(enemies);
     }
 
     createEnemies(enemies){
-        if (!enemies){
-            return;
-        }
         let sprites = [];
         for (let i = 0; i < enemies.length; i++) {
             sprites[i] = new Sprite_Enemy(enemies[i]);
+            sprites[i].resetPosition(enemies[i]._line);
         }
         sprites.sort(this.compareEnemySprite.bind(this));
         for (let j = 0; j < sprites.length; j++) {
             this.addChild(sprites[j]);
         }
         this._enemySprites = sprites;
+
+        for (let j = 0; j < sprites.length; j++) {
+            let _battlerStatus = new Sprite_BattlerStatus();
+            this.addChild(_battlerStatus);
+            
+            _battlerStatus.setup(sprites[j]._battler);
+            _battlerStatus.x = sprites[j].x;
+            _battlerStatus.y = sprites[j].y;
+            _battlerStatus.anchor.x = 0.5;
+            _battlerStatus.anchor.y = 1;
+            sprites[j].setBattlerStatus(_battlerStatus);
+            this._gaugeSprites.push(_battlerStatus);
+        }
     }
 
     compareEnemySprite (a, b) {

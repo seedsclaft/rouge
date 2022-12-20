@@ -1366,7 +1366,7 @@ Game_Interpreter.prototype.command301 = function() {
         troopId = $gamePlayer.makeEncounterTroopId();
     }
     if ($dataTroops[troopId]) {
-        SceneManager.push(Battle_Scene);
+        SceneManager.push(Battle_View);
     }
     return true;
 };

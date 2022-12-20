@@ -54,14 +54,4 @@ class Model_Base {
         return $gameSwitches.value(6) == true;
     }
     
-    stageBgsData(){
-        let bgs = this.stageData().bgs;
-        const bgsOptions = this.stageData().bgsOptions;
-        bgsOptions.forEach(bgsOpt => {
-            if (bgsOpt.seeking < $gameParty.stageProgress()*100){
-                bgs = bgsOpt.bgs;
-            }
-        });
-        return ({name:bgs,volume: 30,pitch : 100,pan : 0});
-    }
 }

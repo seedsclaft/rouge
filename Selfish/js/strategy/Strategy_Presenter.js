@@ -136,7 +136,7 @@ class Strategy_Presenter extends Presenter_Base{
 
     commandBattleStart(){
         this._model.battleStart();
-        SceneManager.push(Battle_Scene);
+        SceneManager.push(Battle_View);
     }
 
     commandRefresh(){

@@ -33,9 +33,9 @@ class Presenter_Base {
         // 見えるかの判定
         const isVisible = $gameScreen.screenVisible();
         switch (resumeScene){
-            case 'Battle_Scene':
+            case 'Battle_View':
 
-                SceneManager.push(Battle_Scene);
+                SceneManager.push(Battle_View);
                 break;
             case 'endEvent':
                 $gamePlayer.clearTransferInfo();

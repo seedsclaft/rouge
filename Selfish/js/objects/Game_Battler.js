@@ -831,6 +831,10 @@ Game_Battler.prototype.battleOrder = function() {
     return this._battleOrder;
 };
 
+Game_Battler.prototype.resetApParam = function() {
+    this._ap = 400 - this.agi * 4;
+};
+
 Game_Battler.prototype.stratDashApParam = function() {
 
 }
@@ -2537,9 +2541,9 @@ function Game_Enemy() {
 Game_Enemy.prototype = Object.create(Game_Battler.prototype);
 Game_Enemy.prototype.constructor = Game_Enemy;
 
-Game_Enemy.prototype.initialize = function(enemyId, x, y,enemyLevel) {
+Game_Enemy.prototype.initialize = function(enemyId, x, y,enemyLevel,line) {
     Game_Battler.prototype.initialize.call(this);
-    this.setup(enemyId, x, y,enemyLevel);
+    this.setup(enemyId, x, y,enemyLevel,line);
 };
 
 Game_Enemy.prototype.initMembers = function() {
@@ -2551,12 +2555,10 @@ Game_Enemy.prototype.initMembers = function() {
     this._screenY = 0;
     this._actionList = [];
     this._summonedIndex = 0;
+    this._line = 0;
 };
 
-Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel) {
-    if (enemylevel === undefined){
-        enemylevel = 1;
-    }
+Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel,line) {
     this._enemyId = enemyId;
     this._screenX = x;
     this._screenY = y;
@@ -2564,6 +2566,7 @@ Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel) {
     const data = $dataEnemies[enemyId];
     this._level = enemylevel;
     this._madness = false;
+    this._line = line;
 
     this.clearParamPlus();
     if (this._enemyId < 100){

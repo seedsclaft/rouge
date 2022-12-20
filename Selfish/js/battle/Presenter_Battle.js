@@ -4,29 +4,10 @@ class Presenter_Battle extends Presenter_Base{
         this._view = view;
         this._model = new Model_Battle();
     
-        this._step = BattleStep.NONE;
-    
-        this._actionType = 0;
-        this._updateFrameCount = null;
-        this._checker = [];
-    
         this.setEvent();
         this.setGuradEvent();
         this.setAnimationSkipEvent();
         this.setKeyMapEvent();
-    
-        //$gameSystem.setResume("Battle_Scene");
-        if (DataManager.isBattleTest()){
-            this._model.setup($dataSystem.testTroopId);
-            this._model.setBattleTest(true);
-        } else{
-            const troop = this._model.getStageTroopData();
-            if (troop) {
-                this._model.setup(null, troop);
-            }
-        }
-        this._view.setResourceData(this._model.loadResourceData());
-        this._model.onBattleStart();    
     }
 
     setEvent(){
@@ -69,29 +50,15 @@ class Presenter_Battle extends Presenter_Base{
     update(){
         this.updateWaitNextTurn();
         this.updateBattleEnd();
-        this.updateEventBattle();
-    }
-
-    updateEventBattle(){
-        if (EventManager.busy()){
-            return;
-        }
-        if (Popup_Help.busy()){
-            return;
-        }
     }
 
     updateCommand(){
         super.updateCommand();
-        if (EventManager.busy() && this._view._command.command != BattleCommand.Start){
-            this._view.clearCommand();
-            return;
-        }
-        if (Popup_Help.busy()){
-            this._view.clearCommand();
-            return;
-        }
-        switch (this._view._command.command){
+        const _currentCommand = this._view._command.pop();
+        switch (_currentCommand.command){
+            case BattleCommand.Start:
+            return this.commandStart();
+            /*
             case BattleCommand.MENU:
             return this.commandMenu();
             case BattleCommand.FIGHT:
@@ -108,8 +75,6 @@ class Presenter_Battle extends Presenter_Base{
             return this.commandLimitBreak();
             case BattleCommand.SKILLCHANGEOK:
             return this.commandSkillChangeOk();
-            case BattleCommand.Start:
-            return this.commandStart();
             case BattleCommand.Ready:
             return this.commandReady();
             case BattleCommand.ANALYZE:
@@ -118,6 +83,7 @@ class Presenter_Battle extends Presenter_Base{
             return this.commandPreReady();
             case BattleCommand.OtherSkill:
             return this.commandOtherSkill();
+            */
         }
         this._view.clearCommand();
     }
@@ -137,10 +103,6 @@ class Presenter_Battle extends Presenter_Base{
         if (this._step != BattleStep.APGAIN){
             return;
         }
-        // ラストバトルでガードさせない用
-        if (this._model.isLastBattle()){
-            isGuarding = false;
-        }
         if (isGuarding) {
             if (!this._isPressed) {
                 SoundManager.playGuard();
@@ -154,14 +116,13 @@ class Presenter_Battle extends Presenter_Base{
     }
 
     commandStart(){
-        if (DataManager.isBattleTest()){
-            BackGroundManager.changeBackGround($dataSystem.battleback1Name,$dataSystem.battleback2Name);
-        }
-        this._model.startBattle();
-        AudioManager.playBgm($gameSystem.battleBgm(),null,0.7);
-        const stageBgsData = this._model.stageBgsData();
-        AudioManager.playBgs(stageBgsData,null,0.7);
-        this._view.displayStartMessages($gameTroop.enemiesNames(),false);
+        //this._model.startBattle();
+        //AudioManager.playBgm($gameSystem.battleBgm(),null,0.7);
+        
+        this._view.setBackGround(this._model.backGround1(),this._model.backGround2());
+        this._view.setEnemy(this._model.enemyData());
+        this._view.setActor(this._model.actorData());
+        //this._view.displayStartMessages($gameTroop.enemiesNames(),false);
     }
 
     commandPreReady(){
@@ -176,14 +137,7 @@ class Presenter_Battle extends Presenter_Base{
         this._view.setDragHandler((sprite) => {this.commandFeature(sprite)});
         this._view.passiveSkillsStatePopup(this._model.actionBattlers());
         this.refreshStatus();
-        if (!this._model.isLastBattle()){
-            this._view.displayPartyCommand();
-        } else{
-            this._view._keyMapWindow.hide();
-            this._view.hideMenuPlateFast();
-            await this.setWait(1000);
-            this._view.commandFight();
-        }
+        this._view.displayPartyCommand();
         TipsManager.setTips();
         if ($gameTemp._needDisPlayEffectChange){
             BackGroundManager.setWeather($gameScreen.backGroundWeather());
@@ -393,7 +347,7 @@ class Presenter_Battle extends Presenter_Base{
             if (stageevent && stageevent._type == "mapBattle"){            
                 this._view.processChallengeDefeat(() => { 
                     this._model.processChallengeDefeat();
-                    SceneManager.push(RushBattle_Scene);
+                    SceneManager.push(RushBattle_View);
                 });
             } else{
                 this._view.processDefeat(this.loadAutoSave.bind(this));
@@ -486,11 +440,6 @@ class Presenter_Battle extends Presenter_Base{
     }
 
     async victoryAction(){
-        // 勝利ボイス
-        if (this._model.isLastBattle() == false){
-            const voiceData = this._model.victoryVoice();
-            SoundManager.playBattleVoice(voiceData.actorId,voiceData.type);
-        }
 
         // ラッシュバトルでレコードを更新
         const isNewRecordData = this._model.createResultDataRushBattle();
@@ -878,11 +827,7 @@ class Presenter_Battle extends Presenter_Base{
             await this.setWait(1500);
             PopupLevelUpManager.setPopup(() => {
                 if (this._model.performCollapseEnd()){
-                    if (this._model.isLastBattle()){
-                        EventManager.endLastBattle();
-                    } else{
-                        EventManager.endStage();
-                    }
+                    EventManager.endStage();
                 } else{
                     this.changeStep(BattleStep.BATTLEEND);
                 }
@@ -891,11 +836,7 @@ class Presenter_Battle extends Presenter_Base{
             this._view.clearLog();
         } else{
             if (this._model.performCollapseEnd()){
-                if (this._model.isLastBattle()){
-                    EventManager.endLastBattle();
-                } else{
-                    EventManager.endStage();
-                }
+                EventManager.endStage();
             } else{
                 this.changeStep(BattleStep.BATTLEEND);
             }
