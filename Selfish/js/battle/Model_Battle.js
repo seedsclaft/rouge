@@ -33,6 +33,15 @@ class Model_Battle extends Model_Base {
         return $gameParty.members();
     }
 
+    battleSkill(battler){
+        let skills = battler.skills().filter(a => a.occasion == 1);
+        let data = [];
+        skills.forEach(skill => {
+            data.push({skill:skill,enable:battler.canUse(skill),cost:battler.skillMpCost(skill) });
+        });
+        return data;
+    }
+
     initMembers(){
         if (DataManager.isBattleTest()){
             $gameTroop.setup([$dataSystem.testTroopId,1,2],$gameVariables.value(1));
@@ -55,6 +64,14 @@ class Model_Battle extends Model_Base {
         this._tempDyingData = [false,false,false];
 
         this._summonedIndex = 1000;
+    }
+
+    initBattle(){
+        $gameSystem.onBattleStart();
+        $gameParty.onBattleStart();
+        $gameTroop.onBattleStart();
+        this.createActionBattlers();
+        this.sortActionBattlers();
     }
 
     setup(troopId, troop){
@@ -85,9 +102,9 @@ class Model_Battle extends Model_Base {
         return this._actionBattler ? this._actionBattler : null;
     }
 
-    updateApGain(isPressed){
+    updateApGain(){
         this._battleMembers.forEach(battler => {
-            battler.gainDefineAp(isPressed);
+            battler.gainDefineAp();
         });
         let actionBattler = _.find(this._battleMembers,(battler) => battler._ap <= 0);
         if (actionBattler != null){
@@ -95,6 +112,16 @@ class Model_Battle extends Model_Base {
         }
         this.sortActionBattlers();
         this.refreshOrder();
+        return this._actionBattler;
+    }
+
+    selectSkill(skillId){
+        this.makeActions();
+        let action = this._actionBattler.action(0);
+        console.log(skillId)
+        action.setSkill(skillId);
+        this._actionBattler.setLastBattleSkillId(skillId);
+        return action;
     }
 
     refreshOrder(){
@@ -140,39 +167,6 @@ class Model_Battle extends Model_Base {
     actionBattlers(){
         return this._battleMembers;
     }
-    onBattleStart(){
-        $gameParty.onBattleStart();
-        $gameTroop.onBattleStart();
-    }
-    startBattle(){
-        $gameSystem.onBattleStart();
-
-        this.createActionBattlers();
-        this.sortActionBattlers();
-    }
-    restartBattle(){
-        this._battleMembers = [];
-        this._actionBattler = null;
-        this._actingBattlers = [];
-        $gameSystem.onBattleStart();
-
-        $gameTroop.aliveMembers().forEach(enemy => {
-            this._battleMembers.push(enemy);
-            enemy.refreshPassive();
-            //初期MP
-            //enemy.setMp(enemy.initMp());
-            enemy.stratDashApParam();
-        });
-        $gameParty.aliveMembers().forEach(actor => {
-            this._battleMembers.push(actor);
-            actor.refreshPassive();
-            actor.resetApParam();
-            actor.stratDashApParam();
-            //初期MP
-            //actor.setMp(actor.initMp());
-        });
-        this.sortActionBattlers();
-    }
     setActionBattler(battler){
         this._actionBattler = battler;
     }
@@ -183,22 +177,14 @@ class Model_Battle extends Model_Base {
         $gameTroop.aliveMembers().forEach(enemy => {
             this._battleMembers.push(enemy);
             enemy.refreshPassive();
-            //初期MP
-            enemy.setMp(enemy.initMp());
             enemy.stratDashApParam();
 
-            // アドベンチャーモード
-            if ($dataOption.getUserData("battleSkipMode") === BattleSkipMode.Skip){
-                enemy.setHp(Math.max(1, Math.floor( enemy.mhp / 100 )));
-            }
         });
         $gameParty.aliveMembers().forEach(actor => {
             this._battleMembers.push(actor);
             actor.refreshPassive();
             actor.resetApParam();
             actor.stratDashApParam();
-            //初期MP
-            actor.setMp(actor.initMp());
         });
     }
     sortActionBattlers(){

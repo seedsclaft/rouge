@@ -678,11 +678,6 @@ Game_BattlerBase.prototype.skillTpCost = function(skill) {
 };
 
 Game_BattlerBase.prototype.canPaySkillCost = function(skill) {
-    if (skill.damage.elementId == 3){
-        if (this.weapons().find(a => a && a.wtypeId == 4) == false){
-            return false;
-        }
-    }
     return this._tp >= this.skillTpCost(skill) && this._mp >= this.skillMpCost(skill);
 };
 
@@ -1385,6 +1380,23 @@ Game_Battler.prototype.performCollapse = function() {
 };
 
 
+Game_Battler.prototype.gainDefineAp = function() {
+    //凍結
+    if (this.isStateAffected($gameStateInfo.getStateId(StateType.FROZEN))){
+        return;
+    }
+    //待ち伏せ
+    if (this.isStateAffected($gameStateInfo.getStateId(StateType.VANTAGE))){
+        return;
+    }
+    //鈍足
+    if (this.isStateAffected($gameStateInfo.getStateId(StateType.SLOW))){
+        this._ap -= 1.5;
+        return;
+    }
+    this._ap -= 3;
+}
+
 Game_Battler.prototype.realTgr = function() {   
     let value = this.tgr;
     const provocation = this.getStateEffect($gameStateInfo.getStateId(StateType.PROVOCATION));
@@ -1678,6 +1690,7 @@ Game_Actor.prototype.setup = function(actorId) {
     this.refreshPassive();
 
 
+    this.resetApParam();
 
     this._statePlus = {
     }
@@ -2596,6 +2609,7 @@ Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel,line) {
             this._actionList.push(action);
         }
     });
+    this.resetApParam();
 };
 
 Game_Enemy.prototype.applyVariance = function(value, variance) {

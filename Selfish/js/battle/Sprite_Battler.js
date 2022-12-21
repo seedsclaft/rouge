@@ -282,13 +282,17 @@ Sprite_Actor.prototype.initMembers = function() {
 };
 
 Sprite_Actor.prototype.createBackSprite = function() {
+    this._backSprite = new Window_Base(new Rectangle( 0,0,240,80));
+    /*
     this._backSprite = new Sprite(new Bitmap(216 + 24,88));
     this._backSprite.x = 0;
-    this._backSprite.y = -8 + 4;
+    this._backSprite.y = 0;
+    this._backSprite.bitmap = ImageManager.loadSystem("roundbutton5");
+    */
     //this._backSprite.bitmap.context.setTransform(1,0,-0.25,1,0,0);
-    this._backSprite.bitmap.fillRect(0,-16,216 + 24,96,'black');
+    //this._backSprite.bitmap.fillRect(0,-16,216 + 24,96,'black');
     //this._backSprite.bitmap.context.setTransform(1,0,0,1,0,0);
-    this._backSprite.opacity = 64;
+    //this._backSprite.opacity = 64;
     this.addChild(this._backSprite);
 };
 
@@ -310,7 +314,7 @@ Sprite_Actor.prototype.createStateSprite = function() {
 Sprite_Actor.prototype.createBattlerStatusSprite = function() {
     this._battlerStatusSprite = new Sprite_BattlerStatus();
     this.addChild(this._battlerStatusSprite);
-    this._battlerStatusSprite.x = 104;
+    this._battlerStatusSprite.x = 88;
     this._battlerStatusSprite.y = 0;
 };
 
@@ -329,7 +333,7 @@ Sprite_Actor.prototype.setBattler = function(battler) {
 };
 
 Sprite_Actor.prototype.setActorHome = function(index) {
-    this.setHome(760, index * 96);
+    this.setHome(784, index * 92 + 40);
 };
 
 Sprite_Actor.prototype.setElementRect = function() {
@@ -352,12 +356,12 @@ Sprite_Actor.prototype.updateBitmap = function() {
         this._battlerName = name;
         
         this._mainSprite.bitmap = ImageManager.loadFace(name);
-        this._mainSprite.setFrame(0, 0, Window_Base._faceWidth, Window_Base._faceHeight);    
-        this._mainSprite.scale.x = 0.75;
-        this._mainSprite.scale.y = 0.75;
+        this._mainSprite.setFrame(0, 0, Window_Base._faceWidth + 24, Window_Base._faceHeight + 24);    
+        this._mainSprite.scale.x = 0.5;
+        this._mainSprite.scale.y = 0.5;
         this._mainSprite.anchor.y = 1;
-        this._mainSprite.x = 64;
-        this._mainSprite.y = 80;  
+        this._mainSprite.x = 52;
+        this._mainSprite.y = 74;  
     }
 };
 

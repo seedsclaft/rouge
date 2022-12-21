@@ -10,7 +10,7 @@ class Layer_BattleParty extends Sprite {
     createActors(members){
         members.forEach(actor => {
             let sprite = new Sprite_Actor();
-            sprite.setBattler(actor,true);
+            sprite.setBattler(actor);
             this.addChild(sprite);
             this._actorSprites.push(sprite);
         });

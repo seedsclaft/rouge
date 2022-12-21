@@ -16,20 +16,25 @@ Spriteset_BattleGrid.prototype.initialize = function() {
 
     this._battlerLayer = new Sprite();
     this.addChild(this._battlerLayer);
+
+    this._orderSprites = [];
+    /*
     $gameParty.battleMembers().forEach(actor => {
         var order = new Sprite_BattleOrder();
         order.initialize();
         order.setBattler(actor);
-        order.x = Graphics.boxWidth - 168;
+        order.x = 0;
         this._battlerLayer.addChild(order);
     });
     $gameTroop.members().forEach(enemy => {
         var order = new Sprite_BattleOrder();
         order.initialize();
         order.setBattler(enemy);
-        order.x = Graphics.boxWidth - 88;
+        order.x = 0;
         this._battlerLayer.addChild(order);
     });
+    */
+   /*
     var sprite = new Sprite()
     this._nextOrder = new Sprite_BattleOrder();
     this._nextOrder.initialize();
@@ -41,17 +46,27 @@ Spriteset_BattleGrid.prototype.initialize = function() {
     this.addChild(sprite);
     sprite.addChild(this._nextOrder);
 
+    */
     this.refresh();
 };
 
+Spriteset_BattleGrid.prototype.addMember = function(member) {
+    let order = new Sprite_BattleOrder();
+    order.initialize();
+    order.setBattler(member);
+    if (member.isActor()){
+        order.x = 4;
+    } else{
+        order.x = 96;
+    }
+    this.addChild(order);
+    this._orderSprites.push(order);
+}
+
 Spriteset_BattleGrid.prototype.ready = function() {
-    gsap.to(this, 0.5, {pixi:{},onComplete: function(){
-        this._phase = "ap";
-    }.bind(this)});
 }
 
 Spriteset_BattleGrid.prototype.setPhase = function(phase) {
-    this._phase = phase;
 }
 
 Spriteset_BattleGrid.prototype.refresh = function() {
@@ -67,7 +82,7 @@ Spriteset_BattleGrid.prototype.refresh = function() {
 }
 
 Spriteset_BattleGrid.prototype.refreshPosition = function() {
-    this._battlerLayer.children.forEach(sprite => {
+    this._orderSprites.forEach(sprite => {
         sprite.refreshPosition();
     });
 }
@@ -98,6 +113,7 @@ Spriteset_BattleGrid.prototype.update = function() {
 }
 
 Spriteset_BattleGrid.prototype.showNextOrder = function(battler,nextap) {
+    return
     if (battler && battler.isActor()){
         this._nextOrder.opacity = 255;
         this._nextOrder.changeBattler(battler);
@@ -143,7 +159,7 @@ function Sprite_BattleOrder() {
 }
 Sprite_BattleOrder.prototype = Object.create(Sprite.prototype);
 Sprite_BattleOrder.prototype.constructor = Sprite_BattleOrder;
-Sprite_BattleOrder._basePositionY = 320;
+Sprite_BattleOrder._basePositionY = 304;
 
 Sprite_BattleOrder.prototype.initialize = function() {
     this._baseSize = 144;
@@ -151,15 +167,15 @@ Sprite_BattleOrder.prototype.initialize = function() {
     this._destroySprites = [];
     this._faceSprite = null;
     this._battler = null;
-    this._faceLayer = new Sprite();
     this._gridLayer = new Sprite();
     this.addChild(this._gridLayer);
+    this._faceLayer = new Sprite();
     this.addChild(this._faceLayer);
 
     this._animation = null;
-    this.alpha = 0;
+    this.alpha = 1;
     this._selected = false;
-    this._state = 'init';
+    //this._state = 'init';
 };
 
 Sprite_BattleOrder.prototype.battler = function() {
@@ -169,12 +185,12 @@ Sprite_BattleOrder.prototype.battler = function() {
 Sprite_BattleOrder.prototype.setBattler = function(battler) {
     this._battler = battler;
     this.setBack();
-    this.setFace();
     this.setSquare();
+    this.setFace();
     if (!battler.isActor()){
         this.setEnemyNumber();
     }
-    //this.setMask();
+    this.setMask(battler.isActor());
 };
 
 Sprite_BattleOrder.prototype.setBack = function() {
@@ -183,32 +199,27 @@ Sprite_BattleOrder.prototype.setBack = function() {
 
     this._backSprite.drawRect(0, 0, 80, 64);
     this._backSprite.alpha = 0;
-    this._faceLayer.addChild(this._backSprite);
+    //this._faceLayer.addChild(this._backSprite);
 };
 
 Sprite_BattleOrder.prototype.setFace = function() {
     this._faceSprite = new Sprite();
-    this._faceSprite.scale.x = 0.5;
-    this._faceSprite.scale.y = 0.5;
-    this._faceSprite.x += 8;
+    this._faceSprite.scale.x = this._faceSprite.scale.y = 0.5;
+    this._faceSprite.x = 6;
     if (this._battler.isActor()){
-        this._faceSprite.bitmap = ImageManager.loadFace(this._battler.characterName());
-        this._faceSprite.setFrame(0, 0, this._baseSize - 16, this._baseSize - 20);
+        this._faceSprite.bitmap = ImageManager.loadFace(this._battler.faceName());
+        this._faceSprite.setFrame(0, 0, this._baseSize, this._baseSize + 24);
     } else{        
         this._faceSprite.bitmap = ImageManager.loadEnemy(this._battler.battlerName());
-        
-        this._faceSprite.x += 2;
-        this._faceSprite.scale.x = 0.75;
-        this._faceSprite.scale.y = 0.75;
         const enemyData = $dataEnemies[this._battler.enemyId()];
         if (enemyData){
             const hue = enemyData.battlerHue;
             if (hue){
                 this._faceSprite.setHue(hue);
             }
-            this._faceSprite.setFrame(0, 0, this._baseSize -64, this._baseSize - 60);
+            this._faceSprite.setFrame(enemyData.faceX, enemyData.faceY, this._baseSize + 24, this._baseSize + 24);
         } else{
-            this._faceSprite.setFrame(0, 0, this._baseSize -64, this._baseSize - 60);    
+            this._faceSprite.setFrame(0, 0, this._baseSize + 24, this._baseSize + 24);    
         }
     }
     this._faceLayer.addChild(this._faceSprite);
@@ -216,14 +227,10 @@ Sprite_BattleOrder.prototype.setFace = function() {
 
 Sprite_BattleOrder.prototype.setSquare = function() {
     this._squareSprite = new Sprite();
-    if (this._battler.isActor()){
-        this._squareSprite.bitmap = ImageManager.loadSystem('gridSquare');
-        this._squareSprite.x += 8;
-        this._squareSprite.y -= 1;
-    } else{
-        this._squareSprite.bitmap = ImageManager.loadSystem('gridSquare2');
-    }
-    this.addChild(this._squareSprite);
+    this._squareSprite.bitmap = ImageManager.loadSystem('mainwindowE2');
+    this._squareSprite.x = 0;
+    this._squareSprite.scale.x = this._squareSprite.scale.y = 0.4;
+    this._gridLayer.addChild(this._squareSprite);
 };
 
 Sprite_BattleOrder.prototype.setEnemyNumber = function() {
@@ -245,7 +252,7 @@ Sprite_BattleOrder.prototype.setEnemyNumber = function() {
 Sprite_BattleOrder.prototype.setNextText = function() {
     var sprite = new Sprite();
     var bitmap = new Bitmap(64,64);
-    sprite.scale.x = sprite.scale.y = 0.75
+    sprite.scale.x = sprite.scale.y = 0.75;
     bitmap.drawText("Next",0,0,64,64,'right',true);
     sprite.bitmap = bitmap;
     sprite.x = 22;
@@ -264,16 +271,25 @@ Sprite_BattleOrder.prototype.changeFace = function(fileName) {
     this._faceSprite.setFrame(0, 0, this._baseSize-16, this._baseSize - 20);
 };
 
-/*
-Sprite_BattleOrder.prototype.setMask = function() {
+Sprite_BattleOrder.prototype.setMask = function(isActor) {
     this._maskGraphic = new PIXI.Graphics();
-    this._maskGraphic.beginFill(0x000000);
-    this._maskGraphic.drawRect(8, 0, 80, 80);
-    this._maskGraphic.endFill();
+    this._maskGraphic.beginFill(0xffffff);
+    if (isActor){
+        this._maskGraphic.drawRect(0, 0, 80, 80);
+        this._maskGraphic.endFill();
+        this._maskGraphic.angle = 45;
+        this._maskGraphic.x = 46;
+        this._maskGraphic.y = -28;
+    } else{
+        this._maskGraphic.drawRect(0, 0, 58, 58);
+        this._maskGraphic.endFill();
+        this._maskGraphic.angle = 45;
+        this._maskGraphic.x = 46;
+        this._maskGraphic.y = 5.5;
+    }
     this._faceLayer.addChild(this._maskGraphic);
     this._faceLayer.mask = this._maskGraphic;
 }
-*/
 
 Sprite_BattleOrder.prototype.ap = function() {
     return this._ap;

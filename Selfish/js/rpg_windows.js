@@ -298,7 +298,7 @@ Window_Base.prototype.pendingColor = function() {
 Window_Base.prototype.drawItemName = function(item, x, y, width,isSelect) {
     if (item) {
         const iconBoxWidth = Window_Base._iconWidth;
-        //this.drawSkillIcon(item.iconIndex,x, y + 3);
+        this.drawSkillIcon(item.iconIndex,x, y + 3);
         const isNew = _.find($gameParty._newSkillIdList,(s) => s == item.id);
         if (isNew){
             this.contents.fontSize = 12;

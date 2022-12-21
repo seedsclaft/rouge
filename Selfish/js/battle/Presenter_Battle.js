@@ -58,6 +58,14 @@ class Presenter_Battle extends Presenter_Base{
         switch (_currentCommand.command){
             case BattleCommand.Start:
             return this.commandStart();
+            case BattleCommand.Fight:
+            return this.commandFight();
+            case BattleCommand.Active:
+            return this.commandActive();
+            case BattleCommand.CheckActive:
+            return this.commandCheckActive();
+            case BattleCommand.SelectSkill:
+            return this.commandSelectSkill();
             /*
             case BattleCommand.MENU:
             return this.commandMenu();
@@ -89,40 +97,49 @@ class Presenter_Battle extends Presenter_Base{
     }
 
     updateGuardState(isGuarding){
-        if (this._step == BattleStep.ACTION){
-            if (this._actionType == ActionType.DAMAGE){
-                if (!this._isPressed){
-                    if (isGuarding){
-                        SoundManager.playGuard();
-                        this._model.addGuardState();
-                        this._isPressed = isGuarding;
-                    }
-                }
-            }
-        }
-        if (this._step != BattleStep.APGAIN){
-            return;
-        }
-        if (isGuarding) {
-            if (!this._isPressed) {
-                SoundManager.playGuard();
-                this._model.addGuardState();
-            }
-        } else {
-            this._model.eraseGuardState();
-        }
-        this.updateApGain();
-        this._isPressed = isGuarding;
     }
 
     commandStart(){
-        //this._model.startBattle();
+        this._model.initBattle();
         //AudioManager.playBgm($gameSystem.battleBgm(),null,0.7);
-        
         this._view.setBackGround(this._model.backGround1(),this._model.backGround2());
+        
+        this._view.createObjectAfter();
         this._view.setEnemy(this._model.enemyData());
         this._view.setActor(this._model.actorData());
+        
         //this._view.displayStartMessages($gameTroop.enemiesNames(),false);
+
+        this._view.commandStart();
+    }
+
+    commandFight(){
+        //戦闘前のパーティ状態を保存
+        //if (DataManager.autoSaveGame(false)) {
+        //    DataManager.autoSaveSuccess();
+        //}
+        //this._model.setBeforeMembers();
+
+        //this.changeStep(BattleStep.APGAIN);
+        this._view.commandFight();
+    }
+
+
+    commandCheckActive(){
+        const _actionBattler = this._model.updateApGain();
+        this._view.commandCheckActive(_actionBattler);
+    }
+
+    commandActive(){
+        const _actionBattler = this._model.actionBattler();
+        let battleSkill = this._model.battleSkill(_actionBattler);
+        this._view.commandActive(_actionBattler,_actionBattler.isActor(),battleSkill);
+    }
+
+    commandSelectSkill(){
+        const _selectSkill = this._view.selectSkill();
+        const action = this._model.selectSkill(_selectSkill.id);
+        this._view.commandSelectSkill(this._model.actionBattler(),action);
     }
 
     commandPreReady(){
@@ -199,7 +216,6 @@ class Presenter_Battle extends Presenter_Base{
         }
         if (!this._view.isGuarding()){
             this._model.eraseGuardState();
-            this._isPressed = false;
         }
         if (this._waitCount >= 0){
             this._waitCount += 1;
@@ -454,12 +470,6 @@ class Presenter_Battle extends Presenter_Base{
         this.processVictory();
     }
 
-    updateApGain(){
-        this._model.updateApGain(this._isPressed);
-        if (this._model.actionBattler() != null){
-            this.setActionBattler();
-        }
-    }
 
     setActionBattler(){
         let battler = this._model.actionBattler();
@@ -852,22 +862,6 @@ class Presenter_Battle extends Presenter_Base{
           })
     }
 
-    async commandFight(){
-        //戦闘前のパーティ状態を保存
-        if (DataManager.autoSaveGame(false)) {
-            DataManager.autoSaveSuccess();
-        }
-        this._model.setBeforeMembers();
-        this._model.setBattleCalledMenu(false);
-
-        if ($gameDefine.mobileMode){
-            await this.setWait(150);
-        }
-        this.changeStep(BattleStep.APGAIN);
-        this._view.clearCommand();
-        // イベント戦闘のBGM
-        //AudioManager.playBgm($gameBGM.getBgm('lastbattle'));
-    }
 
     commandMenu(){
         SceneManager.snapForBackground();

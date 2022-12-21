@@ -8,9 +8,10 @@ class Layer_BattlePicture extends Sprite{
     createPictures(members){
         members.forEach(battler => {
             let sprite = new Sprite_EventPicture();
-            sprite.setup(battler.faceName(),96,0,0);
+            sprite.setup(battler.faceName(),0,0,0);
+            sprite.setPicture();
             sprite.opacity = 0;
-            sprite.scale.x = sprite.scale.y = 0.9;
+            sprite.x = 120;
             this.addChild(sprite);
             this._pictureSprites.push(sprite);
         },this);
@@ -36,11 +37,11 @@ class Layer_BattlePicture extends Sprite{
     }
 
     showAnimation(sprite){
-        gsap.to(sprite, 0.2, {x:168 ,opacity:255});
+        gsap.to(sprite, 0.2, {x:160 ,opacity:255});
     }
 
     hideAnimation(sprite){
-        gsap.to(sprite, 0.2, {x:96 ,opacity:0});   
+        gsap.to(sprite, 0.2, {x:120 ,opacity:0});   
     }
 
     terminate(){

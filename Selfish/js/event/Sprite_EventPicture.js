@@ -9,7 +9,7 @@ class Sprite_EventPicture extends Sprite{
         this._animation = [];
         this._pictureLabel = '';
         this.anchor.x = 0.5;
-        this.anchor.y = 0.5;
+        this.anchor.y = 1;
         this._posData = null;
         this._z = 0;
         this._mainSprite = new Sprite();
@@ -22,22 +22,10 @@ class Sprite_EventPicture extends Sprite{
         this.addChild(this._faceSprite);
     
         this._easeMode = true;
-    
-        this._footSound = null;
-    
         this._filters = {};
     }
 
     setup(labelName,x,y,z){
-        if (x === undefined){
-            x = 0;
-        }
-        if (y === undefined){
-            y = 0;
-        }
-        if (z === undefined){
-            z = 0;
-        }
         this.x = x;
         this.y = y;
         this._z = z;
@@ -143,19 +131,6 @@ class Sprite_EventPicture extends Sprite{
     }
 
     playFootSound(){
-        if (this._footSound){
-            if (this._footSound == 2){
-                SoundManager.footSound2((480 - this.x) / -3);
-            }else
-            if (this._footSound == 3){
-                SoundManager.footSound3((480 - this.x) / -3);
-            }else
-            if (this._footSound == 1){
-                SoundManager.footSound1((480 - this.x) / -6);
-            }
-        } else{
-            SoundManager.footSound1((480 - this.x) / -6);
-        }
     }
 
     walkX(repeat,x,duration){
@@ -467,7 +442,6 @@ class Sprite_EventPicture extends Sprite{
     }
 
     setFootSound(footSound){
-        this._footSound = footSound;
     }
 
     setScale(scaleX,scaleY){
