@@ -102,9 +102,16 @@ Game_Action.prototype.checkItemScope = function(list) {
 Game_Action.prototype.isForOpponent = function() {
     return this.checkItemScope([1, 2, 3, 4, 5, 6]);
 };
-
 Game_Action.prototype.isForFriend = function() {
-    return this.checkItemScope([7, 8, 9, 10, 11]);
+    return this.checkItemScope([7, 8, 9, 10, 11, 12, 13, 14]);
+};
+
+Game_Action.prototype.isForEveryone = function() {
+    return this.checkItemScope([14]);
+};
+
+Game_Action.prototype.isForAliveFriend = function() {
+    return this.checkItemScope([7, 8, 11, 14]);
 };
 
 Game_Action.prototype.isForDeadFriend = function() {
@@ -492,9 +499,10 @@ Game_Action.prototype.results = function() {
     return this._results;
 };
 
-Game_Action.prototype.makeActionResult = function(targets) {
-    targets.forEach((target,index) => {
-        this.makeResult(target,targets.length-1 == index);
+Game_Action.prototype.makeActionResult = function() {
+    const _targets = this.makeTargets();
+    _targets.forEach((target,index) => {
+        this.makeResult(target,_targets.length-1 == index);
     });
 }
 

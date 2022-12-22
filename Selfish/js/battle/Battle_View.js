@@ -52,9 +52,20 @@ class Battle_View extends Scene_Base{
             this.setEnemyHandlers();
             this.addChild(this._layerBattleTroop);
         }
+        if (this._enemyWindow == null){
+            this._enemyWindow = new Window_BattleEnemy();
+            this._enemyWindow.setHandler('ok',     this.setCommand.bind(this,{command:BattleCommand.Action}));
+            this._enemyWindow.setHandler('cancel', this.setCommand.bind(this,{command:BattleCommand.Active}));
+            this._enemyWindow.setEnemy(enemyList);
+            this.addChild(this._enemyWindow);
+        }
         enemyList.forEach(enemy => {
             this._gridSpriteset.addMember(enemy);
         });
+    }
+
+    selectEnemyIndex(){
+        return this._enemyWindow.enemyIndex();
     }
 
     setActor(actorList){
@@ -78,6 +89,7 @@ class Battle_View extends Scene_Base{
             this.addChild(this._skillWindow);
         }
         this._skillWindow.setBattleMagic(data);
+        this._skillWindow.show();
         this._skillWindow.activate();
     }
 
@@ -406,17 +418,16 @@ class Battle_View extends Scene_Base{
         });
     }
 
-    selectActorSelection(battler,action){
-
+    selectActorSelection(targetId,actionTargetData){
         this._actorWindow.show();
         this._actorWindow.activate();
-        if (action.isForAll()){
+        if (actionTargetData.isForAll){
             this._actorWindow.selectAll();
         } else{
-            this._actorWindow.select(battler.index());
+            this._actorWindow.select(targetId);
         }
-        this._actorWindow.setCursorFixed(action.isForUser());
-        this.showMenuPlate(this.onActorCancel.bind(this),TextManager.getBackText(),TextManager.getText(600700));
+        this._actorWindow.setCursorFixed(actionTargetData.isForUser);
+        //this.showMenuPlate(this.onActorCancel.bind(this),TextManager.getBackText(),TextManager.getText(600700));
     }
 
     onActorOk(){
@@ -473,22 +484,22 @@ class Battle_View extends Scene_Base{
         }
     }
 
-    selectEnemySelection(battler,action){
+    selectEnemySelection(targetId,actionTargetData){
         this._skillWindow.hide();
         this._skillWindow.deactivate();
         this._layerBattlePicture.hideBattlerPicture();
         this._enemyWindow.show();
         this._enemyWindow.activate();
-        if (action.isForAll()){
+        if (actionTargetData.isForAll){
             this._enemyWindow.selectAll();
         } else{
-            if (battler._lastTarget && battler._lastTarget.isAlive()){
-                this._enemyWindow.selectTarget(battler._lastTarget);
+            if (targetId != null){
+                this._enemyWindow.selectTarget(targetId);
             } else{
                 this._enemyWindow.selectTarget(null);
             }
         }
-        this.showMenuPlate(this.onEnemyCancel.bind(this),TextManager.getBackText(),TextManager.getText(600800));
+        //this.showMenuPlate(this.onEnemyCancel.bind(this),TextManager.getBackText(),TextManager.getText(600800));
     }
 
     onEnemyOk(){
@@ -664,12 +675,13 @@ class Battle_View extends Scene_Base{
         this.setCommand({command: BattleCommand.SKILLCANCEL});
     }
 
-    commandSelectSkill(battler,action){
+    commandSelectSkill(skillTargetList,targetId,actionTargetData){
         //this._gridSpriteset.showNextOrder(battler);
-        if (action.isForOpponent()) {
-            this.selectEnemySelection(battler,action);
+        if (actionTargetData.isForOpponent) {
+            this._enemyWindow.setEnemy(skillTargetList);
+            this.selectEnemySelection(targetId,actionTargetData);
         } else {
-            this.selectActorSelection(battler,action);
+            this.selectActorSelection(targetId,actionTargetData);
         }
     }
 
@@ -689,7 +701,7 @@ class Battle_View extends Scene_Base{
         if (_enemyWindow && _enemyWindow.active){
             if (_enemyWindow.enemy() == battler || _enemyWindow.cursorAll()){
                 SoundManager.playOk();
-                this.onEnemyOk();
+                //this.onEnemyOk();
             } else{
                 SoundManager.playCursor();
                 _enemyWindow.selectTarget(battler);
@@ -808,6 +820,8 @@ class Battle_View extends Scene_Base{
             this._layerBattlePicture.refreshBattlerPicture(_actionBattler);
             this.setBattleSkill(battleSkill);
         }
+        this._enemyWindow.hide();
+        this._enemyWindow.deactivate();
     }
 
     commandMenu(){
@@ -1070,10 +1084,6 @@ class Battle_View extends Scene_Base{
     }
 
     createEnemyWindow(){
-        this._enemyWindow = new Window_BattleEnemy();
-        this._enemyWindow.setHandler('ok',     this.onEnemyOk.bind(this));
-        this._enemyWindow.setHandler('cancel', this.onEnemyCancel.bind(this));
-        this.addChild(this._enemyWindow);
     }
 
     async processVictory(){
@@ -1386,8 +1396,8 @@ const BattleCommand = {
     Active : 108,
     CheckActive :109,
     SelectSkill : 110,
+    Action : 111,
     MENU : 1,
-    FIGHT : 2,
     ACTION : 3,
     SKILLCANCEL : 4,
     GUARDING : 6,

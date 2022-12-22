@@ -796,7 +796,7 @@ Game_Battler.prototype.initialize = function() {
 Game_Battler.prototype.initMembers = function() {
     Game_BattlerBase.prototype.initMembers.call(this);
     this._actions = [];
-    this._lastTarget = null;
+    this._lastTargetIndex = null;
     this._animations = [];
     this._effectType = null;
     this._selected = false;
@@ -832,6 +832,10 @@ Game_Battler.prototype.resetApParam = function() {
 
 Game_Battler.prototype.stratDashApParam = function() {
 
+}
+
+Game_Battler.prototype.lastTargetIndex = function() {
+    return this._lastTargetIndex;
 }
 
 Game_Battler.prototype.clearAnimations = function() {
@@ -1181,11 +1185,7 @@ Game_Battler.prototype.removeCurrentAction = function() {
 };
 
 Game_Battler.prototype.setLastTarget = function(target) {
-    if (target) {
-        this._lastTarget = target;
-    } else {
-        this._lastTarget = null;
-    }
+    this._lastTargetIndex = target ? target.index() : 0;
 };
 
 Game_Battler.prototype.forceAction = function(skillId, targetIndex) {
@@ -1193,7 +1193,7 @@ Game_Battler.prototype.forceAction = function(skillId, targetIndex) {
     let action = new Game_Action(this, true);
     action.setSkill(skillId);
     if (targetIndex === -2) {
-        action.setTarget(this._lastTarget.index());
+        action.setTarget(this._lastTargetIndex);
     } else if (targetIndex === -1) {
         action.decideRandomTarget();
     } else {
@@ -2515,12 +2515,12 @@ Game_Actor.prototype.animationFiles = function() {
     return {animations:animations,sounds:sounds};
 };
 
-Game_Actor.prototype.getSkillData = function(skillId,slotLv) {
+Game_Actor.prototype.getSkillData = function(skillId,skillLv) {
     const nextLevel = $dataSkills[skillId].nextLevel;
     if (nextLevel && nextLevel.length > 0){
         let level = 0;
         nextLevel.forEach(lv => {
-            if (slotLv > lv){
+            if (skillLv > lv){
                 level += 1;
             }
         });
@@ -2610,6 +2610,10 @@ Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel,line) {
         }
     });
     this.resetApParam();
+};
+
+Game_Enemy.prototype.line = function() {
+    return this._line;
 };
 
 Game_Enemy.prototype.applyVariance = function(value, variance) {

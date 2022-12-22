@@ -66,11 +66,11 @@ class Presenter_Battle extends Presenter_Base{
             return this.commandCheckActive();
             case BattleCommand.SelectSkill:
             return this.commandSelectSkill();
+            case BattleCommand.Action:
+            return this.commandAction();
             /*
             case BattleCommand.MENU:
             return this.commandMenu();
-            case BattleCommand.FIGHT:
-            return this.commandFight();
             case BattleCommand.ACTION:
             return this.commandAction(this._view._command.isActor);
             case BattleCommand.SkillOk:
@@ -139,7 +139,15 @@ class Presenter_Battle extends Presenter_Base{
     commandSelectSkill(){
         const _selectSkill = this._view.selectSkill();
         const action = this._model.selectSkill(_selectSkill.id);
-        this._view.commandSelectSkill(this._model.actionBattler(),action);
+        const _actionTargetData = this._model.actionTargetData(action);
+        const _targetId = this._model.actionBattler().lastTargetIndex();
+        const _skillTargetList = this._model.skillTargetList();
+        this._view.commandSelectSkill(_skillTargetList,_targetId,_actionTargetData);
+    }
+
+    commandAction(){
+        const _targetId = this._view.selectEnemyIndex();
+        this._model.makeResult(_targetId);
     }
 
     commandPreReady(){
@@ -541,6 +549,7 @@ class Presenter_Battle extends Presenter_Base{
         });
     }
 
+    /*
     commandAction(isActor){
         const battler = this._view._skillWindow.actor();
         const action = battler.action(0);
@@ -557,6 +566,7 @@ class Presenter_Battle extends Presenter_Base{
         this._model.makeResult();
         this.startTurn();
     }
+    */
 
     startTurn(){
         this._view.startTurn();

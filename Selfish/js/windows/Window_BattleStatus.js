@@ -135,14 +135,18 @@ Window_BattleEnemy.prototype.constructor = Window_BattleEnemy;
 
 Window_BattleEnemy.prototype.initialize = function() {
     this._enemies = [];
-    this._battlerStatusSprite = [];
     Window_Selectable.prototype.initialize.call(this, new Rectangle( 0, 0, 0, 0 ));
     this.opacity = 0;
+    //this.refresh();
+};
+
+Window_BattleEnemy.prototype.setEnemy = function(enemyData) {
+    this._enemies = enemyData;
     this.refresh();
 };
 
 Window_BattleEnemy.prototype.maxCols = function() {
-    return $gameTroop.aliveMembers().length;
+    return this._enemies.length;
 };
 
 Window_BattleEnemy.prototype.maxItems = function() {
@@ -168,15 +172,7 @@ Window_BattleEnemy.prototype.deactivate = function() {
 };
 
 Window_BattleEnemy.prototype.refresh = function() {
-    this._enemies = $gameTroop.aliveMembers();
     Window_Selectable.prototype.refresh.call(this);
-    this._battlerStatusSprite.forEach((sprite,index) => {
-        sprite.changeHp();
-        sprite.changeMp();
-        if (this._enemies && !this._enemies[index].isAlive()){
-            sprite.opacity = 0;
-        }
-    });
 };
 
 Window_BattleEnemy.prototype.select = function(index) {
@@ -194,14 +190,13 @@ Window_BattleEnemy.prototype.selectTarget = function(target) {
     if (index < 0){
         Window_Selectable.prototype.select.call(this, 0);
         $gameTroop.select(this._enemies[0]);
-        return
+        return;
     }
     Window_Selectable.prototype.select.call(this, index);
     $gameTroop.select(target);
 };
 
 Window_BattleEnemy.prototype.updateCursor = function() {
-    return;
 };
 Window_BattleEnemy.prototype._refreshCursor = function() {
 }

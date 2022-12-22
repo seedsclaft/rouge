@@ -5,6 +5,7 @@ class Model_Battle extends Model_Base {
     constructor(){
         super();
         this.initMembers();
+        this._makeActionData = null;
     }
     
     troop(){
@@ -116,12 +117,56 @@ class Model_Battle extends Model_Base {
     }
 
     selectSkill(skillId){
-        this.makeActions();
-        let action = this._actionBattler.action(0);
-        console.log(skillId)
-        action.setSkill(skillId);
+        this._makeActionData = new Game_Action(this._actionBattler);
+        //this.makeActions();
+        //let action = this._actionBattler.action(0);
+        //console.log(skillId)
+        this._makeActionData.setSkill(skillId);
         this._actionBattler.setLastBattleSkillId(skillId);
-        return action;
+        return this._makeActionData;
+    }
+
+    actionTargetData(action){
+        return {
+            isForOpponent: action.isForOpponent(),
+            isForAll: action.isForAll(),
+            isForUser: action.isForUser()
+        };
+    }
+
+    skillTargetList(){
+        let candidate = this._makeActionData.itemTargetCandidates();
+        candidate = candidate.filter(a => a.line() <= this._makeActionData.item().range);
+        return candidate;
+    }
+
+    makeResult(targetId){
+        this._makeActionData.setTarget(targetId);
+        $gameTroop.increaseTurn();
+        //結果を先に判定
+        if (this.actionBattler().canMove()){
+            let action = this._makeActionData;
+            if (action.item().id == $gameDefine.waitSkillId){
+                this.actionBattler()._ap = this.waitSkillChangeAp(this.actionBattler());
+            } else{
+                this.actionBattler().resetApParam();
+            }
+        }
+    
+        // 行動者のリザルトを作成
+        this.createActionData();
+        // 割り込みのリザルトを作成
+        this.createInterruptActionData();
+    
+        // カウンター生成
+        this.createCounterActionData();
+    
+        // 行動後リザルト生成
+        //this.createAfterActionData();
+    
+    
+        // 複数回カウント設定
+        this._attackTimesAdd = this.actionBattler().attackTimesAdd();
     }
 
     refreshOrder(){
@@ -150,10 +195,6 @@ class Model_Battle extends Model_Base {
 
     canInput(){
         return this._actionBattler.canInput();
-    }
-
-    makeActions(){
-        this._actionBattler.makeActions();
     }
 
     needChargeAnimation(){
@@ -203,36 +244,10 @@ class Model_Battle extends Model_Base {
     isActingBattler(){
         return this._actingBattlers.length > 0;
     }
-    makeResult(){
-        $gameTroop.increaseTurn();
-        //結果を先に判定
-        if (this.actionBattler().canMove()){
-            let action = this.actionBattler().currentAction();
-            if (action._item._itemId == $gameDefine.waitSkillId){
-                this.actionBattler()._ap = this.waitSkillChangeAp(this.actionBattler());
-            } else{
-                this.actionBattler().resetApParam();
-            }
-        }
-    
-        // 行動者のリザルトを作成
-        this.createActionData();
-        // 割り込みのリザルトを作成
-        this.createInterruptActionData();
-    
-        // カウンター生成
-        this.createCounterActionData();
-    
-        // 行動後リザルト生成
-        //this.createAfterActionData();
-    
-    
-        // 複数回カウント設定
-        this._attackTimesAdd = this.actionBattler().attackTimesAdd();
-    }
     createActionData(){
-        let action = this.actionBattler().currentAction();
+        let action = this._makeActionData;
         action.prepare();
+        /*
         // Awakeポイント(派生) SkillAwakeManager._beforeActing
         const awake = SkillAwakeManager.checkSkillAwake(this.actionBattler(),1,action);
         if (awake && awake.length > 0){
@@ -240,6 +255,7 @@ class Model_Battle extends Model_Base {
             action._item._itemId = awake[0].skillId;
             action.awaking = true;
         }
+        */
         action.makeActionResult();
         //行動者を追加
         this.setActingBattler(this.actionBattler(),false);
@@ -265,6 +281,7 @@ class Model_Battle extends Model_Base {
     }
     createInterruptActionData(){
         // Awakeポイント(割り込み) SkillAwakeManager._interruptActing
+        /*
         let awake = [];
         let battleactor = null;
         let actionBattler = this.actionBattler();
@@ -302,9 +319,10 @@ class Model_Battle extends Model_Base {
                 TipsManager.setTips(tips);
             }
         }
+        */
     }
     createCounterActionData(){
-        let action = this.actionBattler().currentAction();
+        let action = this._makeActionData;
         const counterId = $gameStateInfo.getStateId(StateType.COUNTER);
         const refrectId = $gameStateInfo.getStateId(StateType.REFRECT);
         //カウンター生成
