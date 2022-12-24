@@ -190,7 +190,8 @@ Sprite_BattleOrder.prototype.setFace = function() {
     this._faceSprite.x = 6;
     if (this._battler.isActor()){
         this._faceSprite.bitmap = ImageManager.loadFace(this._battler.faceName());
-        this._faceSprite.setFrame(0, 0, this._baseSize, this._baseSize + 24);
+        this._faceSprite.setFrame(0, 0, this._baseSize + 24, this._baseSize + 96);
+        this._faceSprite.y = -32;
     } else{        
         this._faceSprite.bitmap = ImageManager.loadEnemy(this._battler.battlerName());
         const enemyData = $dataEnemies[this._battler.enemyId()];
@@ -257,11 +258,11 @@ Sprite_BattleOrder.prototype.setMask = function(isActor) {
     this._maskGraphic = new PIXI.Graphics();
     this._maskGraphic.beginFill(0xffffff);
     if (isActor){
-        this._maskGraphic.drawRect(0, 0, 80, 80);
+        this._maskGraphic.drawRect(0, 0, 100, 100);
         this._maskGraphic.endFill();
         this._maskGraphic.angle = 45;
         this._maskGraphic.x = 46;
-        this._maskGraphic.y = -28;
+        this._maskGraphic.y = -56;
     } else{
         this._maskGraphic.drawRect(0, 0, 58, 58);
         this._maskGraphic.endFill();

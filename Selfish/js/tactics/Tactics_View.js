@@ -288,6 +288,7 @@ class Tactics_View extends Scene_Base {
             _popup.open();
         } else{
             this._commandList.activate();
+            console.log("activate")
         }
         //const subText = TextManager.getText(210101);
     }
@@ -312,7 +313,7 @@ class Tactics_View extends Scene_Base {
     }
 
     commandDecideAlchemy(isEnable,alchemyNameList){
-        if (isEnable){
+        if (isEnable && alchemyNameList != ""){
             const mainText = TextManager.getText(10030).replace("/d",alchemyNameList);
             const text1 = TextManager.getCancelText();
             const text2 = TextManager.getDecideText();
@@ -331,6 +332,9 @@ class Tactics_View extends Scene_Base {
             _popup.open();
         } else{
             this._commandList.activate();
+            this._alchemyMagicList.hide();
+            this._magicCategory.hide();
+            this.setCommand(TacticsCommand.SelectClear);
         }
     }
 

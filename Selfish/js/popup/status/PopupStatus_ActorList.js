@@ -10,9 +10,9 @@ class PopupStatus_ActorList extends Window_Selectable{
         this._cursorSprite.opacity = 0;
         this.opacity = 0;
         this._actorSprite = new Sprite();
-        this._actorSprite.scale.x = this._actorSprite.scale.y = 1.25;
-        this._actorSprite.x = 40;
-        this._actorSprite.y = 64;
+        this._actorSprite.scale.x = this._actorSprite.scale.y = 1;
+        this._actorSprite.x = -120;
+        this._actorSprite.y = 0;
         this.addChild(this._actorSprite);
         this._actorListItem = new PopupStatus_ActorListItem(x,y,width,height);
         this.addChild(this._actorListItem);

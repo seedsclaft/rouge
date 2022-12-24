@@ -97,7 +97,10 @@ class Tactics_Presenter extends Presenter_Base{
             this._view.commandCommandTurnend();
         } else
         if (_category == "status"){
-            SceneManager.push(MemberSelect_View);
+            PopupStatus_View.setData([$gameActors.actor(1)],() => {
+                PopupStatus_View.close();
+                this.commandSelectCancel();
+            });
         } else
         if (_category == "search" && _selected.length == 0){
             this._view.commandCommandSearch();
@@ -155,7 +158,7 @@ class Tactics_Presenter extends Presenter_Base{
 
     commandDecideAlchemy(){
         const _alchemyName = this._model.selectAlchemyName();
-        this._view.commandDecideAlchemy(_alchemyName != null,_alchemyName);
+        this._view.commandDecideAlchemy(_alchemyName != "",_alchemyName);
     }
 
     commandAlchemyEnd(){

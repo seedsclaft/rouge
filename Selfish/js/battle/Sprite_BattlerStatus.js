@@ -312,18 +312,20 @@ class Sprite_BattlerStatus extends Sprite{
         }
         */
         //if ($gameDefine.mobileMode){
-            this._infoSprite.visible = (this._stateIconSprite.states().length > 0);
+            //this._infoSprite.visible = (this._stateIconSprite.states().length > 0);
         //}
     }
 
     setStateIconSprite(){
         //if ($gameDefine.mobileMode){
+            /*
             this._infoSprite = new Sprite();
             this._infoSprite.bitmap = ImageManager.loadSystem("pageA_1off");
             this._infoSprite.x = 228;
             this._infoSprite.y = -10;
             this._infoSprite.visible = false;
             this.addChild(this._infoSprite);
+            */
         //}
 
         this._stateIconSprite = new Sprite_StateIcon();

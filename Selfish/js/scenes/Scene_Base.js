@@ -295,6 +295,8 @@ Scene_Boot.prototype.start = async function() {
     Presenter_Loading.init();
     PopupInputManager.init();
 
+    PopupStatus_View.initialize();
+    
     $gameCommand.menuCommand().forEach(element => {
         if (element.iconPath)
         ImageManager.loadIcon(element.iconPath);

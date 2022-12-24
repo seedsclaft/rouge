@@ -777,7 +777,7 @@ Game_Troop.prototype.troopId = function() {
     return this._troopId;
 };
 
-Game_Troop.prototype.setup = function(troopIdList,enemyLevel) {
+Game_Troop.prototype.setup = function(troopIdList,lvMin,LvMax) {
     this.clear();
     this._troopId = troopIdList[0];
     this._enemies = [];
@@ -787,6 +787,7 @@ Game_Troop.prototype.setup = function(troopIdList,enemyLevel) {
                 let enemyId = member.enemyId;
                 let x = member.x;
                 let y = member.y;
+                let enemyLevel = Math.floor(Math.random() * (LvMax - lvMin) + lvMin);
                 let enemy = new Game_Enemy(enemyId, x, y,enemyLevel,index);
                 if (member.hidden) {
                     enemy.hide();
@@ -797,6 +798,25 @@ Game_Troop.prototype.setup = function(troopIdList,enemyLevel) {
     }, this);
     this.makeUniqueNames();
 };
+
+Game_Troop.prototype.setupBoss = function(troopIdList,lvMin,LvMax) {
+    troopIdList.forEach((troopId,index) => {
+        $dataTroops[troopId].members.forEach(member => {
+            if ($dataEnemies[member.enemyId]) {
+                let enemyId = member.enemyId;
+                let x = member.x;
+                let y = member.y;
+                let enemyLevel = Math.floor(Math.random() * (LvMax - lvMin) + lvMin);
+                let enemy = new Game_Enemy(enemyId, x, y,enemyLevel,2);
+                if (member.hidden) {
+                    enemy.hide();
+                }
+                this._enemies.push(enemy);
+            }
+        }, this);
+    }, this);
+    this.makeUniqueNames();
+}
 
 Game_Troop.prototype.makeUniqueNames = function() {
     const table = this.letterTable();

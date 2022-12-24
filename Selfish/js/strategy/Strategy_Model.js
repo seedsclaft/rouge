@@ -31,8 +31,6 @@ class Strategy_Model {
     selectedMember(){
         const _command = this.currentCommand();
         const _selected = this.selectedData(_command.key);
-        console.log(_command)
-        console.log(_selected)
         let member = [];
         _selected.forEach(actorId => {
             member.push($gameActors.actor(actorId));
@@ -53,15 +51,15 @@ class Strategy_Model {
 
         actor.changeExp(100);
         const _command = this.currentCommand();
-        $gameStage.selectedData()[_command.key] = _.without(actor.actorId(),$gameStage.selectedData()[_command.key]);
+        $gameStage.selectedData()[_command.key] = _.without($gameStage.selectedData()[_command.key],actor.actorId());
      
         lvUpData = {
             lv:lvUpData.lv - actor.level,
-            hp:lvUpData.hp - actor.mhp,
-            mp:lvUpData.mp - actor.mmp,
-            atk:lvUpData.atk - actor.atk,
-            spd:lvUpData.spd - actor.agi,
-            def:lvUpData.def - actor.def
+            hp:lvUpData.hp - actor.levelUpParam(0),
+            mp:lvUpData.mp - actor.levelUpParam(1),
+            atk:lvUpData.atk - actor.levelUpParam(2),
+            spd:lvUpData.spd - actor.levelUpParam(6),
+            def:lvUpData.def - actor.levelUpParam(3)
         };
         return lvUpData;
     }
@@ -104,7 +102,9 @@ class Strategy_Model {
         const _searchId = $gameStage.searchId();
         const _searchData = $gameSearch.getData(_searchId);
         let troop = new Game_Troop();
-        troop.setup(_searchData.bossEnemy,_searchData.bossLv);
+        console.log(_searchData)
+        troop.setup(_searchData.enemy,_searchData.lvMin,_searchData.lvMax);
+        troop.setupBoss([_searchData.bossEnemy],_searchData.bossLv,_searchData.bossLv);
         $gameTroop = troop;
     }
 }

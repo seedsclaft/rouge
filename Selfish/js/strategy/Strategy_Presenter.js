@@ -64,7 +64,6 @@ class Strategy_Presenter extends Presenter_Base{
     }
 
     commandStart(){
-        PopupStatus_View.initialize();
         //this._view.setEnergyData(this._model.energy());
         //this._view.setTurnInfoData(this._model.turnInfo());
         //const _speiteList = this._model.actorSpriteList();
@@ -80,6 +79,7 @@ class Strategy_Presenter extends Presenter_Base{
 
     commandTrainStart(){
         const _selected = this._model.selectedMember();
+        console.log(_selected)
         if (_selected.length > 0){
             PopupLevelUpManager.init();
             this._view.commandTrainStart(_selected);
@@ -96,7 +96,6 @@ class Strategy_Presenter extends Presenter_Base{
 
     commandAlchemyStart(){
         const _selected = this._model.selectedMember();
-        console.error(_selected)
         if (_selected.length > 0){
             const _alchemyName = this._model.alchemyNameList();
             this._model.alchemy();

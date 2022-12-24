@@ -357,11 +357,11 @@ Sprite_Actor.prototype.updateBitmap = function() {
         this._battlerName = name;
         
         this._mainSprite.bitmap = ImageManager.loadFace(name);
-        this._mainSprite.setFrame(0, 0, Window_Base._faceWidth + 24, Window_Base._faceHeight + 24);    
+        this._mainSprite.setFrame(0, 0, Window_Base._faceWidth + 128, Window_Base._faceHeight + 56);    
         this._mainSprite.scale.x = 0.5;
         this._mainSprite.scale.y = 0.5;
         this._mainSprite.anchor.y = 1;
-        this._mainSprite.x = 52;
+        this._mainSprite.x = 52 + 28;
         this._mainSprite.y = 74;  
     }
 };

@@ -14,10 +14,12 @@ class PopupStatus_View  {
         SceneManager._scene.addChild(this._listWindow);
     }
 
-    static setData(data){
+    static setData(data,cancelCall){
         this._listWindow.setData(data);
+        this._listWindow.show();
         this._listWindow.activate();
         this._listWindow.selectLast();
+        this._listWindow.setHandler('cancel',     () => {if (cancelCall) cancelCall() });
     }
 
     static setLvupData(data,endCall){

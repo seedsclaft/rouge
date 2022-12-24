@@ -66,13 +66,10 @@ class PopupStatus_ActorListItem extends Window_Base{
         const _normalColor = ColorManager.normalColor();
         const _powerUpColor = ColorManager.powerUpColor();
 
-
         const _lineHeight = this.lineHeight();
         const _statusTextId = [500,510,520,530,540];
         const _statusParamId = [0,1,2,6,3];
-        const _upperStatusType = [
-            StateType.HP_UPPER_STATUS,StateType.MP_UPPER_STATUS,StateType.ATK_UPPER_STATUS,StateType.SPD_UPPER_STATUS,StateType.GRD_UPPER_STATUS
-        ]
+
         let _textColor = _normalColor;
         for (let i = 0;i < _statusTextId.length;i++){
             this.changeTextColor(_normalColor);
@@ -89,11 +86,11 @@ class PopupStatus_ActorListItem extends Window_Base{
                 else if (i == 4) _textColor = lvUpdate && lvUpdate.def ? _powerUpColor : _normalColor;
                 this.drawText(this._actor.param(_statusParamId[i]),x + 80,y + _lineHeight * i,120,"right");
             }
-            let upper = this._actor.getStateEffectTotal($gameStateInfo.getStateId(_upperStatusType[i]));
-            if (upper != null && upper > 0){
-                this.drawText("(+" + upper + "%)",x + 200,y + _lineHeight * i,120,"right");
-            }
         }
+        let paramUpRate = this._actor.paramUpRate();
+        paramUpRate.forEach((rate,index) => {
+            this.drawText("(+" + rate + "%)",x + 200,y + _lineHeight * index,120,"right");
+        });
     }
 
     updateElementStatus(x,y){

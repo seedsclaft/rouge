@@ -1700,6 +1700,7 @@ Game_Actor.prototype.setup = function(actorId) {
     this._elementId = actor.elementId;
 
     this._positionData = null;
+    this._paramUpRate = actor.paramUpRate;
 };
 
 Game_Actor.prototype.position = function() {
@@ -1708,6 +1709,38 @@ Game_Actor.prototype.position = function() {
 
 Game_Actor.prototype.setPosition = function(position) {
     this._positionData = position;
+}
+
+Game_Actor.prototype.paramUpRate = function() {
+    return this._paramUpRate;
+}
+
+Game_Actor.prototype.levelUpParam = function(paramId) {
+    switch (paramId){
+        case 0: return this.calcLevelUpParam(paramId);
+        case 1: return this.calcLevelUpParam(paramId);
+        case 2: return this.calcLevelUpParam(paramId);
+        case 3: return this.calcLevelUpParam(paramId);
+        case 6: return this.calcLevelUpParam(4);
+    }
+    return 0;
+}
+
+Game_Actor.prototype.calcLevelUpParam = function(paramId) {
+    const rate = this._paramUpRate[paramId];
+    if (rate == 0) return 0;
+    const border = (this.level-1) * rate / 100;
+    let upParam = 0;
+    if ((Math.max(0, this._paramPlus[paramId]-2)) > border){
+        upParam = Math.floor( rate / 100 ) + 1;
+        this._paramPlus[paramId] += upParam;
+        return upParam;
+    }
+
+    upParam = Math.floor( rate / 100 );
+    upParam += rate >= Math.random() * 100 ? 1 : 0;
+    this._paramPlus[paramId] += upParam;
+    return upParam;
 }
 
 Game_Actor.prototype.addStatePlus = function(id,value) {
