@@ -302,7 +302,6 @@ Sprite_Animation.prototype.targetSpritePosition = function(sprite) {
     if (this._animation.alignBottom) {
         point.y = 0;
     }
-    point.y = sprite.getCenterY();
     sprite.updateTransform();
     return sprite.worldTransform.apply(point);
 };

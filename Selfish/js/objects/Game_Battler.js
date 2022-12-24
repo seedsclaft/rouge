@@ -1391,14 +1391,15 @@ Game_Battler.prototype.gainDefineAp = function() {
     }
     //鈍足
     if (this.isStateAffected($gameStateInfo.getStateId(StateType.SLOW))){
-        this._ap -= 1.5;
+        this._ap -= 1;
         return;
     }
-    this._ap -= 3;
+    this._ap -= 2;
 }
 
 Game_Battler.prototype.realTgr = function() {   
     let value = this.tgr;
+    /*
     const provocation = this.getStateEffect($gameStateInfo.getStateId(StateType.PROVOCATION));
     if (provocation != 0){
         value *= provocation;
@@ -1407,6 +1408,7 @@ Game_Battler.prototype.realTgr = function() {
     if (shadowMethod != 0){
         value *= shadowMethod;
     }
+    */
     return value;
 };
 
@@ -2455,19 +2457,6 @@ Game_Actor.prototype.meetsUsableItemConditions = function(item) {
 };
 
 
-Game_Actor.prototype.otherSkillIds = function() {
-    let list = [];
-    this._skills.forEach(skillId => {
-        let skill = $dataSkills[skillId];
-        if (skill.stypeId == Game_BattlerBase.SKILL_TYPE_SPECIAL){
-            list.push(skillId);
-        }
-    });
-    list.push($gameDefine.waitSkillId);
-    list.push($gameDefine.noActionSkillId);
-    return list;
-}
-
 
 
 
@@ -2980,7 +2969,7 @@ Game_Enemy.prototype.setAction = function(action) {
             return a.rating > ratingZero;
         });
         let select = this.selectAction(actionList, ratingZero);
-        this.setBattleAction($dataSkills[select.skillId]);
+        action.setSkill(select.skillId);
     }
 }
 

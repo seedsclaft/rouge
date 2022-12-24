@@ -12,28 +12,10 @@ Spriteset_BattleGrid.prototype.constructor = Spriteset_BattleGrid;
 
 Spriteset_BattleGrid.prototype.initialize = function() {
     Sprite.prototype.initialize.call(this);
-    this._phase = "init";
+    //this._phase = "init";
 
-    this._battlerLayer = new Sprite();
-    this.addChild(this._battlerLayer);
 
     this._orderSprites = [];
-    /*
-    $gameParty.battleMembers().forEach(actor => {
-        var order = new Sprite_BattleOrder();
-        order.initialize();
-        order.setBattler(actor);
-        order.x = 0;
-        this._battlerLayer.addChild(order);
-    });
-    $gameTroop.members().forEach(enemy => {
-        var order = new Sprite_BattleOrder();
-        order.initialize();
-        order.setBattler(enemy);
-        order.x = 0;
-        this._battlerLayer.addChild(order);
-    });
-    */
    /*
     var sprite = new Sprite()
     this._nextOrder = new Sprite_BattleOrder();
@@ -70,9 +52,9 @@ Spriteset_BattleGrid.prototype.setPhase = function(phase) {
 }
 
 Spriteset_BattleGrid.prototype.refresh = function() {
-    this._battlerLayer.children = _.sortBy(this._battlerLayer.children, (sprite) => sprite.battler()._ap);
-    this._battlerLayer.children = this._battlerLayer.children.reverse();
-    this._battlerLayer.children.forEach(sprite => {
+    this._orderSprites = _.sortBy(this._orderSprites, (sprite) => sprite.battler()._ap);
+    this._orderSprites = this._orderSprites.reverse();
+    this._orderSprites.forEach(sprite => {
         if (!sprite.battler().isAlive()){
             sprite.alpha = 0;
         } else{
@@ -85,27 +67,28 @@ Spriteset_BattleGrid.prototype.refreshPosition = function() {
     this._orderSprites.forEach(sprite => {
         sprite.refreshPosition();
     });
+    this.refresh();
 }
 
 Spriteset_BattleGrid.prototype.update = function() {
     switch (this._phase){
         case 'init':
-        this._battlerLayer.children.forEach(sprite => {
+        this._orderSprites.forEach(sprite => {
             sprite.setInitAnim();
         });
         break;
         case 'ap':
-        this._battlerLayer.children.forEach(sprite => {
+        this._orderSprites.forEach(sprite => {
             sprite.setApAnim();
         });
         break;
         case 'wait':
-        this._battlerLayer.children.forEach(sprite => {
+        this._orderSprites.forEach(sprite => {
             sprite.setWaitAnim();
         });
         break;
         case 'action':
-        this._battlerLayer.children.forEach(sprite => {
+        this._orderSprites.forEach(sprite => {
             sprite.setActionAnim();
         });
         break;
@@ -132,19 +115,18 @@ Spriteset_BattleGrid.prototype.addTroops = function(troops) {
         order.initialize();
         order.setBattler(enemy);
         order.x = Graphics.boxWidth - 88;
-        this._battlerLayer.addChild(order);
+        this.addChild(order);
     });
 }
 
 Spriteset_BattleGrid.prototype.terminate = function() {
     this._nextOrderAnimation.kill();
     this._nextOrderAnimation = null;
-    for (let i = this._battlerLayer.children.length-1; i >= 0; i--){
-        this._battlerLayer.children[i].terminate(); 
+    for (let i = this._orderSprites.length-1; i >= 0; i--){
+        this._orderSprites[i].terminate(); 
     }
     this._nextOrder.terminate();
 
-    this._battlerLayer = null;
     this._nextOrder = null;
     this.destroy();
 }

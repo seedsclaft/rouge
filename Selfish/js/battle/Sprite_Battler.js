@@ -216,8 +216,9 @@ Sprite_Battler.prototype.startAnimation = function(animation, mirror, delay,scal
     if (noSoundFlag === undefined){
         noSoundFlag = false;
     }
-    let sprite = new Sprite_AnimationMV();
-    sprite.setup(this._effectTarget, animation, mirror, delay,noSoundFlag);
+    let sprite = new Sprite_Animation();
+    sprite.targetObjects = this._effectTarget;
+    sprite.setup([this._effectTarget], animation, mirror, delay,noSoundFlag);
     //0820 VXAce規格に合わせる
     if (scale == null){
         sprite.scale.x = 1.5;
@@ -868,7 +869,7 @@ Sprite_Enemy.prototype.damageOffsetY = function() {
 
 Sprite_Enemy.prototype.refreshStatus = function() {
     this._battlerStatusSprite.changeHp();
-    this._battlerStatusSprite.changeMp();
+    //this._battlerStatusSprite.changeMp();
 }
 
 Sprite_Enemy.prototype.resetPosition = function(line) {

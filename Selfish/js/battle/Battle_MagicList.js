@@ -27,7 +27,13 @@ class Battle_MagicList extends Window_Selectable{
             this.drawItemName(_magic.skill, rect.x, rect.y - 12,rect.width);
             this.drawText(_magic.cost, rect.x, rect.y -12, rect.width, "right");
             this.contents.fontSize = 16;
-            this.drawTextEx(_magic.skill.description,rect.x,rect.y + 20,rect.width);
+            if (_magic.skill.range != null){
+                let range = TextManager.getText(1510);
+                if (_magic.skill.range == 1) range = TextManager.getText(1520);
+                else if (_magic.skill.range == 2) range = TextManager.getText(1530);
+                this.drawText(TextManager.getText(1500) + range, rect.x, rect.y + 16, rect.width);
+            }
+            this.drawTextEx(_magic.skill.description,rect.width - _magic.skill.description.length * 16 + 12,rect.y + 20,rect.width);
         }
     }
 

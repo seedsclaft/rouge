@@ -54,8 +54,9 @@ class Battle_View extends Scene_Base{
         }
         if (this._enemyWindow == null){
             this._enemyWindow = new Window_BattleEnemy();
-            this._enemyWindow.setHandler('ok',     this.setCommand.bind(this,{command:BattleCommand.Action}));
+            this._enemyWindow.setHandler('ok',     this.setCommand.bind(this,{command:BattleCommand.Action,isEnemy:true}));
             this._enemyWindow.setHandler('cancel', this.setCommand.bind(this,{command:BattleCommand.Active}));
+            this._enemyWindow.setHandler('index', this.changeEnemyIndex.bind(this));
             this._enemyWindow.setEnemy(enemyList);
             this.addChild(this._enemyWindow);
         }
@@ -64,8 +65,19 @@ class Battle_View extends Scene_Base{
         });
     }
 
-    selectEnemyIndex(){
-        return this._enemyWindow.enemyIndex();
+    changeEnemyIndex(){
+        const _enemy = this._enemyWindow.enemy();
+        const _isAll = this._enemyWindow._cursorAll;
+        this._layerBattleTroop.showBattleStatus(_enemy,_isAll);
+    }
+
+    resetPosition(){
+        this._layerBattleTroop.resetPosition();
+    }
+
+    selectTargetIndex(isEnemy){
+        if (isEnemy) return this._enemyWindow.enemyIndex();
+        return this._actorWindow.index();
     }
 
     setActor(actorList){
@@ -97,7 +109,6 @@ class Battle_View extends Scene_Base{
         return this._skillWindow.item().skill;
     }
 
-
     commandStart(){
         this.createHelpWindow();
         this.createPartyCommandWindow();
@@ -105,22 +116,20 @@ class Battle_View extends Scene_Base{
         this._gridSpriteset.refreshPosition();
     }
 
+    commandAction(){
+        this._skillWindow.hide();
+        this._skillWindow.deactivate();
+        this._enemyWindow.hide();
+        this._enemyWindow.deactivate();
+        this._layerBattleTroop.hideBattleStatus();
+        this._actorWindow.hide();
+        this._actorWindow.deactivate();
+        //this._keyMapWindow.hide();
+        //this._gridSpriteset.clearNextOrder();
+        //this._gridSpriteset.setPhase("action");
+    }
+
     recreateStartObject(){
-        this.createGridLine();
-        this.createGridSpriteset();
-        this.createLayerBattleParty();
-        //this.createSkillItemWindow();
-        this.createSkillWindow();
-        this.createOtherSkillWindow();
-        this.createStatusWindow();
-    
-        this.createMenuButton();
-        this.createBackButton(this.callcommandMenu.bind(this));
-        this.setBackSprite(TextManager.getMenuText());
-        this.createMenuSprite();
-        let battleTextId = 600500;
-        this.setMenuSprite(TextManager.getText(battleTextId));
-        this.createKeyMapWindow();
         this.createSpriteset();
         this.createFeatureWindow();
         this._elementSprite = new Sprite_Element(12,80);
@@ -128,10 +137,8 @@ class Battle_View extends Scene_Base{
         this._elementSprite.visible = false;
         this._gridSpriteset.ready();
         if($gameDefine.mobileMode == true){
-            if (!this.isLastBattle()){
-                this.removeChild(this._dockMenu);
-                this.addChild(this._dockMenu);
-            }
+            this.removeChild(this._dockMenu);
+            this.addChild(this._dockMenu);
             this._dockMenu.show();
             this._dockMenu.showAnalyzeButton();
         }
@@ -212,6 +219,7 @@ class Battle_View extends Scene_Base{
     }
 
     startAnimation(battler,id,mirror, delay,scale,nosound,nocheck){
+        this._checkedAnimation = true;
         this._layerBattleParty.startAnimation(battler,id,mirror, delay,scale,nosound,nocheck);
         this._layerBattleTroop.startAnimation(battler,id,mirror, delay,scale,nosound,nocheck);
     }
@@ -226,7 +234,7 @@ class Battle_View extends Scene_Base{
         this._gridSpriteset.refreshPosition();
     }
 
-    displaySelecting(battler,skills,otherSkills){
+    displaySelecting(battler,skills){
         SoundManager.playActorCommand();
         this._category = 0;
         this.layerBattlePicture().refreshBattlerPicture(battler);
@@ -234,17 +242,12 @@ class Battle_View extends Scene_Base{
         this._skillWindow.activate();
         this._skillWindow.setData(skills,battler);
         this._skillWindow.showAnimation();
-        this._otherSkillWindow.setData(otherSkills,battler);
-        this._otherSkillWindow.hide();
-        this._otherSkillWindow.deactivate();
-        this.showMenuPlate(this.onSkillCancel.bind(this),TextManager.getBackText(),TextManager.getText(600600));
-
+        
         this.changeSkillIndex();
         this._keyMapWindow.show();
     
         this._elementSprite.visible = true;
         if (this._dockMenu){
-            this._dockMenu.enableSkillChangeButton(true);
             this._dockMenu.enableLimitBreakButton(true);
             this._dockMenu.enableCategoryChangeButton(true);
             this._dockMenu.enableGuardButton(true);
@@ -253,9 +256,7 @@ class Battle_View extends Scene_Base{
         }
     }
 
-    displaySkillName(battler){
-        const skillName = TextManager.getSkillName( battler.currentAction().item().id );
-        const text = battler.name() + TextManager.getText(610900).format(skillName);
+    displaySkillName(text){
         this._recordWindow.addText(text);
     }
 
@@ -310,23 +311,17 @@ class Battle_View extends Scene_Base{
             this.setCommand({command: BattleCommand.CheckActive});
         }
         super.update();
+        if (this.animationEnd() && this._checkedAnimation){
+            this._checkedAnimation = false;
+            this.setCommand({command: BattleCommand.ActionEnd});
+
+        }
         if ($gamePause == true){
             return;
         }
         $gameScreen.update();
         //this.updateSkillAddict();
-        //this.updateInputGuardMethod();
         this.updateAnimationSkipMethod();
-    }
-
-    setGuradEvent(command){
-        this._gurardEvent = command;
-    }
-
-    updateInputGuardMethod(){
-        if (this._gurardEvent){
-            this._gurardEvent(this.isGuarding());
-        }
     }
 
     setAnimationSkipEvent(command){
@@ -401,13 +396,6 @@ class Battle_View extends Scene_Base{
         }
     }
 
-    startTurn(){
-        this._skillWindow.hide();
-        this._skillWindow.deactivate();
-        this._keyMapWindow.hide();
-        this._gridSpriteset.clearNextOrder();
-        this._gridSpriteset.setPhase("action");
-    }
 
     setWait(num){
         return new Promise(resolve => {
@@ -459,18 +447,7 @@ class Battle_View extends Scene_Base{
             this._skillWindow.showAnimation();
             this._skillWindow.selectLast();
 
-            this._otherSkillWindow.hide();
-            this._otherSkillWindow.deactivate();
             this.changeSkillIndex();
-        } else
-        if (this._category == 1){
-            this._otherSkillWindow.show();
-            this._otherSkillWindow.activate();
-            this._otherSkillWindow.showAnimation();
-
-            this._skillWindow.show();
-            this._skillWindow.deactivate();
-            this._keyMapWindow.refresh("battleOtherSkill");
         }
         this._keyMapWindow.show();
         this._gridSpriteset.clearNextOrder();
@@ -499,6 +476,7 @@ class Battle_View extends Scene_Base{
                 this._enemyWindow.selectTarget(null);
             }
         }
+        this.changeEnemyIndex();
         //this.showMenuPlate(this.onEnemyCancel.bind(this),TextManager.getBackText(),TextManager.getText(600800));
     }
 
@@ -547,30 +525,14 @@ class Battle_View extends Scene_Base{
         }
     }
 
-    onSkillChange(){
-        this.setCommand({command: BattleCommand.SKILLCHANGE});
-    }
 
     onLimitBreak(){
         this.setCommand({command: BattleCommand.LIMITBREAK});
     }
 
-    onOtherSkillOk(){
-        TouchInput.clear();
-        this.hideSkillCommandWindows();
-        this._keyMapWindow.hide();
-        this.layerBattlePicture().hideBattlerPicture();
-        this.setCommand({command: BattleCommand.OtherSkill});
-        if (this._dockMenu){
-            this._dockMenu.showTypeChange(false);
-        }
-    }
-
     hideSkillCommandWindows(){
         this._skillWindow.hide();
         this._skillWindow.deactivate();
-        this._otherSkillWindow.hide();
-        this._otherSkillWindow.deactivate();
     }
 
     commandLimitBreak(skills,battler){
@@ -581,99 +543,17 @@ class Battle_View extends Scene_Base{
         }
     }
 
-    showSkillItemOpen(actor,skills,selectSkill){
-        SoundManager.playOk();
-        const itemWindow = this.itemWindow();
-        itemWindow.showAnimation();
-        itemWindow.show();
-        itemWindow.activate();
-        itemWindow.setData(skills,actor,selectSkill);
-        this._skillWindow.hide();
-        //this._skillWindow.hideAnimation();
-        this._skillWindow.deactivate();
-        this.showMenuPlate(this.onSkillChangeCancelBack.bind(this),TextManager.getBackText(),TextManager.getText(600600))
-        if (this._dockMenu){
-            this._dockMenu.enableSkillChangeButton(false);
-            this._dockMenu.enableLimitBreakButton(false);
-            this._dockMenu.enableCategoryChangeButton(false);
-            this._dockMenu.enableGuardButton(false);
-        }
-    }
-
-    onSkillChangeOk(){
-        this.setCommand({command: BattleCommand.SKILLCHANGEOK});
-        var battler = this._skillWindow.actor();
-        var skill = $dataSkills[$gameDefine.noActionSkillId];
-        var action = battler.action(0);
-        action.setSkill(skill.id);
-        this.layerBattlePicture().hideBattlerPicture();
-        this.onActorOk();
-        if (this._dockMenu){
-            this._dockMenu.hide();
-        }
-    }
-
-    onSkillChangeCancelBack(){
-        SoundManager.playCancel();
-        this.onSkillChangeCancel();
-    }
-
-    onSkillChangeCancel(){
-        this.itemWindow().deactivate();
-        this.itemWindow().hideAnimation();
-        
-        this._skillWindow.show();
-        this._skillWindow.showAnimation();
-        this._skillWindow.selectLast();
-        this._skillWindow.activate();
-        if (this._dockMenu){
-            this._dockMenu.enableSkillChangeButton(true);
-            this._dockMenu.enableLimitBreakButton(true);
-            this._dockMenu.enableCategoryChangeButton(true);
-            this._dockMenu.enableGuardButton(true);
-            this._dockMenu.show();
-            this._dockMenu.showTypeChange(true);
-        }
-        this.showMenuPlate(null,TextManager.getBackText(),TextManager.getText(600600))
-    }
-
     reShowSkillList(){
-        this.itemWindow().deactivate();
-        this.itemWindow().hideAnimation();
         this._skillWindow.refresh();
         this._skillWindow.hide();
         this._skillWindow.deactivate();
         if (this._dockMenu){
-            this._dockMenu.enableSkillChangeButton(true);
             this._dockMenu.enableLimitBreakButton(true);
             this._dockMenu.enableCategoryChangeButton(true);
             this._dockMenu.enableGuardButton(true);
         }
     }
 
-    onSkillCancel(){
-        if (this.isLastBattle()){
-            return;
-        }
-        if (this._category != 0){
-            this.resetCommandCategory();
-            return;
-        }
-        this._skillWindow.hide();
-        this._skillWindow.deactivate();
-        this._keyMapWindow.hide();
-        this._enemyWindow.deactivate();
-        this._actorWindow.deactivate();
-        this._actorWindow.hide();
-        this._gridSpriteset.setPhase("ap");
-        this.layerBattlePicture().hideBattlerPicture();
-        this.hideMenuPlate();
-    
-        if (this._dockMenu){
-            this._dockMenu.hide();
-        }
-        this.setCommand({command: BattleCommand.SKILLCANCEL});
-    }
 
     commandSelectSkill(skillTargetList,targetId,actionTargetData){
         //this._gridSpriteset.showNextOrder(battler);
@@ -730,10 +610,6 @@ class Battle_View extends Scene_Base{
         this.addChild(this._gridSpriteset);
     }
 
-    createLayerBattleParty(){
-        this._layerBattleParty = new Layer_BattleParty($gameParty.battleMembers());
-        this.addChild(this._layerBattleParty);
-    }
 
     createLayerBattleTroop(){
         this._layerBattleTroop = new Layer_BattleTroop($gameTroop.members());
@@ -822,6 +698,7 @@ class Battle_View extends Scene_Base{
         }
         this._enemyWindow.hide();
         this._enemyWindow.deactivate();
+        this._layerBattleTroop.hideBattleStatus();
     }
 
     commandMenu(){
@@ -893,31 +770,17 @@ class Battle_View extends Scene_Base{
     createSkillWindow(){
         this._skillWindow = new Battle_MagicList(264,36,584,400);
         this._skillWindow.setHandler('ok',        this.onSkillOk.bind(this));
-        this._skillWindow.setHandler('cancel',    this.onSkillCancel.bind(this));
         
         this._skillWindow.setHandler('pageup',    this.onAnalyseOpen.bind(this,'last'));
         this._skillWindow.setHandler('pagedown',  this.onAnalyseOpen.bind(this,'start'));
         
-        //this._skillWindow.setHandler('menu',     this.onSkillChange.bind(this));
-        //this._skillWindow.setHandler('shift',     this.onLimitBreak.bind(this));
         this._skillWindow.setHandler('left',     this.changeCommandCategory.bind(this,1));
         this._skillWindow.setHandler('right',     this.changeCommandCategory.bind(this,1));
     
         this._skillWindow.setHandler('index',     this.changeSkillIndex.bind(this));
-        //this._skillWindow.setHandler('menu',     this.onSkillChangeCategory.bind(this));
         this.addChild(this._skillWindow);
     }
 
-    createOtherSkillWindow(){
-        this._otherSkillWindow = new Window_BattleSlotSkill(264,36,584,400);
-        this._otherSkillWindow.setHandler('ok',        this.onOtherSkillOk.bind(this));
-        this._otherSkillWindow.setHandler('left',     this.changeCommandCategory.bind(this,-1));
-        this._otherSkillWindow.setHandler('right',     this.changeCommandCategory.bind(this,-1));
-        this._otherSkillWindow.setHandler('cancel',     this.resetCommandCategory.bind(this));
-        this._otherSkillWindow.hide();
-        this._otherSkillWindow.deactivate();
-        this.addChild(this._otherSkillWindow);
-    }
 
     resetCommandCategory(){
         this._category = 0;
@@ -932,56 +795,6 @@ class Battle_View extends Scene_Base{
         if (this._category < -1) {this._category = -1};
         if (this._category > 1) {this._category = 1};
         this.refreshSkillCommands();
-    }
-
-    refreshSkillCommands(){
-        SoundManager.playCursor();
-        switch (this._category){
-            case 0:
-                this._otherSkillWindow.hide();
-                this._otherSkillWindow.deactivate();
-                this._skillWindow.reShowAnimation();
-                this._skillWindow.activate();
-                
-                this.changeSkillIndex();
-                if (this._dockMenu){
-                    this._dockMenu.enableSkillChangeButton(true);
-                    this._dockMenu.enableLimitBreakButton(true);
-                }
-                break;
-            case 1:
-                this._skillWindow.deactivate();
-                this._skillWindow.hideAnimation();
-                const lastIndex = this._otherSkillWindow.index();
-                this._otherSkillWindow.show();
-                this._otherSkillWindow.activate();
-                this._otherSkillWindow.showAnimation();
-                if (lastIndex == 0 || lastIndex == 1){
-                    this._otherSkillWindow.selectLastOther(lastIndex);
-                }
-                
-                this._keyMapWindow.refresh("battleOtherSkill");
-                if (this._dockMenu){
-                    this._dockMenu.enableSkillChangeButton(false);
-                    this._dockMenu.enableLimitBreakButton(false);
-                }
-                break;
-        }
-
-    }
-
-    createSkillItemWindow(){
-        this._itemWindow = new Window_SkillItemList(264,36,584,384);
-        this._itemWindow.setHandler('ok',     this.onSkillChangeOk.bind(this));
-        this._itemWindow.setHandler('cancel', this.onSkillChangeCancel.bind(this));
-        this.addChild(this._itemWindow);
-    }
-
-    itemWindow(){
-        if (this._itemWindow == null){
-            this.createSkillItemWindow();
-        }
-        return this._itemWindow;
     }
 
     createStatusWindow(){
@@ -1184,10 +997,6 @@ class Battle_View extends Scene_Base{
         BackGroundManager.collapseBackGround();
     }
 
-    isGuarding(){
-        return TouchInput.isPressed() || Input.isPressed("cancel");
-    }
-
     isAnimationSkip(){
         return Input.isRepeated('ok') || this.animationEnd();
     }
@@ -1214,8 +1023,6 @@ class Battle_View extends Scene_Base{
     eventStart(){
         this._skillWindow.hide();
         this._skillWindow.deactivate();
-        this.itemWindow().hide();
-        this.itemWindow().deactivate();
         this._actorWindow.deactivate();
         this._enemyWindow.deactivate();
         this._gridLineSprite.visible = false;
@@ -1229,27 +1036,6 @@ class Battle_View extends Scene_Base{
     }
 
     eventEnd(){
-        /*
-        if (this._gridSpriteset){
-            var index = _.findIndex(this.children,(child) => child == this._gridSpriteset);
-            this._gridSpriteset.terminate();
-            this.removeChild(this._gridSpriteset);
-            this._gridSpriteset = new Spriteset_BattleGrid();
-            this.addChildAt(this._gridSpriteset,index);
-        }
-    
-        if (this._layerBattleParty){
-            var index = _.findIndex(this.children,(child) => child == this._layerBattleParty);
-            this._layerBattleParty.terminate();
-            this.removeChild(this._layerBattleParty);
-            this._layerBattleParty = new Layer_BattleParty($gameParty.battleMembers());
-            this.addChildAt(this._layerBattleParty,index);
-        }
-    
-        if (this._layerBattleTroop) this._layerBattleTroop.visible = true;
-        if (this._gridLineSprite) this._gridLineSprite.visible = true;
-        this.setCommand({command: BattleCommand.SKILLCANCEL});
-        */
     }
 
     async startLastAttack(battlers){
@@ -1283,17 +1069,12 @@ class Battle_View extends Scene_Base{
 
     createBattleDockButton(){
         this._dockMenu = new Sprite_BattleDock();
-        this._dockMenu.setClickHandler(BattleDockActionType.SkillChange,this.onSkillChange.bind(this));
         this._dockMenu.setClickHandler(BattleDockActionType.LimitBreak,this.onLimitBreak.bind(this));
-        this._dockMenu.setClickHandler(BattleDockActionType.Guard,this.onSkillCancel.bind(this));
         this._dockMenu.setClickHandler(BattleDockActionType.Analyze,this.onAnalyseOpen.bind(this,'start'));
         this._dockMenu.setClickHandler(BattleDockActionType.AnalyzeNext,this.onAnalyseOpen.bind(this,'next'));
         this._dockMenu.setClickHandler(BattleDockActionType.AnalyzePrevios,this.onAnalyseOpen.bind(this,'previous'));
-        this._dockMenu.setClickHandler(BattleDockActionType.CategoryChange,this.changeCommandCategory.bind(this,0));
         
-        if (!this.isLastBattle()){
-            this.addChild(this._dockMenu);
-        }
+        this.addChild(this._dockMenu);
         this._dockMenu.hide();
     }
 
@@ -1314,10 +1095,6 @@ class Battle_View extends Scene_Base{
             this._layerBattleTroop.terminate();
         }
         this._layerBattleTroop = null;
-        if (this._itemWindow){
-            this._itemWindow.terminate();
-        }
-        this._itemWindow = null;
         this._actorWindow = null;
         this._enemyWindow = null;
         if (this._logWindow){
@@ -1353,33 +1130,12 @@ class Battle_View extends Scene_Base{
         this.destroy();
     }
 
-    isLastBattle(){
-        return $gameTroop.troopId() == $gameDefine.lastBattleTroopId;
-    }
-
     async newRecord(recordData){
         let levelup = new Sprite_Levelup();
         this.addChild(levelup);
         await levelup.setupNewRecord(LevelUpType.NewRecord,recordData);
     }
 }
-
-/*
-Scene_Battle.prototype.onSkillChangeCategory = function() {
-    this.setCommand({command: BattleCommand.SKILLCHANGECATEGORY});
-}
-*/
-
-/*
-Scene_Battle.prototype.commandSkillChangeCategory = function(battler,skills) {
-    SoundManager.playCancel();
-    this._skillWindow.show();
-    this._skillWindow.activate();
-    this._skillWindow.setData(battler,skills);
-    this._skillWindow.selectLast();
-    this._skillWindow.showAnimation();
-}
-*/
 
 const SceneBattleStep = {
     NONE : 0,
@@ -1397,15 +1153,12 @@ const BattleCommand = {
     CheckActive :109,
     SelectSkill : 110,
     Action : 111,
+    ActionEnd: 112,
     MENU : 1,
     ACTION : 3,
-    SKILLCANCEL : 4,
-    GUARDING : 6,
     SkillOk : 7,
     ANALYZE : 8,
-    SKILLCHANGE : 9,
     LIMITBREAK : 10,
     Ready : 11,
     PreReady : 12,
-    OtherSkill : 13,
 }

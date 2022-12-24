@@ -5,11 +5,19 @@ class Model_Battle extends Model_Base {
     constructor(){
         super();
         this.initMembers();
-        this._makeActionData = null;
+        this._makeActionData = [];
+    }
+
+    currentAction(){
+        return this._makeActionData.length > 0 ? this._makeActionData[0] : null;
     }
     
     troop(){
         return $gameTroop;
+    }
+
+    battleBgm(){
+        return $gameSystem.battleBgm();
     }
 
     backGround1(){
@@ -117,13 +125,23 @@ class Model_Battle extends Model_Base {
     }
 
     selectSkill(skillId){
-        this._makeActionData = new Game_Action(this._actionBattler);
+        let action = new Game_Action(this._actionBattler);
         //this.makeActions();
         //let action = this._actionBattler.action(0);
         //console.log(skillId)
-        this._makeActionData.setSkill(skillId);
+        action.setSkill(skillId);
         this._actionBattler.setLastBattleSkillId(skillId);
-        return this._makeActionData;
+        this._makeActionData.push(action);
+        return action;
+    }
+
+    selectEnemySkill(){
+        let action = new Game_Action(this._actionBattler);
+        //this.makeActions();
+        //let action = this._actionBattler.action(0);
+        //console.log(skillId)
+        this._actionBattler.setAction(action);
+        this._makeActionData.push(action);
     }
 
     actionTargetData(action){
@@ -135,17 +153,19 @@ class Model_Battle extends Model_Base {
     }
 
     skillTargetList(){
-        let candidate = this._makeActionData.itemTargetCandidates();
-        candidate = candidate.filter(a => a.line() <= this._makeActionData.item().range);
+        let candidate = this.currentAction().itemTargetCandidates();
+        candidate = candidate.filter(a => a.line() <= this.currentAction().item().range);
         return candidate;
     }
 
     makeResult(targetId){
-        this._makeActionData.setTarget(targetId);
+        if (this.actionBattler().isActor()){
+            this.currentAction().setTarget(targetId);
+        }
         $gameTroop.increaseTurn();
         //結果を先に判定
         if (this.actionBattler().canMove()){
-            let action = this._makeActionData;
+            let action = this.currentAction();
             if (action.item().id == $gameDefine.waitSkillId){
                 this.actionBattler()._ap = this.waitSkillChangeAp(this.actionBattler());
             } else{
@@ -156,10 +176,10 @@ class Model_Battle extends Model_Base {
         // 行動者のリザルトを作成
         this.createActionData();
         // 割り込みのリザルトを作成
-        this.createInterruptActionData();
+        //this.createInterruptActionData();
     
         // カウンター生成
-        this.createCounterActionData();
+        //this.createCounterActionData();
     
         // 行動後リザルト生成
         //this.createAfterActionData();
@@ -169,6 +189,38 @@ class Model_Battle extends Model_Base {
         this._attackTimesAdd = this.actionBattler().attackTimesAdd();
     }
 
+    acnimationId(action){
+        let animationId = action.item().animationId;
+        if (animationId < 0 && !this.getActingBattler().isActor()){
+            animationId = this.getActingBattler().attackId();
+        }
+        return animationId;
+    }
+
+    checkTroopLine(){
+        const troop = this.troop();
+        let lineData = [
+            [],[],[]
+        ];
+        troop.aliveMembers().forEach(member => {
+            lineData[member.line()].push(member);
+        });
+        let changed = false;
+        lineData.forEach((line,index) => {
+            if (index == 0) return;
+            for (let j = 0;j <= index;j++){
+                if (lineData[index - j].length == 0){
+                    line.forEach(member => {
+                        console.log(member)
+                        member._line = member._line - 1;
+                    });
+                    changed = true;
+                }
+            }
+        });
+        return changed;
+    }
+
     refreshOrder(){
         this._battleMembers.forEach((battler,index) => {
             battler.setBattleOrder(index+1);
@@ -176,16 +228,6 @@ class Model_Battle extends Model_Base {
     }
 
     checkMpGainBattler(){
-        const actionBattler = this.actionBattler();
-        if (!actionBattler.isRestricted() && !actionBattler.isStateAffected($gameStateInfo.getStateId(StateType.CURSE))){
-            if (actionBattler.mp != actionBattler.mmp){
-                if (actionBattler.isActor()){
-                    return actionBattler.needMpGain();
-                } else{
-                    return true;
-                }
-            }
-        }
         return false;
     }
 
@@ -245,7 +287,7 @@ class Model_Battle extends Model_Base {
         return this._actingBattlers.length > 0;
     }
     createActionData(){
-        let action = this._makeActionData;
+        let action = this.currentAction();
         action.prepare();
         /*
         // Awakeポイント(派生) SkillAwakeManager._beforeActing
@@ -322,7 +364,7 @@ class Model_Battle extends Model_Base {
         */
     }
     createCounterActionData(){
-        let action = this._makeActionData;
+        let action = this.currentAction();
         const counterId = $gameStateInfo.getStateId(StateType.COUNTER);
         const refrectId = $gameStateInfo.getStateId(StateType.REFRECT);
         //カウンター生成
@@ -333,7 +375,7 @@ class Model_Battle extends Model_Base {
                     if (!_.contains(counterTarget,result.target)){
                         if (this.actionBattler() != result.target){
                             result.target.makeActions();
-                            let counterAction = result.target.currentAction();
+                            let counterAction = new Game_Action(result.target);
                             counterAction.setSkill(result.target.getStateEffect(counterId));
                             counterAction.setTarget(this.actionBattler().index());
                             counterAction.prepare();
@@ -364,6 +406,7 @@ class Model_Battle extends Model_Base {
     }
     createAfterActionData(){
         // Awakeポイント SkillAwakeManager._afterActing
+        /*
         let awake = [];
         let battleactor = null;
         $gameParty.battleMembers().some(actor => {
@@ -387,6 +430,7 @@ class Model_Battle extends Model_Base {
                 this.setActingBattler(battleactor,false);
             }
         }
+        */
     }
     createMadnessActionData(){
         $gameTroop.aliveMembers().forEach(enemy => {
@@ -410,7 +454,6 @@ class Model_Battle extends Model_Base {
     }
 
     applyResultsData(action,results){
-        let justGuardTarget = [];
         results.forEach(result => {
             if (result.guard == false && result.target.isGuard()){
                 if (result.hpDamage > 0){
@@ -422,31 +465,17 @@ class Model_Battle extends Model_Base {
                     if (result.hpDamage <= 0){
                         result.hpDamage = 1;
                     }
-                    justGuardTarget.push(result.target);
                 }
             }
             action.applyResult(result.target,result);
         });
-        if (justGuardTarget.length > 0){
-            // レミィが含まれている
-            const isCountable = _.find(justGuardTarget,(target) => target.isActor() && target.actorId() == 3);
-            if (isCountable) $gameSystem.gainJustGuard();
-        }
-        return justGuardTarget;
     }
 
-    startAction(){
+    applyGlobal(){
         let subject = this.getActingBattler();
-        let action = subject.currentAction();
+        let action = this.currentAction();
         
         subject.useItem(action.item());
-        if (subject.isActor()){
-            if (action.item().id != $gameDefine.waitSkillId){
-                subject.setNeedMpGain(true);
-            } else{
-                subject.setNeedMpGain(false);
-            }
-        }
         action.applyGlobal();
     }
     needAfterHeal(){
@@ -548,7 +577,7 @@ class Model_Battle extends Model_Base {
     }
 
     turnEnd(){
-        let popup = this.getActingBattler().currentAction().popupData(this.getActingBattler());
+        let popup = this.currentAction().popupData(this.getActingBattler());
         this.removeState();
         this.addState(popup);
         this.bindRemoveSelf();
@@ -561,7 +590,7 @@ class Model_Battle extends Model_Base {
     }
 
     removeState(){
-        let action = this.getActingBattler().currentAction();
+        let action = this.currentAction();
         let results = action.results();
         results.forEach(result => {
             const removeStates = result.removedStateObjects();
@@ -574,10 +603,11 @@ class Model_Battle extends Model_Base {
     }
 
     addState(popup){
-        let action = this.getActingBattler().currentAction();
+        let action = this.currentAction();
         let results = action.results();
         let skill = $dataSkills[action.item().id];
         let turns = skill.stateTurns ? skill.stateTurns : 0;
+        console.log(turns)
         let stateEffect = skill.stateEffect ? skill.stateEffect : 0;
         if (turns){
             const addTurnEffectId = $gameStateInfo.getStateId(StateType.ADD_TURN_EFFECT);
@@ -619,7 +649,7 @@ class Model_Battle extends Model_Base {
 
     removeCharge(){
         let battler = this.getActingBattler();
-        const action = this.getActingBattler().currentAction();
+        const action = this.currentAction();
         const results = action.results();
         const chargeId = $gameStateInfo.getStateId(StateType.CHARGE);
         results.forEach(result => {
@@ -630,6 +660,7 @@ class Model_Battle extends Model_Base {
     }
 
     bindRemoveSelf(){
+        /*
         //自身の行動で拘束解除
         let battler = this.getActingBattler();
         let action = battler.currentAction();
@@ -647,10 +678,12 @@ class Model_Battle extends Model_Base {
             });
             battler._bindBatllers = [];
         }
+        */
     }
 
     bindRemoveTarget(){
-        let action = this.getActingBattler().currentAction();
+        /*
+        let action = this.currentAction();
         const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
         //相手の行動で拘束解除
         if (action){
@@ -666,9 +699,11 @@ class Model_Battle extends Model_Base {
                 }
             });
         }
+        */
     }
 
     bindState(){
+        /*
         let battler = this.getActingBattler();
         let action = battler.currentAction();
     
@@ -685,11 +720,12 @@ class Model_Battle extends Model_Base {
                 });
             }
         }
+        */
     }
 
     selfSkill(){
         let actor = this.getActingBattler();
-        let action = this.getActingBattler().currentAction();
+        let action = this.currentAction();
         if (action){
             const skill = $dataSkills[action.item().id];
             if (skill.selfSkill){
@@ -699,8 +735,9 @@ class Model_Battle extends Model_Base {
     }
 
     wavySkill(){
+        /*
         let actor = this.getActingBattler();
-        let action = this.getActingBattler().currentAction();
+        let action = this.currentAction();
         if (action){
             const skill = $dataSkills[action.item().id];
             const waveId = $gameStateInfo.getStateId(StateType.WAVY);
@@ -714,6 +751,7 @@ class Model_Battle extends Model_Base {
                 });
             }
         }
+        */
     }
 
     selfSkillEffect(skillId,actor,action){
@@ -751,7 +789,7 @@ class Model_Battle extends Model_Base {
 
     isSummon(){
         let isSummon = false;
-        const action = this.getActingBattler().currentAction();
+        const action = this.currentAction();
         const results = action.results();
         const summonId = $gameStateInfo.getStateId(StateType.SUMMON);
         results.forEach(result => {
@@ -807,8 +845,9 @@ class Model_Battle extends Model_Base {
     }
 
     removeProvocationState (target) {
-        let removeTarget = null;
         let popup = null;
+        /*
+        let removeTarget = null;
         const provocationId = $gameStateInfo.getStateId(StateType.PROVOCATION);
         let party;
         if (target.isActor()){
@@ -825,12 +864,14 @@ class Model_Battle extends Model_Base {
         if (removeTarget){
             popup = [new PopupTextData(removeTarget,PopupTextType.RemoveState,TextManager.getStateName(provocationId))]
         }
+        */
         return popup;
     }
 
     actionClear(){
         if (this.getActingBattler()){
             this._actingBattlers.shift();
+            this._makeActionData.shift();
         }
     }
 
@@ -849,13 +890,15 @@ class Model_Battle extends Model_Base {
 
     endTurn(){
         let subject = this.getActingBattler();
-        const action = subject.currentAction();
+        const action = this.currentAction();
         if (subject){
+            /*
             const waitStateId = $gameStateInfo.getStateId(StateType.WAIT);
             if (subject.isStateAffected(waitStateId)){
                 subject.removeState(waitStateId);
                 subject._ap = this.waitSkillChangeAp(subject);
             } else
+            */
             if (subject.canMove() && !action.madness() && !action.counter()){
                 const reactStateId = $gameStateInfo.getStateId(StateType.REACT);
                 if (subject.isStateAffected(reactStateId)){
@@ -866,6 +909,7 @@ class Model_Battle extends Model_Base {
             }
         }
         if (action){
+            /*
             const saltTargetId = $gameStateInfo.getStateId(StateType.SALT_TARGET);
             //塩対応
             if (action && action.isContainsState(saltTargetId)){
@@ -875,6 +919,7 @@ class Model_Battle extends Model_Base {
                     });
                 }
             }
+            */
         }
     
         const popupData = this.refreshPassive(this._battleMembers);
@@ -939,41 +984,21 @@ class Model_Battle extends Model_Base {
         return false;
     }
     checkDefeat(){
-        const loseType = this.getLoseType();
-        if (loseType == GameStageLoseType.TROOPMEMBERLOST){
-            if ($gameTroop.deadMembers().length > 0){
-                return true;
-            }
-        }
-        if ($gameParty.deadMembers().length > 0){
+        if ($gameParty.deadMembers().length == $gameParty.members().length){
             return true;
         }
         return false;
     }
 
     checkVictory(){
-        const loseType = this.getLoseType();
-        if (loseType == GameStageLoseType.TROOPMEMBERLOST){
-            return _.every($gameTroop.members(),(enemy) => enemy.isDying() && !enemy.isDead());
-        }
         if ($gameTroop.isBossDead() || $gameTroop.isAllDead()){
-            if (this.isLastBattle()){
-                let actor = $gameActors.actor(5);
-                actor.forgetSkill(252);
-                actor.forgetSkill(253);
-                actor.changeSlotSkill(0,211);
-                actor.changeSlotSkill(1,5);
-                actor.changeSlotSkill(2,3);
-                actor.changeSlotSkill(3,1);
-                actor.changeSlotSkill(4,6);
-            }
             return true;
         }
         return false;
     }
 
     checkVictoryBefore(){
-        const results = this.getActingBattler().currentAction().results();
+        const results = this.currentAction().results();
         let deadTarget = [];
         results.forEach(result => {
             if (result.isDead){
@@ -1050,7 +1075,6 @@ class Model_Battle extends Model_Base {
     }
 
     processDefeat(){
-        $gameSystem.gainLoseCount(1);
         AudioManager.stopBgm();
     }
 
@@ -1064,15 +1088,6 @@ class Model_Battle extends Model_Base {
         }
     }
 
-    onSkillCancel(){
-        const battler = this.actionBattler();
-        if (battler){
-            battler._ap += 12;
-            battler.removeCurrentAction();
-            battler.setNeedMpGain(false);
-            this.clearActionBattler();
-        }
-    }
 
     clearActionBattler(){
         this._actionBattler = null;
@@ -1087,6 +1102,7 @@ class Model_Battle extends Model_Base {
     }
 
     checkChainBattler(){
+        return false;
         return this.actionBattler() && this.actionBattler().isStateAffected($gameStateInfo.getStateId(StateType.CHAIN));
     }
     
@@ -1114,10 +1130,6 @@ class Model_Battle extends Model_Base {
         const chainId = $gameStateInfo.getStateId(StateType.CHAIN);
         popupData = [new PopupTextData(this._actionBattler,PopupTextType.CHAIN, TextManager.getStateName(chainId))]
         return popupData;
-    }
-
-    getStageTroopData(){
-        return null;
     }
 
     loadResourceData(){
@@ -1156,141 +1168,6 @@ class Model_Battle extends Model_Base {
             return $gameTroop.members()[($gameTroop.members().length-1) / 2];
         }
         return $gameTroop.members()[this._lastDeadEnemyId];
-    }
-    createResultData(){
-        if (this.isLastBattle()){
-            return;
-        }
-        // バトルスキップしたときはターンカウントを9999にする 
-        if ($dataOption.getUserData("battleSkipMode") === BattleSkipMode.Skip){
-            this._totalTurnCount = 9999;
-        }
-        let battler = this.actionBattler() != null && this.actionBattler().isActor() ? this.actionBattler() : $gameParty.members()[0];
-        let params = {
-            id : 0,
-            time : Date.now(),
-            turnCount : this._totalTurnCount,
-            partyMemberId : $gameParty.battleMembers().map(battler => battler.actorId()),
-            finishActorId : battler.actorId(),
-            finishSkillId : battler._lastBattleSkillId,
-            bossId : $gameTroop.members()[this._lastDeadEnemyId].enemyId(),
-            sended : false
-        };
-        let result = new Game_ResultData(Game_ResultType.Battle,params);
-        $gameParty.recordData().gainRecordData(result);
-        // ランキングデータ送信
-        //FireBaseUtility.sendRankingData(params);
-    }
-    
-    createResultDataRushBattle(){
-        const stageevent = $gameParty.stageEvent();
-        if (stageevent && stageevent._type == "mapBattle"){
-            // トループIDからchallengeIdを検索
-            const troopId = $gameTroop.troopId();
-            const challengeId = $gameChallenge.getChallengeIdByTroopId(troopId);
-
-            if (challengeId > 0){
-                // バトルスキップしたときはターンカウントを9999にする 
-                if ($dataOption.getUserData("battleSkipMode") === BattleSkipMode.Skip){
-                    this._totalTurnCount = 9999;
-                }
-                let battler = this.actionBattler() != null && this.actionBattler().isActor() ? this.actionBattler() : $gameParty.members()[0];
-                let params = {
-                    id : challengeId,
-                    time : Date.now(),
-                    turnCount : this._totalTurnCount,
-                    partyMemberId : $gameParty.battleMembers().map(battler => battler.actorId()),
-                    finishActorId : battler.actorId(),
-                    finishSkillId : battler._lastBattleSkillId,
-                    bossId : $gameTroop.members()[this._lastDeadEnemyId].enemyId()
-                };
-                let result = new Game_ResultData(Game_ResultType.Battle,params);
-                const isNewRecord = $gameParty.recordData().gainRecordData(result);
-                return isNewRecord;
-            }
-        }
-        return null;
-    }
-
-    selectbattlerSkills(battler){
-        let slotSkills = battler.slotSkillIds();
-        let others = battler.otherSkillIds();
-        if (this.isLastBattle()){
-            others = [];
-        }
-        
-        const actor = battler;
-        const isTpMax = actor.isTpMax();
-        let selectbattlerSkills = [];
-        slotSkills.forEach((skillId ,index)=> {
-            if (isTpMax == false && skillId > 1000){
-                skillId -= 1000;
-            }
-            let skill = $dataSkills[skillId];
-            selectbattlerSkills.push(new Game_SlotSkill(
-                skillId,
-                {
-                    mpCost:actor.skillMpCost(skill),
-                    level:actor.skillLevel(skillId),
-                    lessLevel:actor.skillLevelWithoutSP(skillId),
-                    expRate:actor.getSkillExpPercent(skillId),
-                    expRateTotal:actor.getSkillExpPercentTotal(skillId),
-                    enable:(actor && actor.canUse(skill) && skill.id > $gameDefine.defaultSlotId),
-                    elementId:[skill.damage.elementId,actor._selfElement,actor.slotElement(index)],
-                    helpData:new Game_SkillHelp(actor,skillId)
-                })
-            )
-        });
-        /*
-        others.forEach((skillId ,index)=> {
-            let skill = $dataSkills[skillId];
-            selectbattlerSkills.push(new Game_SlotSkill(
-                skillId,
-                {
-                    mpCost:actor.skillMpCost(skill),
-                    level:actor.skillLevel(skillId),
-                    lessLevel:actor.skillLevelWithoutSP(skillId),
-                    expRate:actor.getSkillExpPercent(skillId),
-                    expRateTotal:actor.getSkillExpPercentTotal(skillId),
-                    enable:(actor && actor.canUse(skill) && skill.id > $gameDefine.defaultSlotId),
-                    elementId:[skill.damage.elementId,skill.damage.elementId,skill.damage.elementId],
-                    helpData:new Game_SkillHelp(actor,skillId)
-                })
-            )
-        });
-        */
-        return selectbattlerSkills;
-    }
-
-    otherSkills(battler){
-        let others = battler.otherSkillIds();
-        if (this.isLastBattle()){
-            others = [];
-        }
-        
-        const actor = battler;
-        let selectbattlerSkills = [];
-        others.forEach((skillId ,index)=> {
-            let skill = $dataSkills[skillId];
-            selectbattlerSkills.push(new Game_SlotSkill(
-                skillId,
-                {
-                    mpCost:actor.skillMpCost(skill),
-                    level:actor.skillLevel(skillId),
-                    lessLevel:actor.skillLevelWithoutSP(skillId),
-                    expRate:actor.getSkillExpPercent(skillId),
-                    expRateTotal:actor.getSkillExpPercentTotal(skillId),
-                    enable:(actor && actor.canUse(skill) && skill.id > $gameDefine.defaultSlotId),
-                    elementId:[skill.damage.elementId,skill.damage.elementId,skill.damage.elementId],
-                    helpData:new Game_SkillHelp(actor,skillId)
-                })
-            )
-        });
-        return selectbattlerSkills;
-    }
-
-    selectbattlerSkillOthers(battler){
-        return battler.otherSkillIds();
     }
 
     analyseBattler(index){
@@ -1360,11 +1237,6 @@ class Model_Battle extends Model_Base {
         });
     }
 
-    eraseGuardState(){
-        $gameParty.aliveMembers().forEach(member => {
-            member.eraseState($gameStateInfo.getStateId(StateType.GUARD));
-        });
-    }
 
     selectActorSkillItems(index){
         const element = this.actionBattler().slotElement(index);
@@ -1411,10 +1283,6 @@ class Model_Battle extends Model_Base {
     }
 
     performCollapseType(battler){
-        if (this.isLastBattle()){
-            return 1;
-        }
-
         return 0;
     }
 
@@ -1514,138 +1382,7 @@ class Model_Battle extends Model_Base {
         return null;
     }
 
-    startVoice(){
-        const actorIdx = Math.randomInt($gameParty.battleMembers().length);
-        const actorId = $gameParty.battleMembers()[actorIdx].actorId();
-
-        const loseType = 1;
-        const enemyLv = $gameTroop.avarageLevel();
-        const partyLv = $gameParty.avarageLevel();
-        if (partyLv > (enemyLv + 3)){
-            // 敵が人間の時ニナの「このマモノだったら…」は言わない
-            if (actorId == 2 && loseType == GameStageLoseType.TROOPMEMBERLOST){
-                return {actorId:actorId,type:BattleVoiceType.Start2};
-            }
-            return {actorId:actorId,type:BattleVoiceType.Start1};
-        } else
-        if (partyLv < (enemyLv - 3)){
-            return {actorId:actorId,type:BattleVoiceType.Start3};
-        }
-        // 敵が人間の時レミィの「マモノだわ」は言わない
-        if (actorId == 3 && loseType == GameStageLoseType.TROOPMEMBERLOST){
-            return {actorId:actorId,type:BattleVoiceType.Start1};
-        }
-        return {actorId:actorId,type:BattleVoiceType.Start2};
-    }
-
-    victoryVoice(){
-        const actorIdx = Math.randomInt($gameParty.battleMembers().length);
-        const actorId = $gameParty.battleMembers()[actorIdx].actorId();
-        const isDying = _.find( $gameParty.battleMembers(), (member) => member.isDying());
-        if (isDying){
-            return {actorId:actorId,type:BattleVoiceType.Victory2};
-        }
-        return {actorId:actorId,type:BattleVoiceType.Victory1};
-    }
-
-    damageVoice(results){
-        const battler = this.getActingBattler();
-        let voiceData = [];
-        for (let i = 0;i< results.length;i++){
-            let target = results[i].target;
-            if (target.isActor()){
-                
-                if (results[i].hpDamage > 0){
-                    if (!_.find(voiceData,(data) => data.actorId == target.actorId())){
-                        let rate = results[i].hpDamage / target.hp;
-                        if (rate > 0.5){
-                            voiceData.push({actorId:target.actorId(),type:BattleVoiceType.Damage1});
-                        } else if (rate > 0.25 && rate < 0.5){
-                            voiceData.push({actorId:target.actorId(),type:BattleVoiceType.Damage2});
-                        } else{
-                            voiceData.push({actorId:target.actorId(),type:BattleVoiceType.Damage3});
-                        }
-                    }
-                } else
-                if (results[i].hpDamage < 0 && target.isActor()){
-                    if (!_.find(voiceData,(data) => data.actorId == target.actorId())){
-                        // 使用者と対象者が違う場合のみ
-                        if (battler == null || battler != target){
-                            voiceData.push({actorId:target.actorId(),type:BattleVoiceType.BeHealed});
-                        }
-                    }
-                }
-            }
-        }
-        return voiceData;
-    }
-
-    defeatVoice(){
-        const loseType = this.getLoseType();
-        if (loseType == GameStageLoseType.TROOPMEMBERLOST){
-            return null;
-        }
-        const actor = _.find($gameParty.battleMembers() ,(member) => member.isDead());
-        return {actorId:actor.actorId(),type:BattleVoiceType.Defeat};
-    }
-
-    dyingVoice(){
-        let voiceData = [];
-        $gameParty.battleMembers().forEach((member,index) => {
-            if (this._tempDyingData[index] == false && member.isDying()){
-                voiceData.push({actorId:member.actorId(),type:BattleVoiceType.Dying});
-                this._tempDyingData[index] = true;
-            } else if (this._tempDyingData[index] == true && !member.isDying()){
-                this._tempDyingData[index] = false;
-            }
-        });
-        if (voiceData.length > 0){
-            const idx = Math.randomInt(voiceData.length);
-            return voiceData[idx];
-        }
-        return null;
-    }
-
-    magicVoice(actionBattler){
-        const idx = Math.randomInt(6);
-        // エレクトロチェーン
-        if (actionBattler.actorId() == 2 && actionBattler.currentAction() && actionBattler.currentAction().item().id == 81){
-            return {actorId:actionBattler.actorId(),type:BattleVoiceType.Magic3};
-        }
-        // レミィの回復
-        if (actionBattler.actorId() == 3 && actionBattler.currentAction() && actionBattler.currentAction().isRecover() == true){
-            return {actorId:actionBattler.actorId(),type:BattleVoiceType.Magic2};
-        }
-        // レミィの挑発
-        if (actionBattler.actorId() == 3 && actionBattler.currentAction() && (actionBattler.currentAction().item().id >= 141 && actionBattler.currentAction().item().id <= 145)){
-            return {actorId:actionBattler.actorId(),type:BattleVoiceType.Magic3};
-        }
-        // レミィのその他
-        if (actionBattler.actorId() == 3 && actionBattler.currentAction()){
-            return {actorId:actionBattler.actorId(),type:BattleVoiceType.Magic1};
-        }
-        if (idx == 0){
-            return {actorId:actionBattler.actorId(),type:BattleVoiceType.Magic1};
-        } else
-        if (idx == 1){
-            return {actorId:actionBattler.actorId(),type:BattleVoiceType.Magic2};
-        } else
-        if (idx == 2){
-            if (actionBattler.actorId() == 2){
-                return {actorId:actionBattler.actorId(),type:BattleVoiceType.Magic2};
-            } else{
-                return {actorId:actionBattler.actorId(),type:BattleVoiceType.Magic3};
-            }
-        }
-        return null;
-    }
-
     getLoseType(){
-        let loseType = this.stageData().loseType;
-        const stageevent = $gameParty.stageEvent();
-        if (stageevent && stageevent._type == "mapBattle"){
-            loseType = $gameParty.stageData().loseType;
-        }
-        return loseType;
+        return null;
     }
 }

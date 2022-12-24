@@ -21,17 +21,18 @@ class Layer_BattleTroop extends Sprite{
         this._enemySprites = sprites;
 
         for (let j = 0; j < sprites.length; j++) {
-            let _battlerStatus = new Sprite_BattlerStatus();
-            this.addChild(_battlerStatus);
+            let battlerStatus = new Sprite_BattlerStatus();
+            this.addChild(battlerStatus);
             
-            _battlerStatus.setup(sprites[j]._battler);
-            _battlerStatus.x = sprites[j].x;
-            _battlerStatus.y = sprites[j].y;
-            _battlerStatus.anchor.x = 0.5;
-            _battlerStatus.anchor.y = 1;
-            sprites[j].setBattlerStatus(_battlerStatus);
-            this._gaugeSprites.push(_battlerStatus);
+            battlerStatus.setup(sprites[j]._battler);
+            battlerStatus.x = sprites[j].x;
+            battlerStatus.y = sprites[j].y;
+            battlerStatus.anchor.x = 0.5;
+            battlerStatus.anchor.y = 1;
+            sprites[j].setBattlerStatus(battlerStatus);
+            this._gaugeSprites.push(battlerStatus);
         }
+        this.hideBattleStatus();
     }
 
     compareEnemySprite (a, b) {
@@ -54,12 +55,32 @@ class Layer_BattleTroop extends Sprite{
         });
     }
 
+    resetPosition(){
+        this._enemySprites.forEach((enemy,index) => {
+            enemy.resetPosition(enemy._battler.line());
+            this._gaugeSprites[index].x = enemy.x;
+            this._gaugeSprites[index].y = enemy.y;
+        });
+    }
+
+    showBattleStatus(battler,isAll){
+        this._gaugeSprites.forEach(sprite => {
+            sprite.visible = (sprite._battler == battler || isAll);
+        });
+    }
+
+    hideBattleStatus(){
+        this._gaugeSprites.forEach(sprite => {
+            sprite.visible = false;
+        });
+    }
+
+
     startAnimation(battler,animationId, mirror, delay,scale,nosound,nocheck){
         if (battler.isActor()){
             return;
         }
         if (!battler){
-            Debug.log("対象がいない");
             return;
         }
         const target = _.find(this._enemySprites,(a) => a._battler == battler);
@@ -129,7 +150,7 @@ class Layer_BattleTroop extends Sprite{
             return;
         }    
         const sprite = _.find(this._enemySprites,(sprite) => sprite._battler == target);
-        let stateSprite = sprite.setupStatePopup(type,value);
+        const stateSprite = sprite.setupStatePopup(type,value);
         sprite.addChild(stateSprite);
     }
 

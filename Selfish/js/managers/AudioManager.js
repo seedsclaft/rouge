@@ -145,7 +145,7 @@ AudioManager.playBgm = async function(bgm, pos, volumeRate) {
             const cacheBgm = this.findCache(url);
             if (cacheBgm && cacheBgm._buffer && cacheBgm._buffer._isLoaded){
                 this._bgmBuffer = cacheBgm._buffer;
-                Debug.error("cacheBgm" + bgm.name);
+                //Debug.error("cacheBgm" + bgm.name);
             } else{
                 this._bgmBuffer = this.createBuffer("bgm/", bgm.name);
                 //console.error("createBuffer" + bgm.name);

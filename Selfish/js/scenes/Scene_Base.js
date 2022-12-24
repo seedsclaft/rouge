@@ -267,8 +267,6 @@ Scene_Boot.prototype.loadSystemImages = function() {
     ImageManager.loadSystem('Damage');
     ImageManager.loadSystem('States');
     ImageManager.loadSystem('keyMapIcons');
-    ImageManager.loadSystem('plateA');
-    ImageManager.loadSystem('sabwindowF');
 };
 
 Scene_Boot.prototype.create = function() {

@@ -233,7 +233,7 @@ Game_Action.prototype.isValid = function() {
 };
 
 Game_Action.prototype.makeTargets = function() {
-    const targets = [];
+    let targets = [];
     if (!this._forcing && this.subject().isConfused()) {
         targets.push(this.confusionTarget());
     } else if (this.isForEveryone()) {
@@ -242,6 +242,14 @@ Game_Action.prototype.makeTargets = function() {
         targets.push(...this.targetsForOpponents());
     } else if (this.isForFriend()) {
         targets.push(...this.targetsForFriends());
+    }
+    if (this.item()){
+        const _range = this.item().range;
+        if (this.subject().isActor()){
+            targets = targets.filter(a => (a.line() - _range) <= 0);
+        } else{
+            targets = targets.filter(a => (this.subject().line() - _range) <= 0);
+        }
     }
     return this.repeatTargets(targets);
 };
