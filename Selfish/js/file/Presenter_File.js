@@ -134,14 +134,6 @@ class Presenter_File extends Presenter_Base {
     }
 
     commandLock() {
-        const index = this._view._listWindow.index();
-        this._view.commandLock(index);
-        if (this._view.isAllLocked()){
-            const endEvent = this._model.lockEndEvent();
-            if (endEvent){
-                EventManager.setup(endEvent);
-            }
-        }
     }
 
 }

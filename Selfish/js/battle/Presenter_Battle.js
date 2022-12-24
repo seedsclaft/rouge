@@ -349,23 +349,7 @@ class Presenter_Battle extends Presenter_Base{
         } else
         if (this._model.checkVictory()){
             $gameParty.onBattleEnd();
-            var loseType = this._model.stageData().loseType;
-            const type = this._model.performCollapseType(this._model.lastDeathEnemy());
-            if (type == 1){
-                this._view.performCollapse(this._model.lastDeathEnemy(),type);
-                this.changeStep(BattleStep.WAIT);
 
-
-                this._view.startBossCollapseAnimation(this._model.lastDeathEnemy(),() => {  
-                    AudioManager.fadeOutBgm(1);
-                    this._model.processVictory();
-                    this.processVictory();
-                    $gameParty.resetBattleParameter();
-                    this._view.clearLog();
-                    //EventManager.endStage();
-                });
-                return;
-            } else
             if ($gameTroop.isAllDead() || $gameTroop.isBossDead()){
                 if ($gameTroop.isBossDead()){
                     $gameTroop.aliveMembers().forEach(target => {
@@ -374,10 +358,6 @@ class Presenter_Battle extends Presenter_Base{
                         this._view.performCollapse(target,0);
                     });
                 }
-                this.victoryAction();
-                return;
-            } else
-            if (loseType == GameStageLoseType.TROOPMEMBERLOST){
                 this.victoryAction();
                 return;
             }

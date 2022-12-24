@@ -12,9 +12,10 @@ class Title_Scene extends Scene_Base{
     create(){
         super.create();
         BackGroundManager.resetup();
-        BackGroundManager.changeBackGround("Ruins",null);
+        BackGroundManager.changeBackGround("nexfan_01",null);
         BackGroundManager.resetPosition();
-        //BackGroundManager.moveUV(0,240,0,false);
+        BackGroundManager.move(0,-40,-200);
+        //BackGroundManager.moveUV(1,-40,-200,false);
         BackGroundManager.clearWeather();
         EventManager.resetup();
         EventManager.clearWeather();

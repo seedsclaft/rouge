@@ -21,6 +21,10 @@
  * @desc 挙動をモバイル端末用にする
  * @default false
  * 
+ * @param InitCurrency
+ * @desc 初期pt所持数
+ * @default 0
+ * 
  * @param defaultSlotId
  * @desc 数値までをからの属性スロット情報として使用する
  * @default 10
@@ -36,14 +40,6 @@
  * @param NoActionSkillId
  * @desc 何もしないのスキルID
  * @default 272
- * 
- * @param RushBackSkillId
- * @desc ラッシュバトル突撃準備スキルID
- * @default 401
- * 
- * @param RushAttackSkillId
- * @desc ラッシュバトル敵陣突破スキルID
- * @default 402
  * 
  * @param magicElementSwitchId
  * @desc 属性が装備可能になるスイッチID
@@ -81,22 +77,6 @@
  * @desc 召喚できる状態である
  * @default 26
  * 
- * @param EventBattleSwitchId1
- * @desc イベントバトルのフラグ1
- * @default 27
- * 
- * @param EventBattleSwitchId2
- * @desc イベントバトルのフラグ2
- * @default 28
- * 
- * @param EventBattleSwitchId3
- * @desc イベントバトルのフラグ3
- * @default 29
- * 
- * @param EventBattleSwitchId4
- * @desc イベントバトルのフラグ4
- * @default 30
- * 
  * @param FlozenStateIdSwitchId
  * @desc 攻撃対象に凍結がいる
  * @default 31
@@ -128,25 +108,9 @@
  * @desc 凍結状態のダメージ増加率
  * @default 1.5
  * 
- * @param FrictionDamageArray
- * @desc フリクションのダメージ係数
- * @type number[]
- * @decimals 2
- * 
- * @param lockFileEndEvent
- * @default ""
- * 
- * @param storyClearedEvent
- * @default ""
- * 
  * @param lastBattleTroopId
  * @desc ラストバトルのトループID
  * @type number
- * @default ""
- * 
- * @param endLastBattleEvent
- * @desc ラストバトル終了後のイベント
- * @type string
  * @default ""
  * 
  * @param RoleStateIdArray
@@ -173,6 +137,10 @@ Game_Define.prototype.initialize = function() {
     // iPadはiOS13からnavigator.userAgentから「iPad」であることを判別できない
     this.setMobileModeHotfix();
 };
+
+Game_Define.prototype.data = function() {
+  return this._data;
+}
 
 Game_Define.prototype.platForm = function() {
   return this._platForm;
@@ -207,9 +175,7 @@ Object.defineProperties(Game_Define.prototype, {
   noActionSkillId:              { get: function() { return Number(this._data.NoActionSkillId) }, configurable: false },
   limitBreakValue:              { get: function() { return Number(this._data.limitBreakValue) }, configurable: false },
   
-  rushBackSkillId:              { get: function() { return Number(this._data.RushBackSkillId) }, configurable: false },
-  rushAttackSkillId:                  { get: function() { return Number(this._data.RushAttackSkillId); },   configurable: false },
-  
+
   magicElementSwitchId:         { get: function() { return Number(this._data.magicElementSwitchId); },   configurable: false },
   bossTroopId:                  { get: function() { return Number(this._data.bossTroopId) }, configurable: false },
   bossEnemyId:                  { get: function() { return Number(this._data.bossEnemyId) }, configurable: false },
@@ -220,11 +186,7 @@ Object.defineProperties(Game_Define.prototype, {
   anyOneSameStateIdSwitchId:  { get: function() { return Number(this._data.AnyOneSameStateIdSwitchId); }, configurable: false },
   oneTimeSwitchId:  { get: function() { return Number(this._data.OneTimeSwitchId); }, configurable: false },
   summonSwitchId:  { get: function() { return Number(this._data.SummonSwitchId); }, configurable: false },
-  eventBattleSwitchId1:  { get: function() { return Number(this._data.EventBattleSwitchId1); }, configurable: false },
-  eventBattleSwitchId2:  { get: function() { return Number(this._data.EventBattleSwitchId2); }, configurable: false },
-  eventBattleSwitchId3:  { get: function() { return Number(this._data.EventBattleSwitchId3); }, configurable: false },
-  eventBattleSwitchId4:  { get: function() { return Number(this._data.EventBattleSwitchId4); }, configurable: false },
-  flozenStateIdSwitchId:  { get: function() { return Number(this._data.FlozenStateIdSwitchId); }, configurable: false },
+flozenStateIdSwitchId:  { get: function() { return Number(this._data.FlozenStateIdSwitchId); }, configurable: false },
   chainSeaquenceSwitchId:  { get: function() { return Number(this._data.ChainSeaquenceSwitchId); }, configurable: false },
   
   summonTroopId:  { get: function() { return Number(this._data.SummonTroopId); }, configurable: false },
@@ -233,14 +195,8 @@ Object.defineProperties(Game_Define.prototype, {
   gainElementRate:              { get: function() { return Number(this._data.gainElementRate); }, configurable: false },
   lessElementRate:              { get: function() { return Number(this._data.lessElementRate); }, configurable: false },
   frozenDamageRate:             { get: function() { return Number(this._data.frozenDamageRate); }, configurable: false },
-  frictionDamageArray:             { get: function() { return JSON.parse(this._data.FrictionDamageArray); }, configurable: false },
-  
-  lockFileEndEvent:             { get: function() { return String(this._data.lockFileEndEvent); }, configurable: false },  
-  storyClearedEvent:             { get: function() { return String(this._data.storyClearedEvent); }, configurable: false },  
-  
-  
+
   lastBattleTroopId:             { get: function() { return Number(this._data.lastBattleTroopId); }, configurable: false },  
-  endLastBattleEvent:             { get: function() { return String(this._data.endLastBattleEvent); }, configurable: false },  
   RoleStateIdArray:             { get: function() { return JSON.parse(this._data.RoleStateIdArray); }, configurable: false },
 });
 

@@ -1,7 +1,6 @@
 class Tactics_Model {
     constructor() {
         this._selectedData = $gameStage.selectedData();
-        console.log(this._selectedData)
 
         const _actorList = $gameParty.members();
         let _position = $gameTacticsActorPosition.data();
@@ -27,6 +26,10 @@ class Tactics_Model {
         this._selectAlchemy = [];
     }
 
+    actorList(){
+        return $gameParty.members();
+    }
+
     energy(){
         return $gameParty.gold();
     }
@@ -45,6 +48,17 @@ class Tactics_Model {
 
     alchemyMagicList(){
         return this._alchemyMagicList;
+    }
+
+    alchemyParam(category){
+        let alchemyParam = [0,0,0,0,0];
+        let actors = this._selectedData[category].map(a => $gameActors.actor(a));
+        actors.forEach(actor => {
+            actor.alchemyParam().forEach((param,index) => {
+                alchemyParam[index] += param;
+            });
+        });
+        return alchemyParam;
     }
 
     searchList(){

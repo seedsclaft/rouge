@@ -130,6 +130,8 @@ const StateType = {
     BARRIER :                 "barrier",        //ステートバリア
     CHARGE :                  "charge",         //チャージ
 
+    DISCHARGE :               "discharge",      //暴発 
+
     ATTACK_LENGHT :           "attacklength",   //攻撃回数加算
     SKILL_EXP :               "skillexp",       //スキル経験値アップ(未使用)
     COUNTER :                 "counter",        //カウンター
@@ -165,22 +167,13 @@ const StateType = {
     CONSCIOUS :               "conscious",      //レベル以下即死
     REFRECT :                 "refrect",        //スキルカウンター
     REDAMAGE :                "redamage",       //反ダメージ
-    DISCHARGE :               "discharge",      //暴発 
     PENETRATE :               "penetrate",      //貫通 
     IRON_WILL :               "ironwill",       //アイアンウィル
     KISHIKAISEI:              "kishikaisei",    //起死回生
     SELFISH:                  "selfish",    　　//セルフィッシュ
     RESTRICTION:              "restriction",    //状態異常カウンター
 
-    ONE_HANDED:                 "Onehanded",    //近接
-    SHIELD:                     "Shield",       //防御
-    MARKSMAN:                   "Marksman",     //弓
-    SNEAK:                      "Sneak",        //盗賊
-    DESTRUCTION:                "Destruction",  //破壊
-    RESTORATION:                      "Restoration",        //回復
 
-    GUARD:                "Guard",      //ガード
-    ARROW:                "Arrow",      //弓構え
     MAGIC_RESIST:                "MagicResist",      //魔法耐性
 
 }

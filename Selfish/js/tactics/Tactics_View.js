@@ -21,11 +21,7 @@ class Tactics_View extends Scene_Base {
 
     createDisplayObjects(){
         //this.createScreenSprite();
-        let background = new Sprite();
-        background.bitmap = ImageManager.loadBackground("nexfan_01");
-        background.x = -40;
-        background.y = -200;
-        this.addChild(background);
+        BackGroundManager.resetup();
         this.createWindowLayer();
         /*
         this._statusWindow = new Window_HelpStatus(264,64,1080,540);
@@ -47,6 +43,8 @@ class Tactics_View extends Scene_Base {
 
         this.createHelpWindow();
         this.createKeyMapWindow();
+        PopupStatus_View.resetUp();
+        PopupStatus_View.close();
     }
 
     createKeyMapWindow(){
@@ -129,7 +127,16 @@ class Tactics_View extends Scene_Base {
         */
     }
 
-    commandDecide(commandIndex){
+    setAlchemyParam(apchemyParam){
+        if (this._alchemyParam == null){
+            this._alchemyParam = new Tactics_AlchemyParam(464,64,360,64);
+            this.addChild(this._alchemyParam);
+        }
+        this._alchemyParam.setData(apchemyParam);
+        this._alchemyParam.show();
+    }
+
+    commandDecide(){
         this.setCommand(TacticsCommand.CommandOk);
     }
 
@@ -137,17 +144,18 @@ class Tactics_View extends Scene_Base {
         if (isEnable){
             this._actorSelect.activate();
             this._actorSelect.select(0);
+            this.refreshActorIndex();
         } else{
             const mainText = TextManager.getText(10000).replace("/d",selectedActorNameList);
-            const text1 = TextManager.getCancelText();
-            const text2 = TextManager.getDecideText();
+            const text1 = TextManager.getDecideText();
+            const text2 = TextManager.getCancelText();
             const _popup = PopupManager;
             _popup.setPopup(mainText,{select:0,subText:null});
             _popup.setHandler(text1,'ok',() => {
+                this.setCommand(TacticsCommand.SelectClear);
                 this._commandList.activate();
             });
             _popup.setHandler(text2,'cancel',() => {
-                this.setCommand(TacticsCommand.SelectClear);
                 this._commandList.activate();
             });
             _popup.open();
@@ -267,28 +275,32 @@ class Tactics_View extends Scene_Base {
     commandSelectClear(actorIdList,memberList){
         this._actorSelect.setData(memberList);
         this._actorSpriteList.addActorList(actorIdList);
+        this._actorSpriteList.deactivate();
     }
 
     commandSelectCancel(isEnable,selectedActorNameList){
         this._actorSelect.deactivate();
         if (isEnable){
             const mainText = selectedActorNameList + TextManager.getText(10010).replace("/d",TextManager.getText(this._commandList.currentCommand().textId));
-            const text1 = TextManager.getCancelText();
-            const text2 = TextManager.getDecideText();
+            const text1 = TextManager.getDecideText();
+            const text2 = TextManager.getCancelText();
             const _popup = PopupManager;
             _popup.setPopup(mainText,{select:0,subText:null});
             _popup.setHandler(text1,'ok',() => {
                 this._commandList.activate();
-                this.setCommand(TacticsCommand.SelectClear);
+                this.setCommand(TacticsCommand.DecideMember);
             });
             _popup.setHandler(text2,'cancel',() => {
                 this._commandList.activate();
-                this.setCommand(TacticsCommand.DecideMember);
+                this._actorSpriteList.deactivate();
+                this.setCommand(TacticsCommand.SelectClear);
             });
             _popup.open();
         } else{
             this._commandList.activate();
-            console.log("activate")
+            this._actorSpriteList.deactivate();
+            if (this._alchemyParam) this._alchemyParam.hide();
+            if (this._searchList) this._searchList.hide();
         }
         //const subText = TextManager.getText(210101);
     }
@@ -315,25 +327,27 @@ class Tactics_View extends Scene_Base {
     commandDecideAlchemy(isEnable,alchemyNameList){
         if (isEnable && alchemyNameList != ""){
             const mainText = TextManager.getText(10030).replace("/d",alchemyNameList);
-            const text1 = TextManager.getCancelText();
-            const text2 = TextManager.getDecideText();
+            const text1 = TextManager.getDecideText();
+            const text2 = TextManager.getCancelText();
             const _popup = PopupManager;
             _popup.setPopup(mainText,{select:0,subText:null});
             _popup.setHandler(text1,'ok',() => {
                 this._commandList.activate();
-                this.setCommand(TacticsCommand.AlchemySelect);
+                this._alchemyMagicList.hide();
+                this._magicCategory.hide();
+                this._alchemyParam.hide();
+                this.setCommand(TacticsCommand.AlchemyEnd);
             });
             _popup.setHandler(text2,'cancel',() => {
                 this._commandList.activate();
-                this._alchemyMagicList.hide();
-                this._magicCategory.hide();
-                this.setCommand(TacticsCommand.AlchemyEnd);
+                this.setCommand(TacticsCommand.AlchemySelect);
             });
             _popup.open();
         } else{
             this._commandList.activate();
             this._alchemyMagicList.hide();
             this._magicCategory.hide();
+            this._alchemyParam.hide();
             this.setCommand(TacticsCommand.SelectClear);
         }
     }
@@ -346,15 +360,15 @@ class Tactics_View extends Scene_Base {
 
     commandCommandTurnend(){
         const mainText = TextManager.getText(10020);
-        const text1 = TextManager.getCancelText();
-        const text2 = TextManager.getDecideText();
+        const text1 = TextManager.getDecideText();
+        const text2 = TextManager.getCancelText();
         const _popup = PopupManager;
         _popup.setPopup(mainText,{select:0,subText:null});
         _popup.setHandler(text1,'ok',() => {
-            this._commandList.activate();
+            this.setCommand(TacticsCommand.Turnend);
         });
         _popup.setHandler(text2,'cancel',() => {
-            this.setCommand(TacticsCommand.Turnend);
+            this._commandList.activate();
         });
         _popup.open();
     }

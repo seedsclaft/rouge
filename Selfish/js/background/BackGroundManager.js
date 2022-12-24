@@ -37,8 +37,6 @@ BackGroundManager.update = function() {
 BackGroundManager.changeBackGround = function(name1,name2) {
     this._backGroundView.changeBackGround1(name1);
     this._backGroundView.changeBackGround2(name2);
-    console.log(name1)
-
 }
 
 BackGroundManager.autotileType = function(z) {
@@ -166,7 +164,7 @@ BackGroundManager.move = function(duration,x,y) {
 
 BackGroundManager.moveUV = function(duration,x,y,repeat) {
     //$gameScreen.setBackGroundPosition(x,y);
-    //this._backGroundView.moveUV(duration,x,y,repeat);
+    this._backGroundView.moveUV(duration,x,y,repeat);
 }
 
 BackGroundManager.bgFadeOut = function(duration) {

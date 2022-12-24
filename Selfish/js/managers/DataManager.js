@@ -131,6 +131,7 @@ DataManager.createActorDataPlus = function() {
                 element.y = json.y ? Number(json.y) : 0;
                 element.elementId = json.elementId ? (json.elementId).split(",").map(num => Number(num)) : [];
                 element.paramUpRate = json.paramUpRate ? (json.paramUpRate).split(",").map(num => Number(num)) : [];
+                element.alchemyParam = json.alchemyParam ? (json.alchemyParam).split(",").map(num => Number(num)) : [];
                 element.scale = json.scale ? Number(json.scale) : 1.0;
             }
         }

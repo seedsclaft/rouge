@@ -796,8 +796,8 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
     }
     
     baseValue += subject.damageRate();
-
-    //baseValue = baseValue * 0.01 * subject.atk;
+    console.log(baseValue)
+    baseValue = baseValue * 0.01 * subject.atk;
     let elementValue = this.calcElementRate(target);
     let value = baseValue * elementValue;
     if (this.isMagical()) {
@@ -819,28 +819,13 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
 
 Game_Action.prototype.evalDamageFormula = function(target) {
     try {
-        const _item = this.item();
-        const _atk = this._subject.getAttackValue(0);
-        const _damageRate = Number( eval(_item.damage.formula) );
-        const _defRate = 100 - (target.def) * 0.12;
-        let damage = 0;
-        if (_item.stypeId == 1){
-            damage = Math.floor( _atk * _damageRate * (_defRate / 100));
-            const _shieldRate = target.shieldValue();
-            if (_shieldRate > 0){
-                damage = Math.floor( _atk * _damageRate * (_defRate / 100) * (_shieldRate / 100));
-            }
-        } else 
-        if (_item.stypeId == 2){
-            const _shieldRate = target.magicShieldValue();
-            const _elementRate = target.elementShieldValue(_item.damage.elementId);
-            damage = Math.floor( _damageRate * (1 - (_shieldRate / 100)) * (1 - (_elementRate / 100)));
-            console.log(damage)
-        }
-        const sign = ([3, 4].contains(_item.damage.type) ? -1 : 1);
-        let value = Math.max(damage, 0) * sign;
-		if (isNaN(value)) value = 0;
-		return value;
+        const item = this.item();
+        const a = this.subject(); // eslint-disable-line no-unused-vars
+        const b = target; // eslint-disable-line no-unused-vars
+        const v = $gameVariables._data; // eslint-disable-line no-unused-vars
+        const sign = [3, 4].includes(item.damage.type) ? -1 : 1;
+        const value = Math.max(eval(item.damage.formula), 0) * sign;
+        return isNaN(value) ? 0 : value;
     } catch (e) {
         return 0;
     }
@@ -1398,11 +1383,4 @@ Game_Action.prototype.setAgi = function(agi) {
 
 Game_Action.prototype.agi = function() {
     return this._agi;
-}
-
-const WeaponType = {
-    None:0,
-    ONE_HANDED:1,
-    TWO_HANDED:2,
-    BOW:3
 }

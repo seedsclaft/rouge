@@ -97,9 +97,6 @@ class Sprite_BackGround extends TilingSprite {
     }
 
     moveUV(duration,x,y,repeat){
-        if (repeat === undefined){
-            repeat = false;
-        }
         this.killAnim();
         //let anim = new TimelineMax();
         const rep = repeat == true ? -1 : 0;

@@ -203,6 +203,10 @@ Game_Party.prototype.initialize = function() {
     this.getHelpKeyData();
 };
 
+Game_Party.prototype.setup = function() {
+    this._gold = Number( $gameDefine.data().InitCurrency );
+}
+
 Game_Party.prototype.getHelpKeyData = function() {
     if (this._helpKeyData == null){
         this._helpKeyData = [];
@@ -364,6 +368,7 @@ Game_Party.prototype.setupStartingMembers = function() {
             this._actors.push(actorId);
         }
     }, this);
+    this.setup();
 };
 
 Game_Party.prototype.name = function() {

@@ -25,7 +25,7 @@ class View_BackGround {
     }
 
     createBackGround(){
-        this._backSprite1 = new Sprite_BackGround(Graphics.width,Graphics.height);
+        this._backSprite1 = new Sprite();
         this._backSprite2 = new Sprite_BackGround(Graphics.width,Graphics.height);
         this._toneSprite = new ScreenSprite();
         this._layer.addChild(this._backSprite1);
@@ -91,7 +91,7 @@ class View_BackGround {
             this._backSprite1.bitmap = null;
             this._backSprite1._init = false;
             this._backSprite1.opacity = 255;
-            this._backSprite1.bitmap = ImageManager.loadBattleback1(name);
+            this._backSprite1.bitmap = ImageManager.loadBackground(name);
         } else{
             this._backSprite1.bitmap = null;
         }
@@ -144,7 +144,7 @@ class View_BackGround {
     }
 
     move(duration,x,y){
-        this._backSprite1.moveDirection(duration,x,y);
+        this._backSprite1.move(x,y);
         //this._backSprite2.moveDirection(duration,x,y);
     }
 
@@ -202,7 +202,7 @@ class View_BackGround {
     }
 
     resetPosition(){
-        this._backSprite1.resetPosition();
+        //this._backSprite1.resetPosition();
         //this._backSprite2.resetPosition();
     }
     

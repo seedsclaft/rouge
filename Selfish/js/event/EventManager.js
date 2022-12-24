@@ -513,11 +513,6 @@ EventManager.shutdown = function(){
     }
 }
 
-EventManager.endLastBattle = function(){
-    this.exit();
-    SceneManager.goto(Map_Scene);
-    this.setup($gameDefine.endLastBattleEvent);
-}
 
 EventManager.showAnimation = function(id,x,y,scaleX,scaleY,noSoundFlag){
     this._eventView.showAnimation(id,x,y,scaleX,scaleY,noSoundFlag);

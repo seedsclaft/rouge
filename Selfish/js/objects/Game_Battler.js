@@ -1579,53 +1579,6 @@ Game_Battler.prototype.damageRate = function() {
     return value;
 }
 
-Game_Battler.prototype.getAttackValue = function(weaponSlotId) {
-    let value = 0;
-    let _weapon = null;
-    if (this.isActor()){
-        _weapon = this.weapons()[weaponSlotId];
-        if (_weapon){
-            value += this.weapons()[weaponSlotId].params[2];
-        }
-    } else{
-        value = this.atk;
-    }
-    const _roleAtk = this.roleAttackValue(_weapon);
-    const _skillAtk = 1 + 0.5 * _roleAtk / 100;
-    return (this.atk - value) + value * _skillAtk;
-}
-
-Game_Battler.prototype.roleAttackValue = function(weapon) {
-    if (weapon == null) return 0;
-    switch (weapon.wtypeId){
-        case WeaponType.ONE_HANDED:
-            return this.getStateEffect($gameStateInfo.getStateId( StateType.ONE_HANDED ));
-        case WeaponType.BOW:
-            return this.getStateEffect($gameStateInfo.getStateId( StateType.MARKSMAN ));
-    }
-    return 0;
-}
-
-Game_Battler.prototype.magicShieldValue = function() {
-    return this.getStateEffect($gameStateInfo.getStateId( StateType.MAGIC_RESIST ));
-}
-
-Game_Battler.prototype.magicShieldValue = function() {
-    return this.getStateEffect($gameStateInfo.getStateId( StateType.MAGIC_RESIST ));
-}
-
-Game_Battler.prototype.elementShieldValue = function(elementId) {
-    if (elementId == null) return 0;
-    switch (elementId){
-        case 11:
-        return this.getStateEffect($gameStateInfo.getStateId( StateType.FIRE_RESIST ));
-        case 12:
-        return this.getStateEffect($gameStateInfo.getStateId( StateType.ICE_RESIST ));
-        case 13:
-        return this.getStateEffect($gameStateInfo.getStateId( StateType.THUNDER_RESIST ));
-    }
-    return 0;
-}
 
 //-----------------------------------------------------------------------------
 // Game_Actor
@@ -1701,6 +1654,7 @@ Game_Actor.prototype.setup = function(actorId) {
 
     this._positionData = null;
     this._paramUpRate = actor.paramUpRate;
+    this._alchemyParam = actor.alchemyParam;
 };
 
 Game_Actor.prototype.position = function() {
@@ -1713,6 +1667,10 @@ Game_Actor.prototype.setPosition = function(position) {
 
 Game_Actor.prototype.paramUpRate = function() {
     return this._paramUpRate;
+}
+
+Game_Actor.prototype.alchemyParam = function() {
+    return this._alchemyParam;
 }
 
 Game_Actor.prototype.levelUpParam = function(paramId) {
@@ -1734,12 +1692,14 @@ Game_Actor.prototype.calcLevelUpParam = function(paramId) {
     if ((Math.max(0, this._paramPlus[paramId]-2)) > border){
         upParam = Math.floor( rate / 100 ) + 1;
         this._paramPlus[paramId] += upParam;
+        console.log(upParam)
         return upParam;
     }
 
     upParam = Math.floor( rate / 100 );
     upParam += rate >= Math.random() * 100 ? 1 : 0;
     this._paramPlus[paramId] += upParam;
+    console.log(upParam)
     return upParam;
 }
 

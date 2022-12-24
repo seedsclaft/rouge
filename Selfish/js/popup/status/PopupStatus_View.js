@@ -4,13 +4,20 @@ class PopupStatus_View  {
 
     static initialize(){
         this._listWindow = new PopupStatus_ActorList(496,40,400,440);
-        /*
-        this._listWindow.setHandler('ok',     this.selectActor.bind(this));
         this._listWindow.setHandler('right',     this.changeActor.bind(this,1));
         this._listWindow.setHandler('left',     this.changeActor.bind(this,-1));
+        /*
+        this._listWindow.setHandler('ok',     this.selectActor.bind(this));
         this._listWindow.setHandler('index',     this.changeSelectIndex.bind(this));
         */
         //this._listWindow.setHandler('cancel',     SceneManager._scene.popScene.bind(this));
+       
+    }
+
+    static resetUp(){
+        if (this._listWindow.parent){
+            this._listWindow.parent.removeChild(this._listWindow);
+        }
         SceneManager._scene.addChild(this._listWindow);
     }
 
@@ -30,6 +37,16 @@ class PopupStatus_View  {
     static setLvupAfter(data,endCall){
         this._listWindow.setLvupAfter(data);
         this._listWindow.setHandler('ok',     () => {if (endCall) endCall() });
+    }
+
+    static changeActor(value){
+        if (value > 0){
+            this._listWindow.cursorDown();
+        } else{
+            this._listWindow.cursorUp();
+        }
+        this._listWindow.refresh();
+        this._listWindow.activate();
     }
 
     static close(){
@@ -79,15 +96,6 @@ class PopupStatus_View  {
     changeSelectIndex(){
     }
 
-    changeActor(value){
-        if (value > 0){
-            this._listWindow.cursorDown();
-        } else{
-            this._listWindow.cursorUp();
-        }
-        this._listWindow.refresh();
-        this._listWindow.activate();
-    }
 
     selectActor(){
         this.setCommand(PopupStatusCommand.Select);

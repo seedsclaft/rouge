@@ -84,7 +84,9 @@ class PopupStatus_ActorListItem extends Window_Base{
                 else if (i == 2) _textColor = lvUpdate && lvUpdate.atk ? _powerUpColor : _normalColor;
                 else if (i == 3) _textColor = lvUpdate && lvUpdate.spd ? _powerUpColor : _normalColor;
                 else if (i == 4) _textColor = lvUpdate && lvUpdate.def ? _powerUpColor : _normalColor;
+                this.changeTextColor(_textColor);
                 this.drawText(this._actor.param(_statusParamId[i]),x + 80,y + _lineHeight * i,120,"right");
+                this.changeTextColor(_normalColor);
             }
         }
         let paramUpRate = this._actor.paramUpRate();
@@ -101,13 +103,14 @@ class PopupStatus_ActorListItem extends Window_Base{
         ]
         for (let i = 0;i < _elementId.length;i++){
             this.drawText(_element[_elementId[i]],x + 68 * i,y,120);
-            this.drawElementStatus(this._actor,_elementStatusType[i],x + 68 * i + 32,y,120);
+            this.drawElementStatus(this._actor,_elementStatusType[i],i,x + 68 * i + 32,y,120);
         }
 
     }
 
-    drawElementStatus(actor,elementStatusType,x,y){
-        const _elementStatus = actor.getStateEffectTotal($gameStateInfo.getStateId(elementStatusType));
+    drawElementStatus(actor,elementStatusType,index,x,y){
+        let _elementStatus = actor.getStateEffectTotal($gameStateInfo.getStateId(elementStatusType));
+        _elementStatus += actor.alchemyParam()[index];
         let status = "G";
         if (_elementStatus > 100){
             status = "S";

@@ -20,17 +20,15 @@ class Strategy_View extends Scene_Base {
     }
 
     createDisplayObjects(){
-        let background = new Sprite();
-        background.bitmap = ImageManager.loadBackground("nexfan_01");
-        background.x = -40;
-        background.y = -200;
-        this.addChild(background);
+        BackGroundManager.resetup();
         this.createWindowLayer();
     }
 
     createObjectAfter(){
         this.createHelpWindow();
         this.createKeyMapWindow();
+        PopupStatus_View.resetUp();
+        PopupStatus_View.close();
     }
 
     createKeyMapWindow(){

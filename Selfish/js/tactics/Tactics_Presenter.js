@@ -95,18 +95,23 @@ class Tactics_Presenter extends Presenter_Base{
         const _selected = this._model.selectedData(_category);
         if (_category == "turnend"){
             this._view.commandCommandTurnend();
+            return;
         } else
         if (_category == "status"){
-            PopupStatus_View.setData([$gameActors.actor(1)],() => {
+            const _actorList = this._model.actorList();
+            PopupStatus_View.setData(_actorList,() => {
                 PopupStatus_View.close();
                 this.commandSelectCancel();
             });
+            return;
         } else
+        if (_category == "alchemy"){
+            this._view.setAlchemyParam(null);
+        }
         if (_category == "search" && _selected.length == 0){
             this._view.commandCommandSearch();
-        } else{
-            this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
         }
+        this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
    }
 
     commandSelectOk(){
@@ -122,6 +127,10 @@ class Tactics_Presenter extends Presenter_Base{
                 this._model.setSearchId(_serach.id);
             }
         }
+        if (_category == "alchemy"){
+            const _alchemyParam = this._model.alchemyParam(_category);
+            this._view.setAlchemyParam(_alchemyParam);
+        } 
         this._view.commandSelectOk(_isSelected);
     }
 

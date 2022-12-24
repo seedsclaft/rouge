@@ -52,9 +52,6 @@ class Model_File extends Model_Base {
         }
     }
 
-    lockEndEvent(){
-        return $gameDefine.lockFileEndEvent;
-    }
 
     upLoadData(savedataId){
         return StorageManager.load(savedataId);

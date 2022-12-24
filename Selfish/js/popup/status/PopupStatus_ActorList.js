@@ -21,6 +21,7 @@ class PopupStatus_ActorList extends Window_Selectable{
     }
 
     setData(data){
+        this._lvUpData = null;
         this._data = data;
         this.refresh();
     }
