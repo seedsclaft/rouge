@@ -66,7 +66,6 @@ const StateType = {
     DEATH :         "death",     //戦闘不能
     GUARD :         "guard",     //防御
     
-    SHIELD_BREAK :        "shieldbreak",    //毒
     POISON :        "poison",    //毒
     STUN :          "stun",      //スタン
     CURSE :         "curse",     //呪い
@@ -118,7 +117,8 @@ const StateType = {
 
     PHARMACOLOGY :            "PHArmacology",   //回復効果
 
-    
+    SHIELD :  "Shield" // ダメージシールド
+    /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)
     SHADOW :                  "shadow",         //狙われ率(減少)
@@ -175,19 +175,21 @@ const StateType = {
 
 
     MAGIC_RESIST:                "MagicResist",      //魔法耐性
-
+*/
 }
 
 Game_StateInfo.prototype.getStateId = function(key) {
   const state = _.find(this._data,(data) => data.key == key);
   if (state == null){
-    console.error(key);
+    //console.error(key);
+    return 0;
   }
   return state.id;
 }
 
 Game_StateInfo.prototype.isTotalStateId = function(id) {
-    return _.find(this._data,(data) => data.id == id).total;
+  const state = _.find(this._data,(data) => data.id == id);
+  return state != null ? state.total : false;
 }
 
 Game_StateInfo.prototype.convertStateIdFromBuffId = function(buffId) {

@@ -98,6 +98,8 @@ class CommonUtility {
         "js/popup/status/PopupStatus_Presenter.js",
         "js/popup/status/PopupStatus_ActorList.js",
         "js/popup/status/PopupStatus_ActorListItem.js",
+        "js/popup/status/PopupStatus_MagicList.js",
+        "js/popup/status/PopupStatus_SpParam.js",
         "js/tactics/Tactics_Model.js",
         "js/tactics/Tactics_View.js",
         "js/tactics/Tactics_Presenter.js",

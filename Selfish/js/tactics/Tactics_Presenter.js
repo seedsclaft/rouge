@@ -110,6 +110,7 @@ class Tactics_Presenter extends Presenter_Base{
         }
         if (_category == "search" && _selected.length == 0){
             this._view.commandCommandSearch();
+            return;
         }
         this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
    }

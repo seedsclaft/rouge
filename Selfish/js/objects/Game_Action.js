@@ -243,7 +243,7 @@ Game_Action.prototype.makeTargets = function() {
     } else if (this.isForFriend()) {
         targets.push(...this.targetsForFriends());
     }
-    if (this.item()){
+    if (this.item() && this.isForOpponent()){
         const _range = this.item().range;
         if (this.subject().isActor()){
             targets = targets.filter(a => (a.line() - _range) <= 0);
@@ -540,14 +540,12 @@ Game_Action.prototype.makeResult = function(target,lastTarget) {
                 if (elementValue > 1 && result.hpDamage > 0){
                     result.weakness = true;
                 }
-                // ダメージブロック
-                const damageBlockId = $gameStateInfo.getStateId(StateType.DAMAGE_BLOCK);
-                if (target && target.isStateAffected(damageBlockId)){
-                    if (value < target.getStateEffect(damageBlockId)){
-                        result.hpDamage = 0;
-                        result.damageBlock = true;
-                        result.weakness = false;
-                    }
+                // ダメージシールド
+                let shieldValue = target.friendsUnit().shieldEffectValue();
+                if (shieldValue > 0){
+                    target.friendsUnit().eraseShield(shieldValue,result.hpDamage + target.def);
+                    result.hpDamage -= shieldValue;
+                    result.hpDamage = Math.max(0,result.hpDamage);
                 }
                 // 手加減
                 this.makeResultHoldOn(result);
@@ -796,8 +794,7 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
     }
     
     baseValue += subject.damageRate();
-    console.log(baseValue)
-    baseValue = baseValue * 0.01 * subject.atk;
+    baseValue = baseValue * 0.01 * subject.atk - target.def;
     let elementValue = this.calcElementRate(target);
     let value = baseValue * elementValue;
     if (this.isMagical()) {
@@ -833,10 +830,15 @@ Game_Action.prototype.evalDamageFormula = function(target) {
 
 Game_Action.prototype.calcElementRate = function(target) {
     if (target == null) return 1;
-    if (this.item().damage.elementId < 0) {
+    const _elementId = this.item().damage.elementId;
+    if (_elementId < 0) {
         return this.elementsMaxRate(target, this.subject().attackElements());
     } else {
-        return target.elementRate(this.item().damage.elementId);
+        if (this.subject().isActor()){
+            const _alchemyParam = this.subject().alchemyParam();
+            return target.elementRate(_elementId) * (_alchemyParam[_elementId-1] * 0.01);
+        }
+        return target.elementRate(_elementId);
     }
 };
 

@@ -12,6 +12,7 @@ Sprite_StateIcon.prototype.constructor = Sprite_StateIcon;
 
 Sprite_StateIcon.prototype.initialize = function() {
     Sprite.prototype.initialize.call(this);
+    this.scale.x = this.scale.y = 0.75;
     this.initMembers();
     this.loadBitmap();
 };
@@ -70,7 +71,7 @@ Sprite_StateIcon.prototype.updateIcon = function(states) {
         if (this._animationIndex >= states.length) {
             this._animationIndex = 0;
         }
-        this._iconIndex = states[this._animationIndex].iconIndex;
+        this._iconIndex = $dataStates[ states[this._animationIndex].id ].iconIndex;
         this.createIconBadge(states[this._animationIndex]);
     } else {
         this._animationIndex = 0;
@@ -95,12 +96,14 @@ Sprite_StateIcon.prototype.createIconBadge = function(state) {
     if (stateData == null){
         return;
     }
+    /*
     if (stateData.turns > 900 || stateData.turns < 0){
         return;
     }
     if ($dataStates[state.id].autoRemovalTiming == 0){
         return;
     }
+    */
     let badge = null;
 
     let bitmap = new Bitmap(24,24);
@@ -110,6 +113,9 @@ Sprite_StateIcon.prototype.createIconBadge = function(state) {
     bitmap.fontSize = 14;
     bitmap.textColor = "White";
     switch (state.id) {
+    	case $gameStateInfo.getStateId(StateType.SHIELD):
+            badge = this._battler.getStateEffectTotal($gameStateInfo.getStateId(StateType.SHIELD));
+            break;
     	case $gameStateInfo.getStateId(StateType.CHARGE):
             badge = this._battler.getStateEffectTotal($gameStateInfo.getStateId(StateType.CHARGE));
             break;
@@ -131,8 +137,8 @@ Sprite_StateIcon.prototype.createIconBadge = function(state) {
 Sprite_StateIcon.prototype.states = function() {
     let states = [];
     if (this._battler && this._battler.isAlive()) {
-        states = this._battler.stateIcons();
-        states = _.filter(states,(state) => state.priority != 0 && state.iconIndex != 0);
+        states = this._battler._stateData;
+        states = _.filter(states,(state) => $dataStates[state.id].priority != 0 && $dataStates[state.id].iconIndex != 0);
     }
     return states;
 }

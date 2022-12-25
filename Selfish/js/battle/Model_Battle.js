@@ -46,7 +46,7 @@ class Model_Battle extends Model_Base {
         let skills = battler.skills().filter(a => a.occasion == 1);
         let data = [];
         skills.forEach(skill => {
-            data.push({skill:skill,enable:battler.canUse(skill),cost:battler.skillMpCost(skill) });
+            data.push({skill:skill,enable:battler.canUse(skill) && skill.stypeId != Game_BattlerBase.SKILL_TYPE_PASSIVE,cost:battler.skillMpCost(skill) });
         });
         return data;
     }
@@ -154,7 +154,9 @@ class Model_Battle extends Model_Base {
 
     skillTargetList(){
         let candidate = this.currentAction().itemTargetCandidates();
-        candidate = candidate.filter(a => a.line() <= this.currentAction().item().range);
+        if (candidate && !candidate[0].isActor()){
+            candidate = candidate.filter(a => a.line() <= this.currentAction().item().range);
+        }
         return candidate;
     }
 
@@ -211,7 +213,6 @@ class Model_Battle extends Model_Base {
             for (let j = 0;j <= index;j++){
                 if (lineData[index - j].length == 0){
                     line.forEach(member => {
-                        console.log(member)
                         member._line = member._line - 1;
                     });
                     changed = true;
@@ -607,7 +608,6 @@ class Model_Battle extends Model_Base {
         let results = action.results();
         let skill = $dataSkills[action.item().id];
         let turns = skill.stateTurns ? skill.stateTurns : 0;
-        console.log(turns)
         let stateEffect = skill.stateEffect ? skill.stateEffect : 0;
         if (turns){
             const addTurnEffectId = $gameStateInfo.getStateId(StateType.ADD_TURN_EFFECT);
@@ -1040,9 +1040,11 @@ class Model_Battle extends Model_Base {
     }
 
     processVictory(){
+        /*
         $gameParty.battleMembers().forEach(actor => {
             SkillAwakeManager.checkSkillAwake(actor,4);
         });
+        */
         $gameParty.removeBattleStates();
         //0818 戦闘後回復
         $gameParty.resetBattleParameter();
@@ -1079,11 +1081,8 @@ class Model_Battle extends Model_Base {
     }
 
     endBattle(result){
-        $gameParty.battleMembers().forEach(battler => {
-            $gameSystem.gainUseActorCount(battler.actorId());
-        });
         if (result === 0) {
-            $gameSystem.gainEnemyDefeatCount($gameTroop.deadMembers().length);
+           //$gameSystem.gainEnemyDefeatCount($gameTroop.deadMembers().length);
             $gameSystem.onBattleWin();
         }
     }
@@ -1163,10 +1162,6 @@ class Model_Battle extends Model_Base {
     }
 
     lastDeathEnemy(){
-        const loseType = this.getLoseType();
-        if (loseType == GameStageLoseType.TROOPMEMBERLOST){
-            return $gameTroop.members()[($gameTroop.members().length-1) / 2];
-        }
         return $gameTroop.members()[this._lastDeadEnemyId];
     }
 

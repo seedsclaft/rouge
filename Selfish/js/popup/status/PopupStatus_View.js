@@ -3,9 +3,28 @@ class PopupStatus_View  {
     }
 
     static initialize(){
-        this._listWindow = new PopupStatus_ActorList(496,40,400,440);
-        this._listWindow.setHandler('right',     this.changeActor.bind(this,1));
-        this._listWindow.setHandler('left',     this.changeActor.bind(this,-1));
+        this._listWindow = new PopupStatus_ActorList(584,48,344,400);
+        this._listWindow.setHandler('pageup',     this.changeActor.bind(this,-1));
+        this._listWindow.setHandler('pagedown',     this.changeActor.bind(this,1));
+        this._listWindow.setHandler('shift',     this.changeSkill.bind(this));
+        
+        this._magicCategory = new Tactics_MagicCategory(200 - 160,128,72,264);
+        
+        this._magicCategory.setMagicCategory($gameElement.data());
+        this._magicCategory.select(0);
+
+        this._magicList = new PopupStatus_MagicList(264 - 160,128,480,320);
+        this._magicList.select(0);
+        
+        
+        this._magicList.setHandler("ok", this.commandMagicSelect.bind(this));
+        this._magicList.setHandler("cancel", this.commandMagicCancel.bind(this));
+        this._magicList.setHandler('shift',     this.changeResetSkill.bind(this,-1));
+        this._magicList.setHandler("pageup", this.changeCategory.bind(this,1));
+        this._magicList.setHandler("pagedown", this.changeCategory.bind(this,-1));
+            
+        this._spParam = new PopupStatus_SpParam(504 - 160,80,240,56);
+        this._spParam.hide();
         /*
         this._listWindow.setHandler('ok',     this.selectActor.bind(this));
         this._listWindow.setHandler('index',     this.changeSelectIndex.bind(this));
@@ -18,7 +37,19 @@ class PopupStatus_View  {
         if (this._listWindow.parent){
             this._listWindow.parent.removeChild(this._listWindow);
         }
+        if (this._magicCategory.parent){
+            this._magicCategory.parent.removeChild(this._magicCategory);
+        }
+        if (this._magicList.parent){
+            this._magicList.parent.removeChild(this._magicList);
+        }
+        if (this._spParam.parent){
+            this._spParam.parent.removeChild(this._spParam);
+        }
         SceneManager._scene.addChild(this._listWindow);
+        SceneManager._scene.addChild(this._magicCategory);
+        SceneManager._scene.addChild(this._magicList);
+        SceneManager._scene.addChild(this._spParam);
     }
 
     static setData(data,cancelCall){
@@ -49,8 +80,82 @@ class PopupStatus_View  {
         this._listWindow.activate();
     }
 
+    static changeCategory(value){
+        if (value > 0){
+            this._magicCategory.cursorUp();
+        } else
+        if (value < 0){
+            this._magicCategory.cursorDown();
+        }
+        this.refreshCategoryIndex();
+        this._magicList.activate();
+    }
+    
+    static refreshCategoryIndex(){
+        const _category = this._magicCategory.category();
+        this._magicList.setCategory(_category);
+    }
+
+    static commandMagicSelect(){
+        const _actor = this._listWindow.item();
+        const _magic = this._magicList.item();
+        if (_actor.isLearnedSkill(_magic.id)){
+            _actor._useSp += _magic.mpCost;
+            _actor.forgetSkill(_magic.id);
+        } else
+        if (_actor._useSp >= _magic.mpCost){
+            _actor._useSp -= _magic.mpCost;
+            _actor.learnSkill(_magic.id);
+            this._magicList.setSelected(_magic.id);
+        }
+        this._magicList.refresh();
+        this._magicList.activate();
+        this._spParam.setData(_actor);
+    }
+
+    static commandMagicCancel(){
+        this._magicList.hide();
+        this._magicList.deactivate();
+        this._magicCategory.hide();
+        this._magicCategory.deactivate();
+        this._spParam.hide();
+        this._listWindow.activate();
+    }
+
+    static changeResetSkill(){        
+        const _actor = this._listWindow.item();
+        const mainText = TextManager.getText(12000).replace("/d",_actor.name());
+        const text1 = TextManager.getDecideText();
+        const text2 = TextManager.getCancelText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:null});
+        _popup.setHandler(text1,'ok',() => {
+            this._magicList.activate();
+        });
+        _popup.setHandler(text2,'cancel',() => {
+            this._magicList.activate();
+        });
+        _popup.open();
+    }
+
+    static changeSkill(){
+        const _actor = this._listWindow.item();
+        this._magicList.setActor(_actor);
+        const _magic = $gameParty._learnedSkills.map(a => $dataSkills[a]);
+        this._magicList.setMagic(_magic);
+        this._magicList.show();
+        this._magicList.activate();
+        //this._magicList.selectLast();
+        this._magicCategory.show();
+        this._spParam.setData(_actor);
+        this._spParam.show();
+        this.refreshCategoryIndex();
+    }
+
     static close(){
         this._listWindow.hide();
+        this._magicCategory.hide();
+        this._magicList.hide();
     }
     
 

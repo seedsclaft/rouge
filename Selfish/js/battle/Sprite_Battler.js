@@ -361,7 +361,7 @@ Sprite_Actor.prototype.updateBitmap = function() {
         this._mainSprite.scale.x = 0.5;
         this._mainSprite.scale.y = 0.5;
         this._mainSprite.anchor.y = 1;
-        this._mainSprite.x = 52 + 28;
+        this._mainSprite.x = 52 + 36;
         this._mainSprite.y = 74;  
     }
 };

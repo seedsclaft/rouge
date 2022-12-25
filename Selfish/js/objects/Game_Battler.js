@@ -40,8 +40,8 @@ Game_BattlerBase.ICON_BUFF_START      = 32;
 Game_BattlerBase.ICON_DEBUFF_START    = 48;
 // スキルタイプ
 Game_BattlerBase.SKILL_TYPE_MAGIC       = 1; //魔法スキル
-Game_BattlerBase.SKILL_TYPE_COMMON      = 2; //共通スキル
-Game_BattlerBase.SKILL_TYPE_PASSIVE     = 4; //パッシブスキル
+Game_BattlerBase.SKILL_TYPE_COMMON      = 0; //共通スキル
+Game_BattlerBase.SKILL_TYPE_PASSIVE     = 2; //パッシブスキル
 Game_BattlerBase.SKILL_TYPE_PASSIVE_SELF = 5; //オートパッシブスキル
 Game_BattlerBase.SKILL_TYPE_SELF        = 6; //個人スキル
 Game_BattlerBase.SKILL_TYPE_SPECIAL     = 7; //特殊スキル
@@ -682,12 +682,6 @@ Game_BattlerBase.prototype.canPaySkillCost = function(skill) {
 };
 
 Game_BattlerBase.prototype.paySkillCost = function(skill) {
-    if (skill.damage.elementId == 3){
-        const _item = this.weapons().find(a => a && a.wtypeId == 4);
-        if (_item){
-            this.consumeArrow(_item);
-        }
-    }
     this._mp -= this.skillMpCost(skill);
     this._tp -= this.skillTpCost(skill);
 };
@@ -930,41 +924,21 @@ Game_Battler.prototype.refresh = function() {
 };
 
 Game_Battler.prototype.refreshPassive = function() {
-    const passiveData = this.passiveSkills();
-    if (passiveData == null){
+    const _passiveSkills = this.passiveSkills();
+    if (_passiveSkills == null){
         return;
     }
     let popupData = [];
-    passiveData.forEach(passive => {
-        let flag = false;
-        switch (passive.skill.passiveType){
-            case 'dying':
-                flag = this.isDying();
-                break;
-            case 'hpunderhalf':
-                flag = this.isUnderHalf();
-                break;
-            case 'turnCount':
-                flag = this._turnCount == 1;
-                break;
-            case 'mpover3':
-                flag = this.mp >= 3;
-                break;
-            case 'losetype1':
-                flag = false;
-                break;
-            case 'startOnly':
-                flag = this._turnCount == 1;
-                if (flag == false){
-                    return;
-                }
-                break;
-            default:
-                flag = true;
-                break;
+    
+    const a = this;
+    _passiveSkills.forEach(skill => {
+        let flag = true;
+        let stateEval = skill.stateEval;
+        if (stateEval != null){
+            flag = eval(stateEval);
         }
         if (flag){
-            const addSkills = this.addPassive(passive.skill,passive.slotId);
+            const addSkills = this.addPassive(skill);
             addSkills.forEach(skill => {
                 for (const effect of skill.effects) {
                     if (effect.code == Game_Action.EFFECT_ADD_STATE){
@@ -973,7 +947,7 @@ Game_Battler.prototype.refreshPassive = function() {
                 }
             });
         } else{
-            const removeSkills = this.removePassive(passive.skill,passive.slotId);
+            const removeSkills = this.removePassive(skill);
             removeSkills.forEach(skill => {
                 for (const effect of skill.effects) {
                     if (effect.code == Game_Action.EFFECT_ADD_STATE){
@@ -1022,19 +996,19 @@ Game_Battler.prototype.isStateRestrict = function(stateId) {
 
 Game_Battler.prototype.stateResistSet = function() {
     let resist = this.traitsSet(Game_BattlerBase.TRAIT_STATE_RESIST);
-    this.passiveSkills().forEach(passive => {
-        let resistState = _.find(passive.skill.effects,(e) => e.code == Game_Action.EFFECT_ADD_STATE && e.dataId == $gameStateInfo.getStateId(StateType.RESIST_STATE));
+    this.passiveSkills().forEach(skill => {
+        let resistState = _.find(skill.effects,(e) => e.code == Game_Action.EFFECT_ADD_STATE && e.dataId == $gameStateInfo.getStateId(StateType.RESIST_STATE));
         if (resistState){
-            resist.push(passive.skill.stateEffect);
+            resist.push(skill.stateEffect);
             // 抵抗が増えるスキルに解除についているステートを無効
-            let resists = _.filter(passive.skill.effects,(e) => {return e.code == Game_Action.EFFECT_REMOVE_STATE});
+            let resists = _.filter(skill.effects,(e) => {return e.code == Game_Action.EFFECT_REMOVE_STATE});
             resists.forEach(r => {
                 resist.push(r.dataId);
             });
         }
-        let banishState = _.find(passive.skill.effects,(e) => e.code == Game_Action.EFFECT_ADD_STATE && e.dataId == $gameStateInfo.getStateId(StateType.BANISH));
+        let banishState = _.find(skill.effects,(e) => e.code == Game_Action.EFFECT_ADD_STATE && e.dataId == $gameStateInfo.getStateId(StateType.BANISH));
         if (banishState && this.isStateAffected($gameStateInfo.getStateId( StateType.BANISH ))){
-            resist.push(passive.skill.stateEffect);
+            resist.push(skill.stateEffect);
         }   
     });
     resist = _.uniq( resist );
@@ -1069,18 +1043,18 @@ Game_Battler.prototype.passiveSkills = function() {
     return [];
 }
 
-Game_Battler.prototype.addPassive = function(skill,slotId) {
+Game_Battler.prototype.addPassive = function(skill) {
     let addStates = [];
     skill.effects.forEach(effect => {
         if (effect.code == Game_Action.EFFECT_ADD_STATE ){
-            if (!this.isStateAffected(effect.dataId,this.battlerId(),slotId)){
+            if (!this.isStateAffected(effect.dataId,this.battlerId())){
                 addStates.push(skill);
             }
             let effectValue = skill.stateEffect;
             if (this._statePlus && this._statePlus[effect.dataId]){
                 effectValue += this._statePlus[effect.dataId];
             }
-            this.addState(effect.dataId,skill.stateTurns,effectValue,true,this.battlerId(),slotId);
+            this.addState(effect.dataId,skill.stateTurns,effectValue,true,this.battlerId());
         } 
     });
     return addStates;
@@ -1213,13 +1187,6 @@ Game_Battler.prototype.useItem = function(item) {
 
 Game_Battler.prototype.consumeItem = function(item) {
     $gameParty.consumeItem(item);
-};
-
-Game_Battler.prototype.consumeArrow = function(item) {
-    if ($gameParty.numItems(item) == 0){
-        this.changeEquipById(1,0)
-    }
-    $gameParty.consumeArrow(item);
 };
 
 Game_Battler.prototype.gainHp = function(value) {
@@ -1622,8 +1589,8 @@ Game_Actor.prototype.initMembers = function() {
     this._actionInputIndex = 0;
     this._lastBattleSkillId = 0;
 
-
-
+    this._sp = 0;
+    this._useSp = 0;
 };
 
 Game_Actor.prototype.setup = function(actorId) {
@@ -1692,14 +1659,12 @@ Game_Actor.prototype.calcLevelUpParam = function(paramId) {
     if ((Math.max(0, this._paramPlus[paramId]-2)) > border){
         upParam = Math.floor( rate / 100 ) + 1;
         this._paramPlus[paramId] += upParam;
-        console.log(upParam)
         return upParam;
     }
 
     upParam = Math.floor( rate / 100 );
     upParam += rate >= Math.random() * 100 ? 1 : 0;
     this._paramPlus[paramId] += upParam;
-    console.log(upParam)
     return upParam;
 }
 
@@ -1709,7 +1674,6 @@ Game_Actor.prototype.addStatePlus = function(id,value) {
     }
     this._statePlus[id] += value;
 }
-
 
 Game_Actor.prototype.actorId = function() {
     return this._actorId;
@@ -1827,7 +1791,7 @@ Game_Actor.prototype.initSkills = function() {
     this._skills = [];
     this.currentClass().learnings.forEach(function(learning) {
         if (learning.level <= this._level) {
-            this.learnSkill(learning.skillId,false);
+            this.learnSkill(learning.skillId,true);
         }
     }, this);
 };
@@ -2128,16 +2092,16 @@ Game_Actor.prototype.paramPlus = function(paramId) {
     
     if (paramId == 0){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.HP_BUFF_ADD));
-        value -= this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
+        //value -= this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
     }
     if (paramId == 1){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.MP_BUFF_ADD));
-        value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.MP_BUFF_ADD_SPECIAL));
+        //value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.MP_BUFF_ADD_SPECIAL));
     }
     if (paramId == 2){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.ATK_BUFF_ADD));
         value += $gameParty.involvementPlus();
-        value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
+        //value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
     }
     if (paramId == 3){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.DEF_BUFF_ADD));
@@ -2201,10 +2165,12 @@ Game_Actor.prototype.changeExp = function(exp, show) {
 
 Game_Actor.prototype.levelUp = function() {
     this._level++;
+    this._sp++;
 };
 
 Game_Actor.prototype.levelDown = function() {
     this._level--;
+    this._sp--;
 };
 
 Game_Actor.prototype.findNewSkills = function(lastSkills) {
@@ -2461,7 +2427,7 @@ Game_Actor.prototype.passiveSkills = function() {
     let skills = [];
     this.skills().forEach(skill => {
         if (skill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE){
-            skills.push({skill:skill,slotId:-1});
+            skills.push(skill);
         }
     });
     return skills;
@@ -2511,18 +2477,6 @@ Game_Actor.prototype.getSkillData = function(skillId,skillLv) {
     return skillId > 0 ? $dataSkills[skillId] : null;
 }
 
-Game_Actor.prototype.shieldValue = function() {
-    let value = 0;
-    const guardValue = this.getStateEffectTotal($gameStateInfo.getStateId(StateType.GUARD));
-    if (guardValue > 0){
-        const _shield = this.armors().find(a => a && a.etypeId == 2);
-        if (_shield){
-            const effectValue = this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SHIELD));
-            value = 45 + (0.2 * _shield.params[2] * (1.0 + effectValue * 1.5 / 100));
-        }
-    }
-    return value;
-}
 
 //-----------------------------------------------------------------------------
 // Game_Enemy
@@ -2608,14 +2562,14 @@ Game_Enemy.prototype.paramPlus = function(paramId) {
     let value = Game_Battler.prototype.paramPlus.call(this, paramId);
     if (paramId == 0){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.HP_BUFF_ADD));
-        value -= this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
+        //value -= this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
     }
     if (paramId == 1){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.MP_BUFF_ADD));
     }
     if (paramId == 2){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.ATK_BUFF_ADD));
-        value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
+        //value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
     }
     if (paramId == 3){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.DEF_BUFF_ADD));
@@ -2994,18 +2948,6 @@ Game_Enemy.prototype.battlerId = function() {
     return this._summonedIndex != 0 ? this._summonedIndex : this.index() * -1;
 }
 
-Game_Enemy.prototype.shieldValue = function() {
-    let value = 0;
-    const guardValue = this.getStateEffectTotal($gameStateInfo.getStateId(StateType.GUARD));
-    if (guardValue > 0){
-        const _shield = this.armors().find(a => a && a.etypeId == 2);
-        if (_shield){
-            const effectValue = this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SHIELD));
-            value = 45 + (0.2 * this.def * (1.0 + effectValue * 1.5 / 100));
-        }
-    }        
-    return value;
-}
 
 //-----------------------------------------------------------------------------
 // Game_Actors

@@ -632,57 +632,9 @@ class Presenter_Battle extends Presenter_Base{
     async processVictory(){
         // 味方を勝利顔に
         this._view.changeFaceTypeAll(FaceType.Victory);
-        $gameParty.battleMembers().forEach(actor => {
-            //基本値
-            var add = 0;
-            var level = actor.level;
-            // アドベンチャーモード
-            if ($dataOption.getUserData("battleSkipMode") !== BattleSkipMode.Skip){
-                $gameTroop.deadMembers().forEach(enemy => {
-                    var value = 20;
-                    if (enemy.enemyId() > 100){
-                        return;
-                    }
-                    value += (enemy.level() - level) * 2;
-                    if (value <= 0){
-                        value = 1;
-                    }
-                    add = Math.floor(value * actor.finalExpRate());
-                });
-            }
-            actor.gainExp(add);
-            SkillAwakeManager.levelUpLearnSkill(actor);
-            Debug.log(actor.name() + "加算値=" + add);
-                
-            var afterLevel = actor.level;
-            if (afterLevel > level){
-                this._view.statePopup([new PopupTextData(actor,PopupTextType.Text,TextManager.getText(600300))]);
-            }
-            this._view.statePopup([new PopupTextData(actor,PopupTextType.UpText,TextManager.getText(400) + " +" + add.toString())]);
-        });
 
-    
-        const members = this._model.getChangeMembers();
-        if (members.length > 0){
-            SoundManager.playLevelUp();
-            $gameParty.resetBattleParameter();
-            
-            await this.setWait(1500);
-            PopupLevelUpManager.setPopup(() => {
-                if (this._model.performCollapseEnd()){
-                    EventManager.endStage();
-                } else{
-                    this.changeStep(BattleStep.BATTLEEND);
-                }
-            });
-            //PopupLevelUpManager.open();
-            this._view.clearLog();
-        } else{
-            if (this._model.performCollapseEnd()){
-                EventManager.endStage();
-            } else{
-                this.changeStep(BattleStep.BATTLEEND);
-            }
+        if (this._model.performCollapseEnd()){
+            this.changeStep(BattleStep.BATTLEEND);
         }
     }
 

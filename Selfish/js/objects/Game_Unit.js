@@ -148,9 +148,37 @@ Game_Unit.prototype.isAllDead = function() {
     return this.aliveMembers().length === 0;
 };
 
-//0823 一番HPの少ない対象Idxを取得
 Game_Unit.prototype.getAutoTargetIndex = function() {
     return _.sortBy(this.aliveMembers(),(target) => target.hp)[0].index();
+}
+
+Game_Unit.prototype.shieldEffectValue = function() {
+    const _stateId = $gameStateInfo.getStateId(StateType.SHIELD);
+    const _member = this.aliveMembers().filter(a => a.isStateAffected(_stateId));
+    let value = 0;
+    if (_member.length > 0){
+        _member.forEach(member => {
+            let effect = member.getStateEffect(_stateId);
+            if (value < effect){
+                value = effect;
+            }
+        });
+    }
+    return value;
+}
+
+Game_Unit.prototype.eraseShield = function(value,minus) {
+    const _stateId = $gameStateInfo.getStateId(StateType.SHIELD);
+    if (minus >= value){
+        this.aliveMembers().forEach(member => {
+            member.removeState(_stateId);
+        });
+    } else{
+        this.aliveMembers().forEach(member => {
+            let stateData = member.getStateData(_stateId);
+            member.updateStateData(_stateId,stateData.turns,value - minus,stateData.passive,stateData.battlerId);
+        });
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -529,10 +557,6 @@ Game_Party.prototype.consumeItem = function(item) {
     }
 };
 
-Game_Party.prototype.consumeArrow = function(item) {
-    this.loseItem(item, 1);
-};
-
 Game_Party.prototype.canUse = function(item) {
     return this.members().some(function(actor) {
         return actor.canUse(item);
@@ -656,8 +680,8 @@ Game_Party.prototype.addLearnSkill = function(skillId) {
 Game_Party.prototype.resetBattleParameter = function() {
     this.allMembers().forEach(actor => {
         actor.refreshPassive();
-        actor.gainHp(999);
-        actor.gainMp(-999);
+        //actor.gainHp(999);
+        actor.gainMp(999);
         actor.setLastTarget(null);
         actor.resetTurnCount();
     });

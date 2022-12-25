@@ -144,8 +144,9 @@ DataManager.createSkillDataPlus = function() {
             const json = JSON.parse(element.note);
             if (json){
                 element.maxLevel = json.maxLevel ? Number(json.maxLevel) : 0;
-                element.stateTurns = json.stateTurns ? (json.stateTurns).split(",").map(num => Number(num)) : [];
-                element.stateEffect = json.stateEffect ? (json.stateEffect).split(",").map(num => Number(num)) : [];
+                element.stateTurns = json.stateTurns ? Number(json.stateTurns) : 0;
+                element.stateEffect = json.stateEffect ? Number(json.stateEffect) : 0;
+                element.stateEval = json.stateEval ? String(json.stateEval) : null;
                 element.selfSkill = json.selfSkill ? Number(json.selfSkill) : 0;
                 element.nextLevel = json.nextLevel ? (json.nextLevel).split(",").map(num => Number(num)) : [];
                 element.nextExp = json.nextExp ? Number(json.nextExp) : 0;
@@ -159,7 +160,7 @@ DataManager.createSkillDataPlus = function() {
                     element.repeats += element.repeatPlus;
                 }
                 element.chargeTurn = json.chargeTurn ? Number(json.chargeTurn) : 0;
-                element.range = json.range ? Number(json.range) : 0;
+                element.range = json.range != null ? Number(json.range) : null;
             }
         }
     });
