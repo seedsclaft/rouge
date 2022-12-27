@@ -32,15 +32,20 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
             this.resetTextColor();
             this.contents.fontSize = 21;
             if (this._selected.contains(_alchemy.skill.id)){
-                this.drawBack(rect.x,rect.y,rect.width,rect.height,0xFFFFFF,64);
+                this.drawBack(rect.x,rect.y-12,rect.width,this.itemHeight(),0xFFFFFF,64);
             }
             this.drawText(TextManager.getSkillName(_alchemy.skill.id), rect.x, rect.y - 12,rect.width);
+            
+            const _element = $dataSystem.elements;
             if (_alchemy.needRank) {
+                let needIndex = 0;
                 _alchemy.needRank.forEach((rank,index) => {
                     if (rank == 0){
-                        rank = "－";
+                        //rank = "－";
+                        return;
                     }
-                    this.drawText(rank, rect.x + 344 + 32 * index, rect.y  - 12,40,"center");
+                    this.drawText(_element[index+1] + rank, rect.x + 344 + 32 * needIndex, rect.y  - 12,80,"left");
+                    needIndex++;
                 });
             }
             this.drawText(_alchemy.cost + "pt", rect.x, rect.y  - 12,rect.width,"right");
@@ -53,7 +58,8 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
                 else if (_alchemy.skill.range == 2) range = TextManager.getText(1530);
                 this.drawText(TextManager.getText(1500) + range, rect.x, rect.y + 16, rect.width);
             }
-            this.drawTextEx(_alchemy.skill.description,rect.width - 264 - _alchemy.skill.description.length * 16 + 12,rect.y + 20,rect.width);
+            let textWidth = this.contents.measureTextWidth(_alchemy.skill.description);
+            this.drawTextEx(_alchemy.skill.description,rect.width - 264 - textWidth + 12,rect.y + 20,rect.width);
         
         }
     }
@@ -79,6 +85,16 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
     //}
     setSelected(id){
         this._selected.push(id);
+        this.refresh();
+    }
+
+    setRemove(id){
+        this._selected = _.without(this._selected,id);
+        this.refresh();
+    }
+
+    clearSelect(){
+        this._selected = [];
     }
 
     item(){

@@ -49,6 +49,7 @@ $gameText         = null;
 $gameCommand      = null;
 $gameAlchemy      = null;
 $gameSearch       = null;
+$gameStageData    = null;
 $gameStage        = null;
 $gamePause        = false;
 
@@ -426,6 +427,7 @@ DataManager.createGameObjects = function() {
     $gameText          = new Game_Text();
     $gameCommand       = new Game_Command();
     $gameTacticsActorPosition   = new Game_TacticsActorPosition();
+    $gameStageData = new Game_StageData();
     $gameStage = new Game_Stage();
 };
 
@@ -436,8 +438,6 @@ DataManager.setupBattleTest = function() {
     //BattleManager.setup($dataSystem.testTroopId, true, false);
     //BattleManager.setBattleTest(true);
     //BattleManager.playBattleBgm();
-    // 覚醒コストを1に
-    $gameDefine.limitBreakValue = 1;
 };
 
 DataManager.setupEventTest = function() {

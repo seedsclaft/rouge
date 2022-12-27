@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// PopupStatus_ActorList
+// PopupStatus_MagicList
 //
 
 class PopupStatus_MagicList extends Window_Selectable{

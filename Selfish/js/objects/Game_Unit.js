@@ -668,9 +668,6 @@ Game_Party.prototype.requestMotionRefresh = function() {
 };
 
 Game_Party.prototype.addLearnSkill = function(skillId) {
-    if (skillId < $gameDefine.defaultSlotId){
-        return;
-    }
     if (!this._learnedSkills.includes(skillId)){
         this._learnedSkills.push(skillId);
     }
@@ -980,9 +977,6 @@ Game_Troop.prototype.makeDropItems = function() {
 };
 
 Game_Troop.prototype.isBoss = function() {
-    if (_.find(this._enemies,(e) => e.enemyId() > $gameDefine.bossTroopId)){
-        return true;
-    }
     return false;
 };
 

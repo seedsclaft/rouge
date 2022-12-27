@@ -140,10 +140,11 @@ class Tactics_View extends Scene_Base {
         this.setCommand(TacticsCommand.CommandOk);
     }
 
-    commandCommandOk(isEnable,selectedActorNameList){
+    commandCommandOk(isEnable,selectedActorNameList,infoData){
         if (isEnable){
             this._actorSelect.activate();
             this._actorSelect.select(0);
+            this._actorSpriteList.setInfoSprite(infoData);
             this.refreshActorIndex();
         } else{
             const mainText = TextManager.getText(10000).replace("/d",selectedActorNameList);
@@ -208,7 +209,7 @@ class Tactics_View extends Scene_Base {
 
     setAlchemyMagicList(data){
         if (this._alchemyMagicList == null){
-            this._alchemyMagicList = new Tactics_AlchemyMagicList(184,128,640,360);
+            this._alchemyMagicList = new Tactics_AlchemyMagicList(184,128,640,320);
             this._alchemyMagicList.setHandler("ok", this.setCommand.bind(this,TacticsCommand.AlchemySelect));
             this._alchemyMagicList.setHandler("cancel", this.setCommand.bind(this,TacticsCommand.DecideAlchemy));
             this._alchemyMagicList.setHandler("pageup", this.changeCategory.bind(this,1));
@@ -228,11 +229,37 @@ class Tactics_View extends Scene_Base {
         }
         this.refreshCategoryIndex();
         this._alchemyMagicList.activate();
+        if (this._alchemyMagicList._magicList.length > 0){
+            this._alchemyMagicList.smoothSelect(0);
+        } else{
+            this._alchemyMagicList.select(-1);
+        }
     }
 
-    commandAlchemySelect(alchemyId){
-        this._alchemyMagicList.setSelected(alchemyId);
-        this._alchemyMagicList.activate();
+    commandAlchemySelect(isSelected,isEnableResult,alchemyId){
+        if (isSelected){
+            this._alchemyMagicList.setRemove(alchemyId);
+            this._alchemyMagicList.activate();
+        } else
+        if (isEnableResult == 0){
+            this._alchemyMagicList.setSelected(alchemyId);
+            this._alchemyMagicList.activate();
+        } else{
+            let textId = 10040;
+            if (isEnableResult == 1){
+                textId = 10050;
+            } else{
+
+            }   
+            const mainText = TextManager.getText(textId);
+            const text1 = TextManager.getDecideText();
+            const _popup = PopupManager;
+            _popup.setPopup(mainText,{select:0,subText:null});
+            _popup.setHandler(text1,'ok',() => {
+                this._alchemyMagicList.activate();
+            });
+            _popup.open();
+        }
     }
 
     setSearchList(data){
@@ -265,17 +292,31 @@ class Tactics_View extends Scene_Base {
         return this._searchList.item();
     }
 
-    commandSelectOk(isSelected){
-        const _index = this._actorSelect.index();
-        this._actorSpriteList.setSelectedIndex(_index,isSelected);
-        this._actorSelect.activate();
-        this._actorSpriteList.activate();
+    commandSelectOk(isSelected,isEnable){
+        if (isEnable){
+            const _index = this._actorSelect.index();
+            this._actorSpriteList.setSelectedIndex(_index,isSelected);
+            this._actorSelect.activate();
+            this._actorSpriteList.activate();
+        } else{
+            const mainText = TextManager.getText(10040);
+            const text1 = TextManager.getDecideText();
+            const _popup = PopupManager;
+            _popup.setPopup(mainText,{select:0,subText:null});
+            _popup.setHandler(text1,'ok',() => {
+                this._actorSelect.activate();
+                this._actorSpriteList.activate();
+            });
+            _popup.open();
+        }
     }
 
     commandSelectClear(actorIdList,memberList){
         this._actorSelect.setData(memberList);
         this._actorSpriteList.addActorList(actorIdList);
         this._actorSpriteList.deactivate();
+        if (this._alchemyParam) this._alchemyParam.hide();
+        if (this._alchemyMagicList) this._alchemyMagicList.clearSelect();
     }
 
     commandSelectCancel(isEnable,selectedActorNameList){
@@ -301,6 +342,7 @@ class Tactics_View extends Scene_Base {
             this._actorSpriteList.deactivate();
             if (this._alchemyParam) this._alchemyParam.hide();
             if (this._searchList) this._searchList.hide();
+            this._actorSpriteList.setInfoSprite([]);
         }
         //const subText = TextManager.getText(210101);
     }
@@ -314,14 +356,17 @@ class Tactics_View extends Scene_Base {
         this._actorSelect.removeActorList(actorIdList);
         this._actorSpriteList.removeActorList(actorIdList);
         this._actorSpriteList.deactivate();
+        this._actorSpriteList.setInfoSprite([]);
     }
 
     commandSelectAlchemy(){
         this._commandList.deactivate();
         this._alchemyMagicList.show();
         this._alchemyMagicList.activate();
+        this._alchemyMagicList.select(0);
         this._magicCategory.show();
-        //this._magicCategory.activate();
+        this._magicCategory.select(0);
+        this.refreshCategoryIndex();
     }
 
     commandDecideAlchemy(isEnable,alchemyNameList){
@@ -371,6 +416,10 @@ class Tactics_View extends Scene_Base {
             this._commandList.activate();
         });
         _popup.open();
+    }
+
+    changeEnergyValue(value){
+        this._energyInfo.changeEnergy(value);
     }
     
     update(){

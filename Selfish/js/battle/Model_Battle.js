@@ -245,7 +245,7 @@ class Model_Battle extends Model_Base {
     }
 
     needMadnessAnimation(actionBattler){
-        return !actionBattler.isActor() && actionBattler.currentAction() && actionBattler.currentAction()._madness == true && actionBattler.enemyId() > $gameDefine.bossEnemyId;
+        return !actionBattler.isActor() && actionBattler.currentAction() && actionBattler.currentAction()._madness == true;
     }
 
     actionBattlers(){
@@ -1013,9 +1013,6 @@ class Model_Battle extends Model_Base {
             return false;
         }
         let isBoss = false;
-        if (_.find($gameTroop.aliveMembers(),(e) => e.enemyId() > $gameDefine.bossTroopId)){
-            isBoss = true;
-        }
         let bossEnemy = (_.find($gameTroop.aliveMembers(),(e) => e.isBoss()));
         if (bossEnemy != null){
             const type = this.performCollapseType(bossEnemy);

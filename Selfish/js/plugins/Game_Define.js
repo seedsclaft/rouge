@@ -25,13 +25,9 @@
  * @desc 初期pt所持数
  * @default 0
  * 
- * @param defaultSlotId
- * @desc 数値までをからの属性スロット情報として使用する
- * @default 10
- * 
- * @param limitBreakValue
- * @desc 覚醒魔法を使用できるまでのtp
- * @default 7
+ * @param TrainCurrency
+ * @desc 強化に必要なpt計算式
+ * @default ""
  * 
  * @param WaitSkillId
  * @desc 待機のスキルID
@@ -40,18 +36,6 @@
  * @param NoActionSkillId
  * @desc 何もしないのスキルID
  * @default 272
- * 
- * @param magicElementSwitchId
- * @desc 属性が装備可能になるスイッチID
- * @default 0
- * 
- * @param bossTroopId
- * @desc この数値より上の敵グループはボス戦として扱う
- * @default 50
- * 
- * @param bossEnemyId
- * @desc この数値より上の敵はボスとして扱う
- * @default 50
  * 
  * @param OnlyOneConditionSwitchId
  * @desc バトルスイッチ・生存が自身のみ
@@ -89,9 +73,6 @@
  * @desc 召喚で参照するtroopのNo
  * @default 12
  * 
- * @param RemoveSkillId
- * @desc スキルをはずすId
- * @default 7
  * 
  * @help
  * プロジェクト特有の設定をするプラグイン
@@ -113,9 +94,6 @@
  * @type number
  * @default ""
  * 
- * @param RoleStateIdArray
- * @desc ロールスキルステートIdの配列
- * @type number[]
  */
 
 //-----------------------------------------------------------------------------
@@ -170,34 +148,25 @@ Object.defineProperties(Game_Define.prototype, {
   androidVersionCode:                { get: function() { return String(this._data.AndroidVersionCode); }, configurable: false },
   iosVersionCode:                { get: function() { return String(this._data.iOSVersionCode); }, configurable: false },
   
-  defaultSlotId:                { get: function() { return Number(this._data.defaultSlotId); }, configurable: false },
   waitSkillId:                  { get: function() { return Number(this._data.WaitSkillId); },   configurable: false },
   noActionSkillId:              { get: function() { return Number(this._data.NoActionSkillId) }, configurable: false },
-  limitBreakValue:              { get: function() { return Number(this._data.limitBreakValue) }, configurable: false },
-  
 
-  magicElementSwitchId:         { get: function() { return Number(this._data.magicElementSwitchId); },   configurable: false },
-  bossTroopId:                  { get: function() { return Number(this._data.bossTroopId) }, configurable: false },
-  bossEnemyId:                  { get: function() { return Number(this._data.bossEnemyId) }, configurable: false },
-  
   onlyOneConditionSwitchId:     { get: function() { return Number(this._data.OnlyOneConditionSwitchId); }, configurable: false },
   notOnlyOneConditionSwitchId:  { get: function() { return Number(this._data.NotOnlyOneConditionSwitchId); }, configurable: false },
   containsDieBattlerConditionSwitchId:  { get: function() { return Number(this._data.ContainsDieBattlerConditionSwitchId); }, configurable: false },
   anyOneSameStateIdSwitchId:  { get: function() { return Number(this._data.AnyOneSameStateIdSwitchId); }, configurable: false },
   oneTimeSwitchId:  { get: function() { return Number(this._data.OneTimeSwitchId); }, configurable: false },
   summonSwitchId:  { get: function() { return Number(this._data.SummonSwitchId); }, configurable: false },
-flozenStateIdSwitchId:  { get: function() { return Number(this._data.FlozenStateIdSwitchId); }, configurable: false },
+  flozenStateIdSwitchId:  { get: function() { return Number(this._data.FlozenStateIdSwitchId); }, configurable: false },
   chainSeaquenceSwitchId:  { get: function() { return Number(this._data.ChainSeaquenceSwitchId); }, configurable: false },
   
   summonTroopId:  { get: function() { return Number(this._data.SummonTroopId); }, configurable: false },
-  removeSkillId:  { get: function() { return Number(this._data.RemoveSkillId); }, configurable: false },
   mobileMode:                   { get: function() { return this._mobileMode; }, configurable: false },
   gainElementRate:              { get: function() { return Number(this._data.gainElementRate); }, configurable: false },
   lessElementRate:              { get: function() { return Number(this._data.lessElementRate); }, configurable: false },
   frozenDamageRate:             { get: function() { return Number(this._data.frozenDamageRate); }, configurable: false },
 
   lastBattleTroopId:             { get: function() { return Number(this._data.lastBattleTroopId); }, configurable: false },  
-  RoleStateIdArray:             { get: function() { return JSON.parse(this._data.RoleStateIdArray); }, configurable: false },
 });
 
 const ScopeType = {

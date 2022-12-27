@@ -91,6 +91,17 @@ class Strategy_View extends Scene_Base {
         _popup.open();
     }
 
+    commandMagicStart(nameList){
+        const mainText = TextManager.getText(11010).replace("/d",nameList);
+        const text = TextManager.getDecideText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:null});
+        _popup.setHandler(text,'ok',() => {
+            this.setCommand(StrategyCommand.MagicResult);
+        });
+        _popup.open();
+    }
+
     swipHelp(moveX){
     }
 
@@ -111,5 +122,7 @@ const StrategyCommand = {
     AlchemyResult : 22,
     RecoveryResult : 31,
     BattleStart : 32,
+    MagicStart : 41,
+    MagicResult : 42,
     Refresh : 100
 }

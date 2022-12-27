@@ -57,29 +57,23 @@ class Strategy_Presenter extends Presenter_Base{
                 return this.commandTrainResult();
             case StrategyCommand.AlchemyResult:
                 return this.commandAlchemyResult();
+            case StrategyCommand.RecoveryResult:
+                return this.commandRecoveryResult();
             case StrategyCommand.BattleStart:
                 return this.commandBattleStart();
+            case StrategyCommand.MagicResult:
+                return this.commandMagicResult();
         }
         this._view.clearCommand();
     }
 
     commandStart(){
-        //this._view.setEnergyData(this._model.energy());
-        //this._view.setTurnInfoData(this._model.turnInfo());
-        //const _speiteList = this._model.actorSpriteList();
-        //this._view.setActorSpriteList(_speiteList);
-        //this._view.setSelectActor(_speiteList);
-        //this._view.setCommandData(this._model.commandList());
         this._view.createObjectAfter();
-        //this._view.setMagicCategory(this._model.magicCategory());
-        //this._view.setAlchemyMagicList(this._model.alchemyMagicList());
-        //this._view.setSearchList(this._model.searchList());
         this.commandTrainStart();
     }
 
     commandTrainStart(){
         const _selected = this._model.selectedMember();
-        console.log(_selected)
         if (_selected.length > 0){
             PopupLevelUpManager.init();
             this._view.commandTrainStart(_selected);
@@ -123,19 +117,41 @@ class Strategy_Presenter extends Presenter_Base{
         }
     }
 
+    commandRecoveryResult(){
+        this._model.commandNext();
+        this.commandSearchStart();
+    }
+
     commandSearchStart(){
         const _selected = this._model.selectedMember();
         if (_selected.length > 0){
             this._view.commandSearchStart();
         } else{
             this._model.commandNext();
-            //this.commandSearchStart();
+            this.commandMagicStart();
         }
     }
 
     commandBattleStart(){
         this._model.battleStart();
         SceneManager.push(Battle_View);
+    }
+
+    commandMagicStart(){
+        const _selected = this._model.selectedMember();
+        if (_selected.length > 0){
+            const _recoveryName = this._model.magicRecoveryNameList();
+            this._model.magicRecovery();
+            this._view.commandMagicStart(_recoveryName);
+        } else{
+            this._model.turnend();
+            SceneManager.goto(Tactics_View);
+        }
+    }
+
+    commandMagicResult(){
+        this._model.turnend();
+        SceneManager.goto(Tactics_View);
     }
 
     commandRefresh(){

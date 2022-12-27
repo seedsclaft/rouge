@@ -2438,7 +2438,7 @@ Game_Actor.prototype.getReserveSkillData = function(elementId) {
         return _.filter($gameParty._learnedSkills,(s) => (s != 0 && ($dataSkills[s].damage.elementId == elementId)));
     }
     const list = _.filter($gameParty._learnedSkills,(s) => {
-        if (s != 0 && (($dataSkills[s].damage.elementId == elementId) && $gameSwitches.value(elementId + $gameDefine.magicElementSwitchId))){
+        if (s != 0 && (($dataSkills[s].damage.elementId == elementId))){
             if ($dataSkills[s].stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE_SELF){
                 return false;
             }
@@ -2739,7 +2739,7 @@ Game_Enemy.prototype.performCollapse = function() {
     Game_Battler.prototype.performCollapse.call(this);
     switch (this.collapseType()) {
     case 0:
-        if ($gameTroop.troopId() > $gameDefine.bossTroopId && $gameTroop.aliveMembers().length == 0){
+        if ($gameTroop.aliveMembers().length == 0){
             this.requestEffect('bossCollapse');
             //SoundManager.playBossCollapse1();
         } else{

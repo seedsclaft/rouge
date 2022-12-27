@@ -18,7 +18,7 @@ class PopupStatus_ActorListItem extends Window_Base{
     
 
     lineHeight(){
-        return 32;
+        return 36;
     }
 
 
@@ -29,8 +29,8 @@ class PopupStatus_ActorListItem extends Window_Base{
         this.updateName(168,12);
         this.updateElement(168,this.lineHeight() + 12);
         this.updateLvExp(168,this.lineHeight() * 2 + 12,lvUpdate);
-        this.updateElementStatus(24,160);
-        this.updateStatus(24,208,lvUpdate);
+        this.updateElementStatus(24,168);
+        this.updateStatus(24,216,lvUpdate);
     }
 
     updateFace(x,y){
@@ -59,14 +59,14 @@ class PopupStatus_ActorListItem extends Window_Base{
     }
 
     updateElement(x,y){
-        this.contents.fontSize = 18;
+        this.contents.fontSize = 20;
         this.drawText(TextManager.getText(600),x,y,240);
         this.drawText($dataSystem.elements[this._actor._elementId],x,y,120,"right");
         this.resetFontSettings();
     }
 
     updateLvExp(x,y,lvUpdate){
-        this.contents.fontSize = 18;
+        this.contents.fontSize = 20;
         const _normalColor = ColorManager.normalColor();
         const _powerUpColor = ColorManager.powerUpColor();
         this.drawText(TextManager.getText(700)+".",x,y,240);
@@ -91,7 +91,7 @@ class PopupStatus_ActorListItem extends Window_Base{
         const _statusTextId = [500,510,520,530,540];
         const _statusParamId = [0,1,2,6,3];
 
-        this.contents.fontSize = 18;
+        this.contents.fontSize = 20;
         let _textColor = _normalColor;
         for (let i = 0;i < _statusTextId.length;i++){
             this.changeTextColor(_normalColor);
@@ -124,7 +124,7 @@ class PopupStatus_ActorListItem extends Window_Base{
         const _elementStatusType = [
             StateType.FIRE_STATUS,StateType.THUNDER_STATUS,StateType.ICE_STATUS,StateType.WHITE_STATUS,StateType.BLACK_STATUS
         ]
-        this.contents.fontSize = 18;
+        this.contents.fontSize = 20;
         for (let i = 0;i < _elementId.length;i++){
             this.drawText(_element[_elementId[i]],x + 56 * i,y,120);
             this.drawElementStatus(this._actor,_elementStatusType[i],i,x + 24 + 56 * i,y,120);

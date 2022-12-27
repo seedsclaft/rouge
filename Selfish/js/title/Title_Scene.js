@@ -133,6 +133,7 @@ class Title_Scene extends Scene_Base{
     commandNewGame(){
         SoundManager.playOk();
         DataManager.setupNewGame();
+        $gameStage.initialize(1);
         this._commandWindow.hide();
         this._versionSprite.hide();
         SceneManager.goto(Tactics_View);

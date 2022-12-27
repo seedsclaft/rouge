@@ -3,7 +3,7 @@ class PopupStatus_View  {
     }
 
     static initialize(){
-        this._listWindow = new PopupStatus_ActorList(584,48,344,400);
+        this._listWindow = new PopupStatus_ActorList(584,56,344,416);
         this._listWindow.setHandler('pageup',     this.changeActor.bind(this,-1));
         this._listWindow.setHandler('pagedown',     this.changeActor.bind(this,1));
         this._listWindow.setHandler('shift',     this.changeSkill.bind(this));

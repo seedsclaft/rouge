@@ -5,6 +5,7 @@ class Tactics_ActorSpriteList extends Sprite{
         this.y = y;
         this._data = null;
         this._actorSprites = [];
+        this._infoSprites = [];
         this._arrowSprite = new Sprite();
         this._arrowSprite.bitmap = ImageManager.loadSystem("arrowA_2d");
         this.addChild(this._arrowSprite);
@@ -26,13 +27,41 @@ class Tactics_ActorSpriteList extends Sprite{
 
             let sprite = new Sprite();
             sprite.bitmap = ImageManager.loadPicture(actor.faceName() + "_00_s");
-            //sprite.bitmap = ImageManager.loadPicture("Actor0001_00_s");
             sprite.scale.x = sprite.scale.y = position.scale;
             sprite.x = position.x;
             sprite.y = position.y;
+            sprite.anchor.x = 0.5;
             sprite.anchor.y = 1;
             this.addChild(sprite);
             this._actorSprites.push(sprite);
+
+            let info = new Sprite();
+            info.anchor.x = 0.5;
+            info.bitmap = new Bitmap(200,40);
+            this._infoSprites.push(info);
+        });
+        this._infoSprites.forEach(info => {
+            this.addChild(info);
+            
+        });
+    }
+
+    setInfoSprite(data){
+        this._infoSprites.forEach(sprite => {
+            sprite.hide();
+        });
+        
+        data.forEach((d,index) => {
+            let info = this._infoSprites[index];
+            
+            info.show();
+            info.bitmap.clear();
+            info.bitmap.fontSize = 21;
+            info.bitmap.drawText(d,0,0,200,40,"center");
+
+            let _position = this._data[index].position();
+            info.x = _position.x;
+            info.y = _position.y - (this._actorSprites[index].height / (1.5) * _position.scale);
         });
     }
 
@@ -44,7 +73,7 @@ class Tactics_ActorSpriteList extends Sprite{
         this.activate();
         const _index = this._actorSprites.findIndex(a => a == this.actorSprites(selectIndex));
         const _position = this._data[_index].position();
-        this._arrowSprite.x = 0 + _position.x + (this.actorSprites(selectIndex).width * _position.scale * 0.5);
+        this._arrowSprite.x = 0 + _position.x// + (this.actorSprites(selectIndex).width * _position.scale * 0.5);
         this._arrowSprite.y = -24 + _position.y - (this.actorSprites(selectIndex).height * _position.scale);
     }
 

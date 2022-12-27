@@ -65,17 +65,7 @@ class Model_Menu extends Model_Base {
     }
 
     roleData(){
-        const _player = this.player();
-        const _roleStateId = $gameDefine.RoleStateIdArray;
         let list = [];
-        _roleStateId.forEach(roleStateId => {
-            list.push(
-                {
-                    state:$dataStates[roleStateId],
-                    level:_player.getStateEffect(roleStateId)
-                }
-            )
-        });
         return list;
     }
 

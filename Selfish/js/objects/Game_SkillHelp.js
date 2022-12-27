@@ -102,9 +102,6 @@ class Game_SkillHelp{
         } else
         if (item.stypeId == Game_BattlerBase.SKILL_TYPE_SPECIAL){
             text = TextManager.getText(700700);
-        } else
-        if (item.stypeId == 0 && item.id > $gameDefine.defaultSlotId){
-            text = TextManager.getText(700800);
         } else{
             if (this._battler){
                 text = "\n";

@@ -20,7 +20,6 @@ class Strategy_Model {
     }
 
     selectedData(category){
-        console.error($gameStage.selectedData())
         return $gameStage.selectedData()[category];
     }
 
@@ -49,7 +48,7 @@ class Strategy_Model {
             def:0
         };
 
-        actor.changeExp(100);
+        actor.levelUp();
         const _command = this.currentCommand();
         $gameStage.selectedData()[_command.key] = _.without($gameStage.selectedData()[_command.key],actor.actorId());
      
@@ -106,5 +105,22 @@ class Strategy_Model {
         troop.setup(_searchData.enemy,_searchData.lvMin,_searchData.lvMax);
         troop.setupBoss([_searchData.bossEnemy],_searchData.bossLv,_searchData.bossLv);
         $gameTroop = troop;
+    }
+
+    magicRecovery(){
+        const _command = this.currentCommand();
+        const _selectedData = $gameStage.selectedData()[_command.key];
+        $gameParty.gainGold(_selectedData.length * 200);
+    }
+
+    magicRecoveryNameList(){
+        const _command = this.currentCommand();
+        const _selectedData = $gameStage.selectedData()[_command.key];
+        return _selectedData.map(a => $gameActors.actor(a).name()).join(",");
+    }
+
+    turnend(){
+        $gameStage._turns -= 1;
+        $gameStage.clearSelect();
     }
 }

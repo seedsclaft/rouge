@@ -112,7 +112,8 @@ class Tactics_Presenter extends Presenter_Base{
             this._view.commandCommandSearch();
             return;
         }
-        this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
+        const _info = this._model.infoData(_category);
+        this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category),_info);
    }
 
     commandSelectOk(){
@@ -131,8 +132,21 @@ class Tactics_Presenter extends Presenter_Base{
         if (_category == "alchemy"){
             const _alchemyParam = this._model.alchemyParam(_category);
             this._view.setAlchemyParam(_alchemyParam);
-        } 
-        this._view.commandSelectOk(_isSelected);
+        }
+        const _needEnergy = this._model.needTrainEnergy(_actorId);
+        if (!_isSelected){
+            if (this._model.energy() >= _needEnergy){
+                this._model.loseEnergy(_needEnergy);
+                this._view.changeEnergyValue(_needEnergy * -1);
+                this._view.commandSelectOk(_isSelected,true);
+            } else{
+                this._view.commandSelectOk(_isSelected,false);
+            }
+        } else{
+            this._model.gainEnergy(_needEnergy);
+            this._view.changeEnergyValue(_needEnergy);  
+            this._view.commandSelectOk(_isSelected,true);
+        }
     }
 
     commandSelectCancel(){
@@ -143,6 +157,13 @@ class Tactics_Presenter extends Presenter_Base{
     commandSelectClear(){
         const _category = this._view.selectCategory();
         const _selected = this._model.selectedData(_category);
+
+        let needEnergy = this._model.needEnergy(_category,_selected);
+
+        if (needEnergy != 0){
+            this._model.gainEnergy(needEnergy);
+            this._view.changeEnergyValue(needEnergy);
+        }
         this._model.clearSelectData(_category);
         this._view.commandSelectClear(_selected,this._model.actorSpriteList());
     }
@@ -161,9 +182,24 @@ class Tactics_Presenter extends Presenter_Base{
     }
     
     commandAlchemySelect(){
+        const _category = this._view.selectCategory();
         const _alchemy = this._view.selectAlchemy();
-        this._model.addAlchemy(_alchemy.skill.id);
-        this._view.commandAlchemySelect(_alchemy.skill.id);
+        const _isSelected = this._model.checkSelectedAlchemy(_alchemy.skill.id);
+        let checkSelectAlchemy = false;
+        if (_isSelected){
+            this._model.removeAlchemy(_alchemy);
+            this._view.changeEnergyValue(_alchemy.cost);
+        } else
+        if (!_isSelected){
+            checkSelectAlchemy = this._model.checkSelectAlchemy(_category,_alchemy);
+            if (checkSelectAlchemy == 0){
+                this._model.addAlchemy(_alchemy);
+                this._view.changeEnergyValue(_alchemy.cost * -1);
+            }
+        }
+        const _alchemyParam = this._model.alchemyParam(_category);
+        this._view.setAlchemyParam(_alchemyParam);
+        this._view.commandAlchemySelect(_isSelected,checkSelectAlchemy,_alchemy.skill.id);
     }
 
     commandDecideAlchemy(){
