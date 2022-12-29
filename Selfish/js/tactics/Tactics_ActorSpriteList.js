@@ -26,8 +26,13 @@ class Tactics_ActorSpriteList extends Sprite{
             let actor = d;
 
             let sprite = new Sprite();
-            sprite.bitmap = ImageManager.loadPicture(actor.faceName() + "_00_s");
-            sprite.scale.x = sprite.scale.y = position.scale;
+            if (position.scale > 0.5){
+                sprite.bitmap = ImageManager.loadPicture(actor.faceName() + "_00_l");
+                sprite.scale.x = sprite.scale.y = position.scale;
+            } else{
+                sprite.bitmap = ImageManager.loadPicture(actor.faceName() + "_00_s");
+                sprite.scale.x = sprite.scale.y = position.scale * 2;
+            }
             sprite.x = position.x;
             sprite.y = position.y;
             sprite.anchor.x = 0.5;
@@ -61,7 +66,11 @@ class Tactics_ActorSpriteList extends Sprite{
 
             let _position = this._data[index].position();
             info.x = _position.x;
-            info.y = _position.y - (this._actorSprites[index].height / (1.5) * _position.scale);
+            let posScale = 1;
+            if (_position < 0.5){
+                posScale = 0.5;
+            }
+            info.y = _position.y - (440 * _position.scale * posScale);
         });
     }
 
@@ -74,7 +83,11 @@ class Tactics_ActorSpriteList extends Sprite{
         const _index = this._actorSprites.findIndex(a => a == this.actorSprites(selectIndex));
         const _position = this._data[_index].position();
         this._arrowSprite.x = 0 + _position.x// + (this.actorSprites(selectIndex).width * _position.scale * 0.5);
-        this._arrowSprite.y = -24 + _position.y - (this.actorSprites(selectIndex).height * _position.scale);
+        let posScale = 1;
+        if (_position < 0.5){
+            posScale = 0.5;
+        }
+        this._arrowSprite.y = (-24 * (1-_position.scale)) + _position.y - (640 * (_position.scale * posScale));
     }
 
     setSelectedIndex(selectIndex,isSelected){

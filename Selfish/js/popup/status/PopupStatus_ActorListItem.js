@@ -34,24 +34,14 @@ class PopupStatus_ActorListItem extends Window_Base{
     }
 
     updateFace(x,y){
-        this.drawFace(this._actor.faceName(),0,x,y,128,128);
+        const bitmap = ImageManager.loadFace(this._actor.faceName());
+        this.contents.blt(bitmap, 72, 72, 144, 144, x, y);
+        //this.drawFace(this._actor.faceName(),0,x,y,288,288);
     }
 
     drawFace (
         faceName, faceIndex, x, y, width, height
     ) {
-        width = width || ImageManager.faceWidth;
-        height = height || ImageManager.faceHeight;
-        const bitmap = ImageManager.loadFace(faceName);
-        const pw = ImageManager.faceWidth + 12;
-        const ph = ImageManager.faceHeight + 128;
-        const sw = Math.min(width, pw);
-        const sh = Math.min(height, ph);
-        const dx = Math.floor(x + Math.max(width - pw, 0) / 2);
-        const dy = Math.floor(y + Math.max(height - ph, 0) / 2);
-        const sx = Math.floor((faceIndex % 4) * pw + (pw - sw) / 2);
-        const sy = Math.floor(Math.floor(faceIndex / 4) * ph + (ph - sh) / 2);
-        this.contents.blt(bitmap, sx, sy, sw, sh, dx, dy);
     };
 
     updateName(x,y){

@@ -303,6 +303,11 @@ Scene_Boot.prototype.start = async function() {
     });
     ImageManager.loadSystem("textplateC");
     ImageManager.loadBackground("nexfan_01");
+    ImageManager.loadPicture("Actor0001_00_l")
+    ImageManager.loadPicture("Actor0002_00_l")
+    ImageManager.loadPicture("Actor0003_00_l")
+    ImageManager.loadPicture("Actor0004_00_l")
+    ImageManager.loadPicture("Actor0005_00_l")
     ImageManager.loadPicture("Actor0001_00_s")
     ImageManager.loadPicture("Actor0002_00_s")
     ImageManager.loadPicture("Actor0003_00_s")

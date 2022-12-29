@@ -10,8 +10,8 @@ class PopupStatus_ActorList extends Window_Selectable{
         this._cursorSprite.opacity = 0;
         this.opacity = 0;
         this._actorSprite = new Sprite();
-        this._actorSprite.scale.x = this._actorSprite.scale.y = 1;
-        this._actorSprite.x = -40;
+        this._actorSprite.scale.x = this._actorSprite.scale.y = 0.75;
+        this._actorSprite.x = 0;
         this._actorSprite.y = 0;
         this.addChild(this._actorSprite);
         this._actorListItem = new PopupStatus_ActorListItem(x,y,width,height);
@@ -59,6 +59,12 @@ class PopupStatus_ActorList extends Window_Selectable{
     drawItem(index){
         const actor = this._data[index];
         if (actor){
+            const _x = $dataActors[actor.actorId()].x; 
+            const _y = $dataActors[actor.actorId()].y; 
+            const _scale = $dataActors[actor.actorId()].scale; 
+            this._actorSprite.scale.x = this._actorSprite.scale.y = _scale;
+            this._actorSprite.x = _x;
+            this._actorSprite.y = _y;
             this._actorSprite.bitmap = ImageManager.loadPicture(actor.faceName().replace("yhmv","yh"));
             this._actorListItem.setActor(actor,this._lvUpData);
         }
