@@ -507,7 +507,7 @@ Game_BattlerBase.prototype.setTp = function(tp) {
 };
 
 Game_BattlerBase.prototype.maxTp = function() {
-    return this.luk;
+    return 100;
 };
 
 Game_BattlerBase.prototype.refresh = function() {
@@ -1202,7 +1202,7 @@ Game_Battler.prototype.gainTp = function(value) {
 };
 
 Game_Battler.prototype.gainSilentTp = function(value) {
-    this.setTp(this.tp + value);
+    //this.setTp(this.tp + value);
 };
 
 Game_Battler.prototype.initTp = function() {
@@ -1245,6 +1245,7 @@ Game_Battler.prototype.regenerateAll = function() {
 };
 
 Game_Battler.prototype.onBattleStart = function() {
+    this.initTp();
 };
 
 

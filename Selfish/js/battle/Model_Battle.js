@@ -43,11 +43,13 @@ class Model_Battle extends Model_Base {
     }
 
     battleSkill(battler){
-        let skills = battler.skills().filter(a => a.occasion == 1);
         let data = [];
-        skills.forEach(skill => {
-            data.push({skill:skill,enable:battler.canUse(skill) && skill.stypeId != Game_BattlerBase.SKILL_TYPE_PASSIVE,cost:battler.skillMpCost(skill) });
-        });
+        if (battler.isActor()){
+            const skills = battler.skills().filter(a => a.occasion == 1);
+            skills.forEach(skill => {
+                data.push({skill:skill,enable:battler.canUse(skill) && skill.stypeId != Game_BattlerBase.SKILL_TYPE_PASSIVE,cost:battler.skillMpCost(skill) });
+            });
+        }
         return data;
     }
 
@@ -161,9 +163,7 @@ class Model_Battle extends Model_Base {
     }
 
     makeResult(targetId){
-        if (this.actionBattler().isActor()){
-            this.currentAction().setTarget(targetId);
-        }
+        this.currentAction().setTarget(targetId);
         $gameTroop.increaseTurn();
         //結果を先に判定
         if (this.actionBattler().canMove()){
@@ -275,6 +275,7 @@ class Model_Battle extends Model_Base {
         this._battleMembers = _.sortBy(this._battleMembers,(battler) => battler._ap);
     }
     setActingBattler(battler,flag){
+        console.error(battler)
         if (flag){
             this._actingBattlers.unshift(battler);
             return;
@@ -406,32 +407,27 @@ class Model_Battle extends Model_Base {
         }
     }
     createAfterActionData(){
-        // Awakeポイント SkillAwakeManager._afterActing
-        /*
-        let awake = [];
-        let battleactor = null;
-        $gameParty.battleMembers().some(actor => {
-            awake = SkillAwakeManager.checkSkillAwake(actor,2);
-            if (awake.length > 0){
-                battleactor = actor;
-                return true;
-            }
+        // timingがafterの固有を発動
+        const _battler = this.actionBattlers();
+        _battler.forEach(battler => {
+            let battleSkill = this.battleSkill(battler);
+            battleSkill.forEach(skill => {
+                if (skill.enable && skill.skill.timing == "after"){
+                    let flag = true;
+                    let stateEval = skill.skill.stateEval;
+                    if (stateEval != null){
+                        let a = battler;
+                        flag = eval(stateEval);
+                    }
+                    if (flag){
+                        this.selectSkill(skill.skill.id);
+                        this.currentAction().prepare();
+                        this.currentAction().makeActionResult();
+                        this.setActingBattler(battler,false);
+                    }
+                }
+            });
         });
-        if (awake.length > 0){
-            const afterTarget = SkillAwakeManager.checkMatchData(awake[0]);
-            if (afterTarget){
-                battleactor.makeActions();
-                let action = battleactor.currentAction();
-                action.setSkill(awake[0].skillId);
-                action.setTarget(SkillAwakeManager.checkMatchData(awake[0]).index());
-                action.prepare();
-                action.makeActionResult();
-                action.awaking = true;
-                //行動者を追加
-                this.setActingBattler(battleactor,false);
-            }
-        }
-        */
     }
     createMadnessActionData(){
         $gameTroop.aliveMembers().forEach(enemy => {
@@ -869,9 +865,12 @@ class Model_Battle extends Model_Base {
     }
 
     actionClear(){
+        console.log(this.getActingBattler())
+        console.log(this._actingBattlers)
         if (this.getActingBattler()){
             this._actingBattlers.shift();
             this._makeActionData.shift();
+            console.log(this._actingBattlers)
         }
     }
 

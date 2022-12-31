@@ -117,7 +117,8 @@ const StateType = {
 
     PHARMACOLOGY :            "PHArmacology",   //回復効果
 
-    SHIELD :  "Shield" // ダメージシールド
+    SHIELD :  "Shield", // ダメージシールド
+    ALL_ATTACK :              "Allattack",      //攻撃全体化
     /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)
@@ -135,7 +136,6 @@ const StateType = {
     ATTACK_LENGHT :           "attacklength",   //攻撃回数加算
     SKILL_EXP :               "skillexp",       //スキル経験値アップ(未使用)
     COUNTER :                 "counter",        //カウンター
-    ALL_ATTACK :              "allattack",      //攻撃全体化
 
     DAMAGE_BLOCK :            "damageblock",    //ダメージブロック
     DRAIN_HEALATK :           "drainhealatk",   //ドレインヒール(攻撃付与)

@@ -7,11 +7,17 @@ class Layer_BattlePicture extends Sprite{
 
     createPictures(members){
         members.forEach(battler => {
-            let sprite = new Sprite_EventPicture();
-            sprite.setup(battler.faceName(),0,0,0);
-            sprite.setPicture();
+            let sprite = new Sprite();
             sprite.opacity = 0;
-            sprite.x = 120;
+            let _actorData = $dataActors[battler.actorId()];
+            let _x = _actorData.x; 
+            let _y = _actorData.y;
+            let _scale = _actorData.scale;
+            sprite.x = _x - 120;
+            sprite.y = _y;
+            sprite.scale.x = sprite.scale.y = _scale;
+            sprite.bitmap = ImageManager.loadPicture(battler.faceName());
+            sprite._pictureLabel = battler.faceName();
             this.addChild(sprite);
             this._pictureSprites.push(sprite);
         },this);
@@ -22,10 +28,12 @@ class Layer_BattlePicture extends Sprite{
             return;
         }
         this._pictureSprites.forEach(sprite => {
+            let _actorData = $dataActors[battler.actorId()];
+            let _x = _actorData.x; 
             if (battler.faceName() == sprite._pictureLabel){
-                this.showAnimation(sprite);
+                this.showAnimation(sprite,_x);
             } else{
-                this.hideAnimation(sprite);
+                this.hideAnimation(sprite,_x);
             }
         });
     }
@@ -36,12 +44,12 @@ class Layer_BattlePicture extends Sprite{
         });
     }
 
-    showAnimation(sprite){
-        gsap.to(sprite, 0.2, {x:160 ,opacity:255});
+    showAnimation(sprite,x){
+        gsap.to(sprite, 0.2, {x:x-96,opacity:255});
     }
 
-    hideAnimation(sprite){
-        gsap.to(sprite, 0.2, {x:120 ,opacity:0});   
+    hideAnimation(sprite,x){
+        gsap.to(sprite, 0.2, {x:x-120 ,opacity:0});   
     }
 
     terminate(){

@@ -148,6 +148,7 @@ DataManager.createSkillDataPlus = function() {
                 element.stateTurns = json.stateTurns ? Number(json.stateTurns) : 0;
                 element.stateEffect = json.stateEffect ? Number(json.stateEffect) : 0;
                 element.stateEval = json.stateEval ? String(json.stateEval) : null;
+                element.timing = json.timing ? String(json.timing) : null;
                 element.selfSkill = json.selfSkill ? Number(json.selfSkill) : 0;
                 element.nextLevel = json.nextLevel ? (json.nextLevel).split(",").map(num => Number(num)) : [];
                 element.nextExp = json.nextExp ? Number(json.nextExp) : 0;

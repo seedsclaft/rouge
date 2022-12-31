@@ -121,7 +121,7 @@ class Presenter_Battle extends Presenter_Base{
         const _actionBattler = this._model.actionBattler();
         if (_actionBattler.isActor()){
             let battleSkill = this._model.battleSkill(_actionBattler);
-            this._view.commandActive(_actionBattler,_actionBattler.isActor(),battleSkill);    
+            this._view.commandActive(_actionBattler,battleSkill);    
         } else{
             this._model.selectEnemySkill();
             this.commandAction();
@@ -141,9 +141,7 @@ class Presenter_Battle extends Presenter_Base{
         const _targetId = this._view.selectTargetIndex(isEnemy);
         this._model.makeResult(_targetId);
         this._view.commandAction();
-        
-        let actionBattler = this._model.getActingBattler();
-        let action = this._model.currentAction();
+
         /*
         if (!actionBattler.isAlive() || (!actionBattler.canMove() && !action.madness())){
             let isCountered = action.counter();
@@ -165,9 +163,15 @@ class Presenter_Battle extends Presenter_Base{
             await this.setWait(1200);
         }
         */
+        this.commandActionStart();
+    }
+
+    async commandActionStart(){
+        const actionBattler = this._model.getActingBattler();
+        const action = this._model.currentAction();
         this._model.applyGlobal();
 
-        let results = this._model.currentAction().results();
+        const results = this._model.currentAction().results();
         if (results.length == 0){
             this.endTurnAction();
             return;
@@ -372,7 +376,7 @@ class Presenter_Battle extends Presenter_Base{
         }
 
         if (this._model.isActingBattler()){
-            this.startAction();
+            this.commandActionStart();
         } else{
             $gameSwitches.setValue($gameDefine.chainSeaquenceSwitchId,true);
             // チェイン
@@ -623,11 +627,6 @@ class Presenter_Battle extends Presenter_Base{
         this._view.startTurn();
         this.startAction();
     }
-
-    async startAction(){
-    }
-
-
 
     async processVictory(){
         // 味方を勝利顔に

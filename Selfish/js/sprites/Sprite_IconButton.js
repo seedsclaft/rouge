@@ -18,8 +18,8 @@ class Sprite_IconButton extends Sprite_Button{
         this._iconSprite = new Sprite();
         this._iconSprite.bitmap = ImageManager.loadSystem('IconSet');
         const iconIndex  = 156;
-        const pw = Window_Base._iconWidth;
-        const ph = Window_Base._iconHeight;
+        const pw = ImageManager.iconWidth;
+        const ph = ImageManager.iconHeight;
         const sx = iconIndex % 16 * pw;
         const sy = Math.floor(iconIndex / 16) * ph;
         this._iconSprite.x = 24;

@@ -301,14 +301,14 @@ Sprite_Actor.prototype.createMainSprite = function() {
     this._mainSprite = new Sprite();
     this._mainSprite.anchor.x = 0.5;
     this._mainSprite.anchor.y = 0.5;
-    this._mainSprite.y = 0//Window_Base._faceHeight / 2;
+    this._mainSprite.y = 0;
     this.addChild(this._mainSprite);
     this._effectTarget = this._mainSprite;
 };
 
 Sprite_Actor.prototype.createStateSprite = function() {
     this._stateSprite = new Sprite_StateOverlay();
-    this._stateSprite.y = Window_Base._faceHeight / 2 + 16;
+    this._stateSprite.y = ImageManager.faceHeight / 2 + 16;
     this.addChild(this._stateSprite);
 };
 
@@ -357,11 +357,11 @@ Sprite_Actor.prototype.updateBitmap = function() {
         this._battlerName = name;
         
         this._mainSprite.bitmap = ImageManager.loadFace(name);
-        this._mainSprite.setFrame(0, 0, Window_Base._faceWidth + 128, Window_Base._faceHeight + 56);    
+        this._mainSprite.setFrame(48, 96, ImageManager.faceWidth + 122, ImageManager.faceHeight - 10);    
         this._mainSprite.scale.x = 0.5;
         this._mainSprite.scale.y = 0.5;
         this._mainSprite.anchor.y = 1;
-        this._mainSprite.x = 52 + 36;
+        this._mainSprite.x = 74;
         this._mainSprite.y = 74;  
     }
 };
@@ -590,7 +590,7 @@ Sprite_Enemy.prototype.setBattlerStatus = function(battlerStatusSprite) {
 
 Sprite_Enemy.prototype.createStateSprite = function() {
     this._stateSprite = new Sprite_StateOverlay();
-    this._stateSprite.y = Window_Base._faceHeight / 3;
+    this._stateSprite.y = ImageManager.faceHeight / 3;
     this.addChild(this._stateSprite);
 };
 

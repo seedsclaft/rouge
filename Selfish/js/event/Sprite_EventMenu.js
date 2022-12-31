@@ -88,8 +88,8 @@ class Sprite_EventMenu extends Sprite {
     createLogButton(){
         this._logButton = new Sprite_Button();
         this._logButton.bitmap = ImageManager.loadSystem('IconSet');
-        const w = Window_Base._iconWidth;
-        const h = Window_Base._iconHeight;
+        const w = ImageManager.iconWidth;
+        const h = ImageManager.iconHeight;
         this._logButton.setFrame(1 * w,12 * h ,w,h);
         this.addChild(this._logButton);
         this._logButton.x = 24;
@@ -101,8 +101,8 @@ class Sprite_EventMenu extends Sprite {
     createDisplayButton(){
         this._displayButton = new Sprite_Button();
         this._displayButton.bitmap = ImageManager.loadSystem('IconSet');
-        const w = Window_Base._iconWidth;
-        const h = Window_Base._iconHeight;
+        const w = ImageManager.iconWidth;
+        const h = ImageManager.iconHeight;
         this._displayButton.setFrame(15 * w,10 * h ,w,h);
         this.addChild(this._displayButton);
         this._displayButton.x = 72;

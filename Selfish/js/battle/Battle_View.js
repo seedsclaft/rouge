@@ -237,28 +237,6 @@ class Battle_View extends Scene_Base{
         this._gridSpriteset.refreshPosition();
     }
 
-    displaySelecting(battler,skills){
-        SoundManager.playActorCommand();
-        this._category = 0;
-        this.layerBattlePicture().refreshBattlerPicture(battler);
-        this._skillWindow.show();
-        this._skillWindow.activate();
-        this._skillWindow.setData(skills,battler);
-        this._skillWindow.showAnimation();
-        
-        this.changeSkillIndex();
-        this._keyMapWindow.show();
-    
-        this._elementSprite.visible = true;
-        if (this._dockMenu){
-            this._dockMenu.enableLimitBreakButton(true);
-            this._dockMenu.enableCategoryChangeButton(true);
-            this._dockMenu.enableGuardButton(true);
-            this._dockMenu.show();
-            this._dockMenu.showTypeChange(true);
-        }
-    }
-
     displaySkillName(text){
         this._recordWindow.addText(text);
     }
@@ -676,11 +654,10 @@ class Battle_View extends Scene_Base{
         }
     }
 
-    commandActive(_actionBattler,isActor,battleSkill){
-        if (isActor){
-            this._layerBattlePicture.refreshBattlerPicture(_actionBattler);
-            this.setBattleSkill(battleSkill,_actionBattler.lastBattleSkillId());
-        }
+    commandActive(_actionBattler,battleSkill){
+        this._layerBattlePicture.refreshBattlerPicture(_actionBattler);
+        this.setBattleSkill(battleSkill,_actionBattler.lastBattleSkillId());
+        
         this._enemyWindow.hide();
         this._enemyWindow.deactivate();
         this._actorWindow.hide();
