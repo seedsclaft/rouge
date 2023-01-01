@@ -55,7 +55,6 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
             if (_alchemy.skill.range != null){
                 let range = TextManager.getText(1510);
                 if (_alchemy.skill.range == 1) range = TextManager.getText(1520);
-                else if (_alchemy.skill.range == 2) range = TextManager.getText(1530);
                 this.drawText(TextManager.getText(1500) + range, rect.x, rect.y + 16, rect.width);
             }
             let textWidth = this.contents.measureTextWidth(_alchemy.skill.description);

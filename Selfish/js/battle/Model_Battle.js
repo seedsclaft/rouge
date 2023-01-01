@@ -55,7 +55,7 @@ class Model_Battle extends Model_Base {
 
     initMembers(){
         if (DataManager.isBattleTest()){
-            $gameTroop.setup([$dataSystem.testTroopId],$gameVariables.value(1),$gameVariables.value(1));
+            $gameTroop.setup([$dataSystem.testTroopId,$dataSystem.testTroopId-1],$gameVariables.value(1),$gameVariables.value(1));
         }
         this._actionForcedBattler = null;
         this._battleMembers = [];
@@ -69,8 +69,6 @@ class Model_Battle extends Model_Base {
         this._totalTurnCount = 1;
 
         this._lastDeadEnemyId = 0;
-
-        this._eventBattleData = null;
 
         this._tempDyingData = [false,false,false];
 
@@ -130,7 +128,6 @@ class Model_Battle extends Model_Base {
         let action = new Game_Action(this._actionBattler);
         //this.makeActions();
         //let action = this._actionBattler.action(0);
-        //console.log(skillId)
         action.setSkill(skillId);
         this._actionBattler.setLastBattleSkillId(skillId);
         this._makeActionData.push(action);
@@ -141,7 +138,6 @@ class Model_Battle extends Model_Base {
         let action = new Game_Action(this._actionBattler);
         //this.makeActions();
         //let action = this._actionBattler.action(0);
-        //console.log(skillId)
         this._actionBattler.setAction(action);
         this._makeActionData.push(action);
     }
@@ -150,7 +146,8 @@ class Model_Battle extends Model_Base {
         return {
             isForOpponent: action.isForOpponent(),
             isForAll: action.isForAll(),
-            isForUser: action.isForUser()
+            isForUser: action.isForUser(),
+            isLine: action.isLine()
         };
     }
 
@@ -199,13 +196,15 @@ class Model_Battle extends Model_Base {
         return animationId;
     }
 
-    checkTroopLine(){
+    changeTroopLine(){
         const troop = this.troop();
         let lineData = [
-            [],[],[]
+            [],[]
         ];
-        troop.aliveMembers().forEach(member => {
-            lineData[member.line()].push(member);
+        troop.enemiesLine().forEach((line,index) => {
+            if (troop.members()[index].isAlive()){
+                lineData[line].push(troop.members()[index]);
+            }
         });
         let changed = false;
         lineData.forEach((line,index) => {
@@ -213,9 +212,13 @@ class Model_Battle extends Model_Base {
             for (let j = 0;j <= index;j++){
                 if (lineData[index - j].length == 0){
                     line.forEach(member => {
-                        member._line = member._line - 1;
+                        member._line = index - 1;
                     });
                     changed = true;
+                } else{
+                    line.forEach(member => {
+                        member._line = index;
+                    });
                 }
             }
         });
@@ -275,7 +278,6 @@ class Model_Battle extends Model_Base {
         this._battleMembers = _.sortBy(this._battleMembers,(battler) => battler._ap);
     }
     setActingBattler(battler,flag){
-        console.error(battler)
         if (flag){
             this._actingBattlers.unshift(battler);
             return;
@@ -865,12 +867,9 @@ class Model_Battle extends Model_Base {
     }
 
     actionClear(){
-        console.log(this.getActingBattler())
-        console.log(this._actingBattlers)
         if (this.getActingBattler()){
             this._actingBattlers.shift();
             this._makeActionData.shift();
-            console.log(this._actingBattlers)
         }
     }
 
@@ -1324,7 +1323,7 @@ class Model_Battle extends Model_Base {
         if (action._item._itemId == $gameDefine.waitSkillId){
             ap = this.waitSkillChangeAp(this.actionBattler());
         } else{
-            ap = 400 - this.actionBattler().agi * 4;
+            ap = 500 - this.actionBattler().agi * 4;
         }
         return ap;
     }

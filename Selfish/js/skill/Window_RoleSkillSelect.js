@@ -46,7 +46,6 @@ class Window_RoleSkillSelect extends Window_Selectable{
                 this.drawBack(rect.x ,rect.y,rect.width,this.itemHeight()-2,this.cursorColor(),128);
                 
             }
-            //this.drawSkillIcon(item.iconIndex, rect.x + 2, rect.y + 4, rect.width);
             //let name = item.name;
         
             this.drawText(TextManager.getStateName(item.state.id), rect.x + 8, rect.y + 1, rect.width,"left");

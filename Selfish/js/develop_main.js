@@ -143,6 +143,7 @@ const scriptUrls = [
 	"js/battle/Sprite_Damage.js",
 	"js/battle/Sprite_PopupText.js",
 	"js/battle/Battle_MagicList.js",
+	"js/battle/Battle_EnemyStatus.js",
 	"js/skill/Window_SkillCategory.js",
 	"js/skill/Window_SkillSelect.js",
 	"js/skill/Window_RoleSkillSelect.js",

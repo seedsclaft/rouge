@@ -91,7 +91,7 @@ class View_BackGround {
             this._backSprite1.bitmap = null;
             this._backSprite1._init = false;
             this._backSprite1.opacity = 255;
-            this._backSprite1.bitmap = ImageManager.loadBackground(name);
+            this._backSprite1.bitmap = ImageManager.loadBattleback1(name);
         } else{
             this._backSprite1.bitmap = null;
         }

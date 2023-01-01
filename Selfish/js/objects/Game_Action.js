@@ -134,6 +134,10 @@ Game_Action.prototype.isForAll = function() {
     return this.checkItemScope([2, 8, 10]);
 };
 
+Game_Action.prototype.isLine = function() {
+    return this.item().line;
+};
+
 Game_Action.prototype.needsSelection = function() {
     return this.checkItemScope([1, 7, 9]);
 };
@@ -311,7 +315,7 @@ Game_Action.prototype.targetsForOpponents = function() {
             //ステートの重複を避ける
             while (targets.length == 0){
                 targets.push(unit.randomTarget());
-                var state = _.find(this._item.object().effects,(a) => a.code == Game_Action.EFFECT_ADD_STATE );
+                let state = _.find(this._item.object().effects,(a) => a.code == Game_Action.EFFECT_ADD_STATE );
                 if (state){
                     targets =_.filter(targets,function(t){
                         return !t.isStateAffected(state.dataId)

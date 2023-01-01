@@ -49,7 +49,6 @@ class PopupStatus_MagicList extends Window_Selectable{
             if (_magic.range != null){
                 let range = TextManager.getText(1510);
                 if (_magic.range == 1) range = TextManager.getText(1520);
-                else if (_magic.range == 2) range = TextManager.getText(1530);
                 this.drawText(TextManager.getText(1500) + range, rect.x, rect.y + 16, rect.width);
             }
             this.drawTextEx(_magic.description,rect.width - _magic.description.length * 16 + 12,rect.y + 20,rect.width);

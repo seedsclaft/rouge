@@ -163,6 +163,7 @@ DataManager.createSkillDataPlus = function() {
                 }
                 element.chargeTurn = json.chargeTurn ? Number(json.chargeTurn) : 0;
                 element.range = json.range != null ? Number(json.range) : null;
+                element.line = json.line != null ? Boolean(json.line == 1) : false;
             }
         }
     });

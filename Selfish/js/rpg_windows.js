@@ -290,8 +290,8 @@ Window_Base.prototype.pendingColor = function() {
 
 Window_Base.prototype.drawItemName = function(item, x, y, width,isSelect) {
     if (item) {
-        const iconBoxWidth = Window_Base._iconWidth;
-        this.drawSkillIcon(item.iconIndex,x, y + 3);
+        const iconBoxWidth = ImageManager.iconWidth;
+        this.drawIcon(item.iconIndex,x, y + 3);
         const isNew = _.find($gameParty._newSkillIdList,(s) => s == item.id);
         if (isNew){
             this.contents.fontSize = 12;
@@ -312,21 +312,6 @@ Window_Base.prototype.drawItemName = function(item, x, y, width,isSelect) {
     }
 };
 
-Window_Base.prototype.drawItemNameHide = function(item, x, y, width) {
-    width = width || 312;
-    if (item) {
-        var iconBoxWidth = Window_Base._iconWidth;
-        this.drawSkillIcon(item.iconIndex, x + 20, y + 3);
-        this.contents.fontSize = 22;
-        var hatena = "";
-        for (var i = 0;i < TextManager.getSkillName(item.id).length;i++){
-            hatena += $dataOption.getUserData('language') == LanguageType.English ? "?" : "？";
-        }
-        this.drawText(hatena, x + iconBoxWidth + 24, y, width - iconBoxWidth);
-        this.resetFontSettings();
-    }
-};
-
 Window_Base.prototype.drawGauge = function(x, y, width, rate, color1, color2,needBack) {
     if (needBack === undefined){
         needBack = true;
@@ -337,15 +322,6 @@ Window_Base.prototype.drawGauge = function(x, y, width, rate, color1, color2,nee
         this.contents.fillRect(x, gaugeY, width, 6, this.gaugeBackColor());
     }
     this.contents.gradientFillRect(x, gaugeY, fillW, 6, color1, color2);
-};
-
-Window_Base.prototype.drawSkillIcon = function(iconIndex, x, y) {
-    var bitmap = ImageManager.loadSystem('IconSet');
-    var pw = Window_Base._iconWidth;
-    var ph = Window_Base._iconHeight;
-    var sx = iconIndex % 16 * pw;
-    var sy = Math.floor(iconIndex / 16) * ph;
-    this.contents.blt(bitmap, sx, sy, pw, ph, x, y);
 };
 
 Window_Base.prototype.refreshDimmerBitmap = function() {

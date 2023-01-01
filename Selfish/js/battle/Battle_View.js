@@ -53,7 +53,7 @@ class Battle_View extends Scene_Base{
             this.addChild(this._layerBattleTroop);
         }
         if (this._enemyWindow == null){
-            this._enemyWindow = new Window_BattleEnemy();
+            this._enemyWindow = new Battle_EnemyStatus();
             this._enemyWindow.setHandler('ok',     this.setCommand.bind(this,{command:BattleCommand.Action,isEnemy:true}));
             this._enemyWindow.setHandler('cancel', this.setCommand.bind(this,{command:BattleCommand.Active}));
             this._enemyWindow.setHandler('index', this.changeEnemyIndex.bind(this));
@@ -66,9 +66,8 @@ class Battle_View extends Scene_Base{
     }
 
     changeEnemyIndex(){
-        const _enemy = this._enemyWindow.enemy();
-        const _isAll = this._enemyWindow._cursorAll;
-        this._layerBattleTroop.showBattleStatus(_enemy,_isAll);
+        const _selectedEnemy = this._enemyWindow.selectedEnemy();
+        this._layerBattleTroop.showBattleStatus(_selectedEnemy);
     }
 
     resetPosition(){
@@ -443,6 +442,9 @@ class Battle_View extends Scene_Base{
         this._enemyWindow.activate();
         if (actionTargetData.isForAll){
             this._enemyWindow.selectAll();
+        } else
+        if (actionTargetData.isLine){
+            this._enemyWindow.selectLine();
         } else{
             if (targetId != null){
                 this._enemyWindow.selectTarget(targetId);
@@ -657,7 +659,6 @@ class Battle_View extends Scene_Base{
     commandActive(_actionBattler,battleSkill){
         this._layerBattlePicture.refreshBattlerPicture(_actionBattler);
         this.setBattleSkill(battleSkill,_actionBattler.lastBattleSkillId());
-        
         this._enemyWindow.hide();
         this._enemyWindow.deactivate();
         this._actorWindow.hide();

@@ -22,7 +22,7 @@ class Tactics_MagicCategory extends Window_Selectable{
         const _category = this._data[index];
         if (_category){
             const rect = this.itemLineRect(index);
-            this.drawSkillIcon(_category.iconIndex,rect.x , rect.y);
+            this.drawIcon(_category.iconIndex,rect.x , rect.y);
         }
     }
 

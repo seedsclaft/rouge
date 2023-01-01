@@ -63,9 +63,9 @@ class Layer_BattleTroop extends Sprite{
         });
     }
 
-    showBattleStatus(battler,isAll){
+    showBattleStatus(selectedEnemy){
         this._gaugeSprites.forEach(sprite => {
-            sprite.visible = (sprite._battler == battler || isAll);
+            sprite.visible = selectedEnemy.find(a => a == sprite._battler);
         });
     }
 

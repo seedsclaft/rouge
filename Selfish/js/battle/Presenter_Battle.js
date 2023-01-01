@@ -38,13 +38,10 @@ class Presenter_Battle extends Presenter_Base{
         this._actionType = type;
     }
 
-    changeStep(step){
-        this._step = step;     
-    }
 
     update(){
-        this.updateWaitNextTurn();
-        this.updateBattleEnd();
+        //this.updateWaitNextTurn();
+        //this.updateBattleEnd();
     }
 
     updateCommand(){
@@ -107,7 +104,6 @@ class Presenter_Battle extends Presenter_Base{
         //}
         //this._model.setBeforeMembers();
 
-        //this.changeStep(BattleStep.APGAIN);
         this._view.commandFight();
     }
 
@@ -208,7 +204,6 @@ class Presenter_Battle extends Presenter_Base{
             this._view.changeFaceType(actionBattler,FaceType.Attack);
         }
         //this.setActionType(ActionType.DAMAGE);
-        //this.changeStep(BattleStep.ACTION);
     }
 
     async commandActionEnd(){
@@ -344,6 +339,8 @@ class Presenter_Battle extends Presenter_Base{
         this.refreshStatus();
         this._view.clearLog();
 
+        // 隊列の変更
+        this._model.changeTroopLine();
         //this._view.clearAnimation();
 
         if (this._model.checkDefeat()){
@@ -405,14 +402,8 @@ class Presenter_Battle extends Presenter_Base{
             this._view.clearRecord();
             this._view.substituteMoveReset();
 
-            // 隊列の変更
-            const changed = this._model.checkTroopLine();
-            if (changed){
-                this._view.resetPosition();
-            }
 
             this.commandCheckActive();
-            //this.changeStep(BattleStep.WAITNEXTTURN);
 
         }
     }
@@ -440,9 +431,6 @@ class Presenter_Battle extends Presenter_Base{
     }
 
     updateAnimationSkip(isAnimationSkip){
-        if (this._step != BattleStep.ACTION){
-            return;
-        }
         switch (this._actionType){
             case ActionType.DAMAGE:
                 if (isAnimationSkip){
@@ -458,7 +446,6 @@ class Presenter_Battle extends Presenter_Base{
                     this._view.clearAnimation();
                     this._model.makeResult();
                     this.startTurn();
-                    this.changeStep(BattleStep.WAIT);
                 }
                 break;
             case ActionType.AFTERHEAL:
@@ -470,7 +457,6 @@ class Presenter_Battle extends Presenter_Base{
             case ActionType.POISON:
                 if (isAnimationSkip){
                     this._view.clearAnimation();
-                    this.changeStep(BattleStep.WAIT);
                     this.endTurnAction();
                     this._inputFlag = false;
                 }
@@ -482,18 +468,12 @@ class Presenter_Battle extends Presenter_Base{
         if (EventManager.busy()){
             return;
         }
-        if (this._step != BattleStep.WAITNEXTTURN){
-            return;
-        }
         if (this._view._featureWindow._openness > 0){
             return;
         }
     }
 
     updateBattleEnd(){
-        if (this._step != BattleStep.BATTLEEND){
-            return;
-        }
         if (EventManager.busy()){
             return;
         }
@@ -517,7 +497,6 @@ class Presenter_Battle extends Presenter_Base{
             this.refreshStatus();            
             this.setActionType(ActionType.AFTERHEAL);
             this._model.clearDrainState();
-            this.changeStep(BattleStep.ACTION);
             return;
         }
         this.slipTurnAction();
@@ -530,10 +509,8 @@ class Presenter_Battle extends Presenter_Base{
             this._view.slipTurn(this._model.actionBattler(),slipValue);
             this.refreshStatus();
             this.setActionType(ActionType.POISON);
-            this.changeStep(BattleStep.ACTION);
             return;
         }
-        this.changeStep(BattleStep.WAIT);
         this.endTurnAction();
     }
 
@@ -559,16 +536,13 @@ class Presenter_Battle extends Presenter_Base{
         if (this._model.canInput()){
             this._model.makeActions();
             if (battler.isActor()){
-                this.changeStep(BattleStep.WAIT);
             } else{
                 if (this._model.needChargeAnimation()){
                     this._view.startAnimation(battler,1663,false, 0,1, false,false);
                     this.setActionType(ActionType.CHARGE);
-                    this.changeStep(BattleStep.ACTION);
                 } else{
                     this._model.makeResult();
                     this.startTurn();
-                    this.changeStep(BattleStep.WAIT);
                 }
             }
         } else{
@@ -585,7 +559,6 @@ class Presenter_Battle extends Presenter_Base{
             }
             //battler.onTurnEnd();
             this.refreshStatus();
-            this.changeStep(BattleStep.WAIT);
             this.endTurnAction();
         }
     }
@@ -633,7 +606,6 @@ class Presenter_Battle extends Presenter_Base{
         this._view.changeFaceTypeAll(FaceType.Victory);
 
         if (this._model.performCollapseEnd()){
-            this.changeStep(BattleStep.BATTLEEND);
         }
     }
 

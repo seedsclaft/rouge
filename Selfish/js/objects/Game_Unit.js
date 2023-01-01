@@ -793,6 +793,11 @@ Game_Troop.prototype.clear = function() {
     this._enemies = [];
     this._turnCount = 0;
     this._namesCount = {};
+    this._enemiesLine = [];
+};
+
+Game_Troop.prototype.enemiesLine = function() {
+    return this._enemiesLine;
 };
 
 Game_Troop.prototype.troop = function() {
@@ -819,6 +824,7 @@ Game_Troop.prototype.setup = function(troopIdList,lvMin,LvMax) {
                     enemy.hide();
                 }
                 this._enemies.push(enemy);
+                this._enemiesLine.push(index);
             }
         }, this);
     }, this);

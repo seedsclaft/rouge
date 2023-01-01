@@ -37,7 +37,6 @@ class Battle_MagicList extends Window_Selectable{
             if (_magic.skill.range != null){
                 let range = TextManager.getText(1510);
                 if (_magic.skill.range == 1) range = TextManager.getText(1520);
-                else if (_magic.skill.range == 2) range = TextManager.getText(1530);
                 this.drawText(TextManager.getText(1500) + range, rect.x, rect.y + 16, rect.width);
             
                 if (_magic.skill.damage && _magic.skill.damage.formula != ""){
@@ -96,12 +95,11 @@ class Battle_MagicList extends Window_Selectable{
     }
 
     selectLast(skillId){
-        const _findIndex = this._data.findIndex(a => a.id == skillId);
+        const _findIndex = this._data.findIndex(a => a.skill.id == skillId);
         if (_findIndex > -1){
             this.smoothSelect(_findIndex);
         } else{
             this.smoothSelect(0);
-
         }
     }
 

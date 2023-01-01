@@ -821,7 +821,7 @@ Game_Battler.prototype.battleOrder = function() {
 };
 
 Game_Battler.prototype.resetApParam = function() {
-    this._ap = 400 - this.agi * 4;
+    this._ap = 500 - this.agi * 4;
 };
 
 Game_Battler.prototype.stratDashApParam = function() {
@@ -1359,10 +1359,10 @@ Game_Battler.prototype.gainDefineAp = function() {
     }
     //鈍足
     if (this.isStateAffected($gameStateInfo.getStateId(StateType.SLOW))){
-        this._ap -= 1;
+        this._ap -= 1.5;
         return;
     }
-    this._ap -= 2;
+    this._ap -= 3;
 }
 
 Game_Battler.prototype.realTgr = function() {   
