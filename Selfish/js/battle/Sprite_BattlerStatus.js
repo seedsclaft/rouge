@@ -44,63 +44,47 @@ class Sprite_BattlerStatus extends Sprite{
     }
 
     setHp(){
+        let gaugeWidth = 0;
         if (this._battler.isActor()){
-            const width = Math.floor( this._battler.mhp * 1.5 );
-            const height = 6;
-            const x = 80 - width;
-            const y = 64;
-            this._hpGaugeSpriteBack = new Sprite(new Bitmap(width,height));
-            this._hpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
-            this._hpGaugeSpriteBack.pivot.x = 1;
-            this.addChild(this._hpGaugeSpriteBack);
-            this._hpGaugeSpriteBack.x = x;
-            this._hpGaugeSpriteBack.y = y;
-            this._hpGaugeSprite = new Sprite(new Bitmap(width - 4,height - 2));
-            this._hpGaugeSprite.bitmap.gradientFillRect(0, 0, width - 4, height - 2,$gameColor.getColor('hpgauge2'),$gameColor.getColor('hpgauge1'));
-            this._hpGaugeSprite.pivot.x = 1;
-            this._hpGaugeSprite.x = x + 2;
-            this._hpGaugeSprite.y = y + 1;
-            this._hpGaugeSprite.scale.x = this._battler.hp / this._battler.mhp;
-            this.addChild(this._hpGaugeSprite);
-            this._hpSprite = new Sprite();
-            this.setHpBitmap(this._battler.hp);
-            this._hpSprite.x = -80;
-            this._hpSprite.y = y - 32;
-            this.addChild(this._hpSprite);
+            gaugeWidth = this._battler.mhp * 1.5;
         } else{
-            const width = 80;
-            const height = 6;
-            const x = 0;
-            const y = 0;
-            this._hpGaugeSpriteBack = new Sprite(new Bitmap(width,height));
-            this._hpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
-            this._hpGaugeSpriteBack.pivot.x = 0;
-            this.addChild(this._hpGaugeSpriteBack);
-            this._hpGaugeSpriteBack.x = x;
-            this._hpGaugeSpriteBack.y = y;
-            this._hpGaugeSprite = new Sprite(new Bitmap(width - 4,height - 2));
-            this._hpGaugeSprite.bitmap.gradientFillRect(0, 0, width - 4, height - 2,$gameColor.getColor('hpgauge2'),$gameColor.getColor('hpgauge1'));
-            this._hpGaugeSprite.pivot.x = 0;
-            this._hpGaugeSprite.x = x + 2;
-            this._hpGaugeSprite.y = y + 1;
-            this._hpGaugeSprite.scale.x = this._battler.hp / this._battler.mhp;
-            this.addChild(this._hpGaugeSprite);
-            this._hpSprite = new Sprite();
-            this.setHpBitmap(this._battler.hp);
-            this._hpSprite.x = x - 80;
-            this._hpSprite.y = y - 32;
-            this.addChild(this._hpSprite);
+            gaugeWidth = this._battler.mhp * 1;
         }
+        const width = Math.floor( gaugeWidth );
+        const height = 6;
+        const x = 80 - width;
+        const y = 0;
+        this._hpGaugeSpriteBack = new Sprite(new Bitmap(width,height));
+        this._hpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
+        this._hpGaugeSpriteBack.pivot.x = 1;
+        this.addChild(this._hpGaugeSpriteBack);
+        this._hpGaugeSpriteBack.x = x;
+        this._hpGaugeSpriteBack.y = y;
+        this._hpGaugeSprite = new Sprite(new Bitmap(width - 4,height - 2));
+        this._hpGaugeSprite.bitmap.gradientFillRect(0, 0, width - 4, height - 2,$gameColor.getColor('hpgauge2'),$gameColor.getColor('hpgauge1'));
+        this._hpGaugeSprite.pivot.x = 1;
+        this._hpGaugeSprite.x = x + 2;
+        this._hpGaugeSprite.y = y + 1;
+        this._hpGaugeSprite.scale.x = this._battler.hp / this._battler.mhp;
+        this.addChild(this._hpGaugeSprite);
+        this._hpSprite = new Sprite();
+        this.setHpBitmap(this._battler.hp);
+        this._hpSprite.x = -80;
+        this._hpSprite.y = y - 32;
+        this.addChild(this._hpSprite);
     }
 
     setMp(){
-        if (!this._battler.isActor()){
-            return;
+        let gaugeWidth = 0;
+        if (this._battler.isActor()){
+            gaugeWidth = this._battler.mmp * 5;
+        } else{
+            gaugeWidth = this._battler.mmp * 2;
         }
-        const width = Math.floor( this._battler.mmp * 5 );
+        const width = Math.floor( gaugeWidth );
         const height = 6;
         const x = 80 - width;
-        const y = 36;
+        const y = -28;
         this._mpGaugeSpriteBack = new Sprite(new Bitmap(width,height));
         this._mpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
         this._mpGaugeSpriteBack.pivot.x = 1;
@@ -207,7 +191,7 @@ class Sprite_BattlerStatus extends Sprite{
         if (!this._battler){
             return;
         }
-        if (!this._battler.isAlive() && !this._battler.isActor()){
+        if (!this._battler.isAlive()){
             this.alpha = 0;
         } else{
             this.alpha = 1;

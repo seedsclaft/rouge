@@ -106,6 +106,11 @@ Sprite_StateIcon.prototype.createIconBadge = function(state) {
     */
     let badge = null;
 
+    switch (state.id) {
+    	case $gameStateInfo.getStateId(StateType.CHAIN_TARGET):
+        case $gameStateInfo.getStateId(StateType.CHAIN_SELF):
+            return;
+    }
     let bitmap = new Bitmap(24,24);
     bitmap.fontSize = 18;
     bitmap.textColor = "#ff3810";

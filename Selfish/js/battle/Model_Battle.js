@@ -47,7 +47,7 @@ class Model_Battle extends Model_Base {
         if (battler.isActor()){
             const skills = battler.skills().filter(a => a.occasion == 1);
             skills.forEach(skill => {
-                data.push({skill:skill,enable:battler.canUse(skill) && skill.stypeId != Game_BattlerBase.SKILL_TYPE_PASSIVE,cost:battler.skillMpCost(skill) });
+                data.push({skill:skill,enable:battler.canUse(skill) && skill.stypeId == Game_BattlerBase.SKILL_TYPE_MAGIC,cost:battler.skillMpCost(skill) });
             });
         }
         return data;
@@ -114,6 +114,7 @@ class Model_Battle extends Model_Base {
     updateApGain(){
         this._battleMembers.forEach(battler => {
             battler.gainDefineAp();
+            battler.updateStateTimes();
         });
         let actionBattler = _.find(this._battleMembers,(battler) => battler._ap <= 0);
         if (actionBattler != null){
@@ -124,10 +125,22 @@ class Model_Battle extends Model_Base {
         return this._actionBattler;
     }
 
+    bindedBattlers(){
+        const chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
+        let bindBatllers = this._battleMembers.filter(battler => {
+            return battler.isStateAffected(chainTargetId) && (battler.getStateTurns(chainTargetId) % 10 == 0);
+        });
+        bindBatllers.forEach(bindBatller => {
+            bindBatller.gainHp(-1);
+            bindBatller._bindBatllers.forEach(bind => {
+                bind.gainBindDamage(1);
+            });
+        });
+        return bindBatllers;
+    }
+
     selectSkill(skillId){
         let action = new Game_Action(this._actionBattler);
-        //this.makeActions();
-        //let action = this._actionBattler.action(0);
         action.setSkill(skillId);
         this._actionBattler.setLastBattleSkillId(skillId);
         this._makeActionData.push(action);
@@ -136,8 +149,6 @@ class Model_Battle extends Model_Base {
 
     selectEnemySkill(){
         let action = new Game_Action(this._actionBattler);
-        //this.makeActions();
-        //let action = this._actionBattler.action(0);
         this._actionBattler.setAction(action);
         this._makeActionData.push(action);
     }
@@ -168,14 +179,14 @@ class Model_Battle extends Model_Base {
             if (action.item().id == $gameDefine.waitSkillId){
                 this.actionBattler()._ap = this.waitSkillChangeAp(this.actionBattler());
             } else{
-                this.actionBattler().resetApParam();
+                //this.actionBattler().resetAp();
             }
         }
     
         // 行動者のリザルトを作成
         this.createActionData();
         // 割り込みのリザルトを作成
-        //this.createInterruptActionData();
+        this.createInterruptActionData();
     
         // カウンター生成
         //this.createCounterActionData();
@@ -231,14 +242,6 @@ class Model_Battle extends Model_Base {
         });
     }
 
-    checkMpGainBattler(){
-        return false;
-    }
-
-    gainNeedMp(){
-        this.actionBattler().gainMp(1);
-    }
-
     canInput(){
         return this._actionBattler.canInput();
     }
@@ -270,7 +273,7 @@ class Model_Battle extends Model_Base {
         $gameParty.aliveMembers().forEach(actor => {
             this._battleMembers.push(actor);
             actor.refreshPassive();
-            actor.resetApParam();
+            actor.resetAp();
             actor.stratDashApParam();
         });
     }
@@ -293,19 +296,10 @@ class Model_Battle extends Model_Base {
     createActionData(){
         let action = this.currentAction();
         action.prepare();
-        /*
-        // Awakeポイント(派生) SkillAwakeManager._beforeActing
-        const awake = SkillAwakeManager.checkSkillAwake(this.actionBattler(),1,action);
-        if (awake && awake.length > 0){
-            action._itemId = awake[0].skillId;
-            action._item._itemId = awake[0].skillId;
-            action.awaking = true;
-        }
-        */
         action.makeActionResult();
-        //行動者を追加
         this.setActingBattler(this.actionBattler(),false);
     }
+
     createAttackTimesAddActionData(){
         if (this._attackTimesAdd <= 0){
             return;
@@ -317,15 +311,57 @@ class Model_Battle extends Model_Base {
         //行動者を追加
         this.setActingBattler(this.actionBattler(),false);
     }
-    createWaitActionData(){
-        this.actionBattler().makeActions();
-        let action = this.actionBattler().currentAction();
-        action.setSkill($gameDefine.noActionSkillId);
-        action.setTarget(this.actionBattler().index());
-        action.makeActionResult();
-        this.setActingBattler(this.actionBattler(),true);
-    }
+
     createInterruptActionData(){
+        const _battler = this.actionBattler();
+        const chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
+        if (_battler.isStateAffected(chainTargetId)){
+            const _bindBatllers = _battler._bindBatllers;
+            if (_bindBatllers.length > 0){
+                _bindBatllers.forEach(bindBatllers => {
+                    let action = new Game_Action(bindBatllers);
+                    action.setSkill(56);
+                    action.setTarget(_battler.index());
+                    action.makeActionResult();
+                    this._makeActionData.push(action);
+                    this.setActingBattler(bindBatllers,false);
+                });
+            }
+        }
+
+        
+        const _battlers = this.actionBattlers();
+        let action = this.currentAction();
+        // timingがInterruptの固有を発動
+        _battlers.forEach(battler => {
+            let data = [];
+            if (battler.isActor()){
+                let skills = battler.skills().filter(a => a.occasion == 1);
+                skills.forEach(skill => {
+                    data.push({skill:skill,enable:battler.canUse(skill) ,cost:battler.skillMpCost(skill) });
+                });
+            }
+            data.forEach(skill => {
+                if (skill.enable && skill.skill.timing == "interrupt"){
+                    let flag = true;
+                    let stateEval = skill.skill.stateEval;
+                    if (stateEval != null){
+                        let a = battler;
+                        let pam = $gameParty.aliveMembers();
+                        let r = action.results();
+                        flag = eval(stateEval);
+                    }
+                    if (flag){
+                        let action = new Game_Action(battler,false,"interrupt");
+                        action.setSkill(skill.skill.id);
+                        action.makeActionResult();
+                        this._makeActionData.unshift(action);
+                        this.setActingBattler(battler,true);
+                        battler.paySkillCost(skill.skill);
+                    }
+                }
+            });
+        });
         // Awakeポイント(割り込み) SkillAwakeManager._interruptActing
         /*
         let awake = [];
@@ -367,6 +403,12 @@ class Model_Battle extends Model_Base {
         }
         */
     }
+
+    interrupt(){
+        this._makeActionData[1]._results = [];
+        this._makeActionData[1].makeActionResult();
+    }
+
     createCounterActionData(){
         let action = this.currentAction();
         const counterId = $gameStateInfo.getStateId(StateType.COUNTER);
@@ -412,8 +454,14 @@ class Model_Battle extends Model_Base {
         // timingがafterの固有を発動
         const _battler = this.actionBattlers();
         _battler.forEach(battler => {
-            let battleSkill = this.battleSkill(battler);
-            battleSkill.forEach(skill => {
+            let data = [];
+            if (battler.isActor()){
+                let skills = battler.skills().filter(a => a.occasion == 1);
+                skills.forEach(skill => {
+                    data.push({skill:skill,enable:battler.canUse(skill) ,cost:battler.skillMpCost(skill) });
+                });
+            }
+            data.forEach(skill => {
                 if (skill.enable && skill.skill.timing == "after"){
                     let flag = true;
                     let stateEval = skill.skill.stateEval;
@@ -422,10 +470,12 @@ class Model_Battle extends Model_Base {
                         flag = eval(stateEval);
                     }
                     if (flag){
-                        this.selectSkill(skill.skill.id);
-                        this.currentAction().prepare();
-                        this.currentAction().makeActionResult();
+                        let action = new Game_Action(battler);
+                        action.setSkill(skill.skill.id);
+                        action.makeActionResult();
+                        this._makeActionData.push(action);
                         this.setActingBattler(battler,false);
+                        battler.paySkillCost(skill.skill);
                     }
                 }
             });
@@ -471,11 +521,11 @@ class Model_Battle extends Model_Base {
     }
 
     applyGlobal(){
-        let subject = this.getActingBattler();
-        let action = this.currentAction();
+        const _subject = this.getActingBattler();
+        const _action = this.currentAction();
         
-        subject.useItem(action.item());
-        action.applyGlobal();
+        _subject.useItem(_action.item(),true);
+        _action.applyGlobal();
     }
     needAfterHeal(){
         let subject = this.getActingBattler();
@@ -585,6 +635,7 @@ class Model_Battle extends Model_Base {
         this.bindState();
         this.selfSkill();
         this.wavySkill();
+        this.actionBattler().resetAp();
         return popup;
     }
 
@@ -658,37 +709,42 @@ class Model_Battle extends Model_Base {
     }
 
     bindRemoveSelf(){
-        /*
         //自身の行動で拘束解除
-        let battler = this.getActingBattler();
-        let action = battler.currentAction();
+        const _battler = this.getActingBattler();
+        let action = this.currentAction();
         const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
-        const chainPlusId = $gameStateInfo.getStateId(StateType.CHAIN_PLUS);
-        const isChainPlus = battler.isStateAffected(chainPlusId);
-        if (action && battler.isStateAffected(chainSelfId)){
-            battler.removeState(chainSelfId);
-            battler._bindBatllers.forEach(target => {
+        //const chainPlusId = $gameStateInfo.getStateId(StateType.CHAIN_PLUS);
+        //const isChainPlus = _battler.isStateAffected(chainPlusId);
+        if (action && _battler.isStateAffected(chainSelfId)){
+            _battler.removeState(chainSelfId);
+            /*
+            _battler._bindBatllers.forEach(target => {
                 // 拘束プラス所持者のみ行動値を初期化する
-                if (isChainPlus){
-                    target.resetApParam();
-                }
+                //if (isChainPlus){
+                    //target.resetAp();
+                //}
                 target.removeState($gameStateInfo.getStateId(StateType.CHAIN_TARGET));
+                
             });
             battler._bindBatllers = [];
+            */
         }
-        */
     }
 
     bindRemoveTarget(){
+        const _battler = this.getActingBattler();
+        const chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
+        if (_battler.isStateAffected(chainTargetId)){
+            _battler.removeState(chainTargetId);
+            _battler._bindBatllers = [];
+        }
         /*
-        let action = this.currentAction();
-        const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
         //相手の行動で拘束解除
         if (action){
             action.results().forEach(result => {
                 if (result.target.isStateAffected(chainSelfId) && result.hpDamage > 0){
                     result.target.removeState(chainSelfId);
-                    result.target.resetApParam();
+                    result.target.resetAp();
                     result.target._bindBatllers.forEach(target => {
                         target.removeState($gameStateInfo.getStateId(StateType.CHAIN_TARGET));
                         //popup.push({battler:target});
@@ -701,9 +757,8 @@ class Model_Battle extends Model_Base {
     }
 
     bindState(){
-        /*
-        let battler = this.getActingBattler();
-        let action = battler.currentAction();
+        const _battler = this.getActingBattler();
+        let action = this.currentAction();
     
         const chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
         if (action && action.isContainsState(chainTargetId)){
@@ -711,14 +766,15 @@ class Model_Battle extends Model_Base {
             
             if (!effects){
                 const data = $dataSkills[action.item().id];
-                battler.addState($gameStateInfo.getStateId(StateType.CHAIN_SELF), data.stateTurns,data.stateEffect,false,battler.battlerId());
-                battler._bindBatllers = [];
+                _battler.addState($gameStateInfo.getStateId(StateType.CHAIN_SELF), data.stateTurns,data.stateEffect,false,_battler.battlerId());
                 action.results().forEach(result => {
-                    battler._bindBatllers.push(result.target);
+                    result.target._bindBatllers = [];
+                });
+                action.results().forEach(result => {
+                    result.target._bindBatllers.push(_battler);
                 });
             }
         }
-        */
     }
 
     selfSkill(){
@@ -755,7 +811,7 @@ class Model_Battle extends Model_Base {
     selfSkillEffect(skillId,actor,action){
         if (skillId == 0) return;
         const selfSkill = $dataSkills[skillId];
-        const passive = (selfSkill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE || selfSkill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE_SELF);
+        const passive = (selfSkill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE);
         
         let targets = [actor];
         if (selfSkill.scope == ScopeType.ALL_PARTY){
@@ -866,6 +922,10 @@ class Model_Battle extends Model_Base {
         return popup;
     }
 
+    claerAction(){
+        this._makeActionData = [];
+    }
+
     actionClear(){
         if (this.getActingBattler()){
             this._actingBattlers.shift();
@@ -902,7 +962,7 @@ class Model_Battle extends Model_Base {
                 if (subject.isStateAffected(reactStateId)){
                     subject._ap = 0.1; // チェインは0, リアクトは0.1
                 } else{
-                    subject.resetApParam();
+                    subject.resetAp();
                 }
             }
         }

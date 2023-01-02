@@ -25,7 +25,9 @@ class Battle_MagicList extends Window_Selectable{
             this.changePaintOpacity(_magic.enable);
             this.contents.fontSize = 21;
             this.drawItemName(_magic.skill, rect.x, rect.y - 12,rect.width);
-            this.drawText(_magic.cost, rect.x, rect.y -12, rect.width, "right");
+            if (_magic.skill.stypeId == Game_BattlerBase.SKILL_TYPE_MAGIC){
+                this.drawText(_magic.cost, rect.x, rect.y -12, rect.width, "right");
+            }
             this.contents.fontSize = 16;
             if (_magic.skill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE) {
                 this.drawText(TextManager.getText(1560), rect.x, rect.y + 16, rect.width);
@@ -33,7 +35,7 @@ class Battle_MagicList extends Window_Selectable{
                     this.drawText(TextManager.getText(1540) + " " + TextManager.getText(1550), rect.x + 80, rect.y + 16, rect.width);
                     this.drawText(_magic.skill.damage.formula, rect.x + 136, rect.y + 16, 120, "rigth");
                 }
-            }
+            } else
             if (_magic.skill.range != null){
                 let range = TextManager.getText(1510);
                 if (_magic.skill.range == 1) range = TextManager.getText(1520);
@@ -60,8 +62,11 @@ class Battle_MagicList extends Window_Selectable{
                     this.drawText(_magic.skill.damage.formula, rect.x + 136, rect.y + 16, 120, "rigth");
                 }
             }
-            let textWidth = this.contents.measureTextWidth(_magic.skill.description);
-            this.drawTextEx(_magic.skill.description,rect.width - textWidth + 12,rect.y + 20,rect.width);
+            const _textLine = _magic.skill.description.split("\n");
+            _textLine.forEach((text,index) => {
+                let textWidth = this.contents.measureTextWidth(text);
+                this.drawTextEx(text,rect.width - textWidth + 12,rect.y + 20 + index * 26 - (_textLine.length-1) * 26,rect.width);
+            });
         }
     }
 

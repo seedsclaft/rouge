@@ -45,6 +45,7 @@ class Battle_EnemyStatus extends Window_Selectable{
     select(index) {
         super.select(index);
         this._cursorAll = false;
+        this._cursorLine = false;
         $gameTroop.select(this.enemy());
     };
 
@@ -84,6 +85,7 @@ class Battle_EnemyStatus extends Window_Selectable{
         this._data.forEach(enemy => {
             if (enemy._line == this._line){
                 enemy.select();
+                this._index = enemy.index();
             }
         });
         this._cursorLine = true;

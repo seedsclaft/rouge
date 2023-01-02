@@ -45,11 +45,11 @@ class Layer_BattlePicture extends Sprite{
     }
 
     showAnimation(sprite,x){
-        gsap.to(sprite, 0.2, {x:x-96,opacity:255});
+        gsap.to(sprite, 0.2, {x:x-184,opacity:255});
     }
 
     hideAnimation(sprite,x){
-        gsap.to(sprite, 0.2, {x:x-120 ,opacity:0});   
+        gsap.to(sprite, 0.2, {x:-480 ,opacity:0});   
     }
 
     terminate(){

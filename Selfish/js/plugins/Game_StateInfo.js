@@ -118,13 +118,15 @@ const StateType = {
     PHARMACOLOGY :            "PHArmacology",   //回復効果
 
     SHIELD :  "Shield", // ダメージシールド
-    ALL_ATTACK :              "Allattack",      //攻撃全体化
+    DAMAGE_CUT :              "DamageCut",      //ダメージ減算
+    CHAIN_SELF :              "ChainSelf",      //拘束（する方）
+    CHAIN_TARGET :            "ChainTarget",    //拘束（される方）
+    REACT :                   "ReAct",          //リアクト
     /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)
     SHADOW :                  "shadow",         //狙われ率(減少)
     SALT_TARGET :             "salttarget",     //挑発
-    DAMAGE_CUT :              "damagecut",      //ダメージ減算
     MP_DAMAGE :               "mpdamage",       //追加MPダメージ
     INVISIBLE :               "invisible",      //無敵
 
@@ -163,7 +165,6 @@ const StateType = {
     MPCOST_MAX :              "mpcostmax",      //最大MPコスト消費
     VANTAGE :                 "vantage",        //待ち伏せ
     FINITE :                  "finite",         //宣告
-    REACT :                   "react",          //リアクト
     CONSCIOUS :               "conscious",      //レベル以下即死
     REFRECT :                 "refrect",        //スキルカウンター
     REDAMAGE :                "redamage",       //反ダメージ

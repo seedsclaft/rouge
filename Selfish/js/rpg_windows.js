@@ -684,18 +684,6 @@ Window_Selectable.prototype.drawMpCost = function(mpCost,x,y,width) {
     }
     this.changeTextColor(this.mpCostColor());
     this.drawText(mpCost, x, y, width,'right');
-    return;
-    if (skill && (skill.stypeId == Game_BattlerBase.SKILL_TYPE_MAGIC || skill.stypeId == Game_BattlerBase.SKILL_TYPE_COMMON || skill.stypeId == Game_BattlerBase.SKILL_TYPE_SELF)){
-        this.changeTextColor(this.mpCostColor());
-        this.drawText(this._actor.skillMpCost(skill), x, y, width,'right');
-    } else
-    if (skill && (skill.stypeId == Game_BattlerBase.SKILL_TYPE_SPECIAL)){
-        this.changeTextColor(this.tpCostColor());
-        this.contents.fontSize = 16;
-        this.drawText(TextManager.tpA, x - 12, y + 1, width,'right');
-        this.contents.fontSize = $gameSystem.mainFontSize();
-        this.drawText(this._actor.skillTpCost(skill), x, y, width,'right');
-    }
 }
 
 Window_Base.prototype.drawSkillExp = function(skillData,x,y,width) {

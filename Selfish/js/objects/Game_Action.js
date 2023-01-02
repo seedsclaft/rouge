@@ -26,9 +26,10 @@ Game_Action.HITTYPE_CERTAIN         = 0;
 Game_Action.HITTYPE_PHYSICAL        = 1;
 Game_Action.HITTYPE_MAGICAL         = 2;
 
-Game_Action.prototype.initialize = function(subject, forcing) {
+Game_Action.prototype.initialize = function(subject, forcing,type) {
     this._subject = subject;
     this._forcing = forcing || false;
+    this._type = type;
     this.clear();
 };
 
@@ -304,6 +305,14 @@ Game_Action.prototype.targetsForOpponents = function() {
         for (var i = 0; i < this.numTargets(); i++) {
             targets.push(unit.randomTarget());
         }
+    } else if (this.item().line) {
+        const _target = unit.smoothTarget(this._targetIndex);
+        const _line = _target._line;
+        unit.aliveMembers().forEach(member => {
+            if (member._line == _line){
+                targets.push(member);
+            }
+        });
     } else if (this.isForOne()) {
         if (this._targetIndex < 0) {
             const skill = this.item();
@@ -713,7 +722,9 @@ Game_Action.prototype.makeHpDamage = function(result, target, value,lastTarget) 
     }
     result.hpDamage = value;
     //フロストウォール
+    
     const damageCutId = $gameStateInfo.getStateId(StateType.DAMAGE_CUT);
+    console.log(target)
     if (value > 0 && target && target.isStateAffected(damageCutId)){
         result.hpDamage -= target.getStateEffectTotal(damageCutId);
         if (result.hpDamage < 1){
@@ -762,17 +773,16 @@ Game_Action.prototype.apply = function(target) {
 };
 
 Game_Action.prototype.applyResult = function(target,result) {
-    //var result = target.result();
-    //target._result = result;
-    if (!result.missed) {
-        if (this.item().damage.type > 0) {
-            this.executeDamage(result);
-        }
-        this.item().effects.forEach(function(effect) {
-            this.applyItemEffect(result, effect);
-        }, this);
-        this.applyItemUserEffect(target);
+    if (result.missed) {
+        return;
     }
+    if (this.item().damage.type > 0) {
+        this.executeDamage(result);
+    }
+    this.item().effects.forEach(function(effect) {
+        this.applyItemEffect(result, effect);
+    }, this);
+    this.applyItemUserEffect(target);
 };
 
 Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = true) {
@@ -896,6 +906,7 @@ Game_Action.prototype.executeHpDamage = function(result) {
         value = Math.min(target.hp, value);
     }
     target.gainHp(-value);
+    this.subject().gainAddDamage(value);
     if (value > 0) {
         let removeStateIds = target.onDamage();
         removeStateIds.forEach(removeStateId => {
@@ -920,6 +931,7 @@ Game_Action.prototype.executeRpDamage = function(target, value) {
         value = Math.min(target.hp, value);
     }
     target.gainHp(-value);
+    this.subject().gainAddDamage(value);
     this.gainDrainedHp(value);
 };
 
@@ -1246,6 +1258,27 @@ Game_Action.prototype.popupData = function(actor) {
         // チャージ攻撃発動
         if (result.chargeAttack){
             popup.push(new PopupTextData(actor,PopupTextType.RemoveState,TextManager.getStateName($gameStateInfo.getStateId(StateType.CHARGE))));
+        }
+        // 拘束自動解除
+        var chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
+        var chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
+        if (actor.isStateAffected(chainSelfId)){
+            actor._bindBatllers.forEach(target => {
+                popup.push(new PopupTextData(target,PopupTextType.RemoveState,TextManager.getStateName(chainTargetId)));
+            });
+        }
+        // 拘束対象解除
+        if (result.target.isStateAffected(chainSelfId) && result.hpDamage > 0){
+            result.target._bindBatllers.forEach(target => {
+                popup.push(new PopupTextData(target,PopupTextType.RemoveState,TextManager.getStateName(chainSelfId)));
+            });
+        }
+        // 拘束を使用した本人に拘束付与
+        if (this.isContainsState(chainTargetId)){
+            var effects = _.every(this.results(),(r) => r.target.isStateResist(chainTargetId))
+            if (!effects){
+                popup.push(new PopupTextData(actor,PopupTextType.AddState,TextManager.getStateName(chainSelfId)));
+            }
         }
         // 無敵発動で無敵が外れている
         if (result.invisible){

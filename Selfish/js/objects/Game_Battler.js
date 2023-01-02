@@ -42,9 +42,7 @@ Game_BattlerBase.ICON_DEBUFF_START    = 48;
 Game_BattlerBase.SKILL_TYPE_MAGIC       = 1; //魔法スキル
 Game_BattlerBase.SKILL_TYPE_COMMON      = 0; //共通スキル
 Game_BattlerBase.SKILL_TYPE_PASSIVE     = 2; //パッシブスキル
-Game_BattlerBase.SKILL_TYPE_PASSIVE_SELF = 5; //オートパッシブスキル
-Game_BattlerBase.SKILL_TYPE_SELF        = 6; //個人スキル
-Game_BattlerBase.SKILL_TYPE_SPECIAL     = 7; //特殊スキル
+Game_BattlerBase.SKILL_TYPE_SPECIAL     = 3; //固有スキル
 
 Object.defineProperties(Game_BattlerBase.prototype, {
     // Hit Points
@@ -234,9 +232,16 @@ Game_BattlerBase.prototype.updateStateTurns = function() {
     }, this);
 };
 
+Game_BattlerBase.prototype.updateStateTimes = function() {
+    this._stateData.forEach(stateData => {
+        stateData.updateStateTimes();
+    }, this);
+};
+
 Game_BattlerBase.prototype.die = function() {
     this._hp = 0;
     this.clearStates();
+    this.resetAp();
 };
 
 Game_BattlerBase.prototype.revive = function() {
@@ -625,6 +630,8 @@ Game_BattlerBase.prototype.restriction = function() {
 
 Game_BattlerBase.prototype.addNewState = function(stateId) {
     if (stateId === this.deathStateId()) {
+        this.removeChainState();
+        this.removeChainSelfState();
         this.die();
     }
     const restricted = this.isRestricted();
@@ -681,9 +688,11 @@ Game_BattlerBase.prototype.canPaySkillCost = function(skill) {
     return this._tp >= this.skillTpCost(skill) && this._mp >= this.skillMpCost(skill);
 };
 
-Game_BattlerBase.prototype.paySkillCost = function(skill) {
+Game_BattlerBase.prototype.paySkillCost = function(skill,mpOnly = false) {
     this._mp -= this.skillMpCost(skill);
-    this._tp -= this.skillTpCost(skill);
+    if (!mpOnly){
+        this._tp -= this.skillTpCost(skill);
+    }
 };
 
 Game_BattlerBase.prototype.isOccasionOk = function(item) {
@@ -802,6 +811,9 @@ Game_Battler.prototype.initMembers = function() {
     this._turnCount = 1;
     this._elementId = null;
 
+    // ダメージ総計
+    this._addDamage = 0;
+    this._bindDamage = 0;
 };
 
 Game_Battler.prototype.battlerId = function() {
@@ -820,9 +832,29 @@ Game_Battler.prototype.battleOrder = function() {
     return this._battleOrder;
 };
 
-Game_Battler.prototype.resetApParam = function() {
+Game_Battler.prototype.resetAp = function() {
+    if (this.isStateAffected($gameStateInfo.getStateId(StateType.CHAIN_SELF))){
+        this._ap = 1;
+        return;
+    }
     this._ap = 500 - this.agi * 4;
 };
+
+Game_Battler.prototype.gainAddDamage = function(value) {
+    this._addDamage += value
+}
+
+Game_Battler.prototype.addDamage = function() {
+    return this._addDamage;
+}
+
+Game_Battler.prototype.gainBindDamage = function(value) {
+    this._bindDamage += value
+}
+
+Game_Battler.prototype.bindDamage = function() {
+    return this._bindDamage;
+}
 
 Game_Battler.prototype.stratDashApParam = function() {
 
@@ -1129,6 +1161,25 @@ Game_Battler.prototype.removeStatesByDamage = function() {
     return removeStateIds;
 };
 
+Game_Battler.prototype.removeChainState = function() {
+    const chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
+    if (this.isStateAffected(chainTargetId)){
+        this.removeState(chainTargetId)
+    }
+}
+
+Game_Battler.prototype.removeChainSelfState = function() {
+    const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
+    if (this.isStateAffected(chainSelfId)){
+        this.removeState(chainSelfId);
+        this.resetAp();
+        this._bindBatllers.forEach(battler => {
+            battler.removeState($gameStateInfo.getStateId(StateType.CHAIN_TARGET));
+        });
+        this._bindBatllers = [];
+    }
+}
+
 Game_Battler.prototype.makeActionTimes = function() {
     return this.actionPlusSet().reduce(function(r, p) {
         return Math.random() < p ? r + 1 : r;
@@ -1177,9 +1228,9 @@ Game_Battler.prototype.forceAction = function(skillId, targetIndex) {
     return action;
 };
 
-Game_Battler.prototype.useItem = function(item) {
+Game_Battler.prototype.useItem = function(item,mpOnly = false) {
     if (DataManager.isSkill(item)) {
-        this.paySkillCost(item);
+        this.paySkillCost(item,mpOnly);
     } else if (DataManager.isItem(item)) {
         this.consumeItem(item);
     }
@@ -1246,6 +1297,8 @@ Game_Battler.prototype.regenerateAll = function() {
 
 Game_Battler.prototype.onBattleStart = function() {
     this.initTp();
+    this._addDamage = 0;
+    this._bindDamage = 0;
 };
 
 
@@ -1256,7 +1309,7 @@ Game_Battler.prototype.onAllActionsEnd = function() {
 Game_Battler.prototype.onTurnEnd = function() {
     this.regenerateAll();
     this.updateStateTurns();
-    const removeState = this.removeStatesAuto(RemoveStateAutoType.TURN_END);
+    const removeState = this.removeStatesAuto(RemoveStateAutoType.ACT_END);
     const addState = this.addStatesAuto(removeState);
     this._turnCount++;
     return {add:addState,remove: removeState};
@@ -1353,8 +1406,17 @@ Game_Battler.prototype.gainDefineAp = function() {
     if (this.isStateAffected($gameStateInfo.getStateId(StateType.FROZEN))){
         return;
     }
+    //バインド制限
+    if (this.isStateAffected($gameStateInfo.getStateId(StateType.CHAIN_TARGET))){
+        this._ap -= 1.5;
+        return;
+    }
     //待ち伏せ
     if (this.isStateAffected($gameStateInfo.getStateId(StateType.VANTAGE))){
+        return;
+    }
+    if (this.isStateAffected($gameStateInfo.getStateId(StateType.CHAIN_SELF))){
+        this._ap += 1.5;
         return;
     }
     //鈍足
@@ -1613,7 +1675,7 @@ Game_Actor.prototype.setup = function(actorId) {
     this.refreshPassive();
 
 
-    this.resetApParam();
+    this.resetAp();
 
     this._statePlus = {
     }
@@ -2440,12 +2502,6 @@ Game_Actor.prototype.getReserveSkillData = function(elementId) {
     }
     const list = _.filter($gameParty._learnedSkills,(s) => {
         if (s != 0 && (($dataSkills[s].damage.elementId == elementId))){
-            if ($dataSkills[s].stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE_SELF){
-                return false;
-            }
-            if ($dataSkills[s].stypeId == Game_BattlerBase.SKILL_TYPE_SELF){
-                return true;
-            }
             if ($dataSkills[s].stypeId == Game_BattlerBase.SKILL_TYPE_SPECIAL){
                 return false;
             }
@@ -2546,7 +2602,7 @@ Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel,line) {
             this._actionList.push(action);
         }
     });
-    this.resetApParam();
+    this.resetAp();
 };
 
 Game_Enemy.prototype.line = function() {
@@ -2632,7 +2688,7 @@ Game_Enemy.prototype.passiveSkills = function() {
     this._actionList.forEach((action,index) => {
         let skill = $dataSkills[action.skillId];
         if (skill){
-            if (skill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE_SELF || skill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE){
+            if (skill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE){
                 list.push({skill:skill,slotId:index});
             }
         }
@@ -2828,7 +2884,7 @@ Game_Enemy.prototype.meetsSwitchCondition = function(param,action) {
     //スイッチで判定をする
     //自身のみ生存
     if (param == $gameDefine.onlyOneConditionSwitchId){
-        return ($gameTroop.aliveMembers().length == 1);
+        return ($gameTroop.aliveMembers().length == 1 && $gameTroop.members().length > 1);
     }
     //自身以外も生存
     if (param == $gameDefine.notOnlyOneConditionSwitchId){
@@ -2916,8 +2972,12 @@ Game_Enemy.prototype.setAction = function(action) {
         actionList = actionList.filter(function(a) {
             return a.rating > ratingZero;
         });
-        let select = this.selectAction(actionList, ratingZero);
-        action.setSkill(select.skillId);
+        const _select = this.selectAction(actionList, ratingZero);
+        if (_select){
+            action.setSkill(_select.skillId);
+        } else{        
+            action.setSkill($gameDefine.noActionSkillId);
+        }
     }
 }
 

@@ -35,7 +35,7 @@
  * 
  * @param NoActionSkillId
  * @desc 何もしないのスキルID
- * @default 272
+ * @default 3
  * 
  * @param OnlyOneConditionSwitchId
  * @desc バトルスイッチ・生存が自身のみ

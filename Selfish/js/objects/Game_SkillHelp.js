@@ -94,12 +94,6 @@ class Game_SkillHelp{
         if (item.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE){
             text = TextManager.getText(700300);
         } else
-        if (item.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE_SELF){
-            text = TextManager.getText(700400);
-        } else
-        if (item.stypeId == Game_BattlerBase.SKILL_TYPE_SELF){
-            text = TextManager.getText(700600);
-        } else
         if (item.stypeId == Game_BattlerBase.SKILL_TYPE_SPECIAL){
             text = TextManager.getText(700700);
         } else{

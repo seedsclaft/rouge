@@ -111,13 +111,16 @@ class Presenter_Battle extends Presenter_Base{
     commandCheckActive(){
         const _actionBattler = this._model.updateApGain();
         this._view.commandCheckActive(_actionBattler);
+        const _bindedBattler = this._model.bindedBattlers();
+        this._view.bindDamage(_bindedBattler);
     }
 
     commandActive(){
         const _actionBattler = this._model.actionBattler();
         if (_actionBattler.isActor()){
-            let battleSkill = this._model.battleSkill(_actionBattler);
-            this._view.commandActive(_actionBattler,battleSkill);    
+            this._model.claerAction();
+            const _battleSkill = this._model.battleSkill(_actionBattler);
+            this._view.commandActive(_actionBattler,_battleSkill);    
         } else{
             this._model.selectEnemySkill();
             this.commandAction();
@@ -139,14 +142,6 @@ class Presenter_Battle extends Presenter_Base{
         this._view.commandAction();
 
         /*
-        if (!actionBattler.isAlive() || (!actionBattler.canMove() && !action.madness())){
-            let isCountered = action.counter();
-            action.clear();
-            action.setSkill($gameDefine.noActionSkillId);
-            action.setTarget(actionBattler.index());
-            action.makeActionResult();
-            if (isCountered) action.setCountered();
-        }
         if (action && action.counter() == true){
             SoundManager.playCounter();
             this._view.startCounterAnimation(actionBattler);
@@ -334,6 +329,9 @@ class Presenter_Battle extends Presenter_Base{
             this._view.statePopup(summonPopup);
         }
 
+        if (action._type == "interrupt"){
+            this._model.interrupt();
+        }
         this._model.actionClear();
 
         this.refreshStatus();
@@ -371,7 +369,6 @@ class Presenter_Battle extends Presenter_Base{
         if (!this._model.isActingBattler()){
             this._model.createMadnessActionData();
         }
-
         if (this._model.isActingBattler()){
             this.commandActionStart();
         } else{
@@ -547,10 +544,9 @@ class Presenter_Battle extends Presenter_Base{
             }
         } else{
             // 何もしない
-            this._model.createWaitActionData();
             this._view.clearStatePopup();
             this._view.clearDamagePopup();
-            battler.resetApParam();
+            battler.resetAp();
             this._view.startTurn();
             if (this._model.needSlipTurn()){
                 //毒ダメージ

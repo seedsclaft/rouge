@@ -23,21 +23,17 @@ Game_States.prototype.initialize = function() {
     this._passive = false;
     this._battlerId = 0;
     this._slotId = 0;
+    this._timing = 0;
 };
 
-Game_States.prototype.setup = function(stateId,turns,effect,passive,battlerId,slotId) {
-    if (battlerId === undefined){
-        battlerId = 0;
-    }
-    if (slotId === undefined){
-        slotId = 0;
-    }
+Game_States.prototype.setup = function(stateId,turns,effect,passive,battlerId = 0,slotId = 0) {
     this._stateId = stateId;
     this._turns = turns;
     this._effect = effect;
     this._passive = passive;
     this._battlerId = battlerId;
     this._slotId = slotId;
+    this._timing = $dataStates[stateId].autoRemovalTiming;
 }
 
 Game_States.prototype.clear = function() {
@@ -51,6 +47,19 @@ Game_States.prototype.clear = function() {
 
 Game_States.prototype.updateStateTurns = function() {
     if (this._turns < 0){
+        return;
+    }
+    if (this._timing != RemoveStateAutoType.ACT_END){
+        return;
+    }
+    this._turns -= 1;
+}
+
+Game_States.prototype.updateStateTimes = function() {
+    if (this._turns < 0){
+        return;
+    }
+    if (this._timing != RemoveStateAutoType.TURN_END){
         return;
     }
     this._turns -= 1;

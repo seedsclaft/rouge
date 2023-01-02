@@ -316,7 +316,7 @@ Sprite_Actor.prototype.createBattlerStatusSprite = function() {
     this._battlerStatusSprite = new Sprite_BattlerStatus();
     this.addChild(this._battlerStatusSprite);
     this._battlerStatusSprite.x = 88;
-    this._battlerStatusSprite.y = 0;
+    this._battlerStatusSprite.y = 64;
 };
 
 Sprite_Actor.prototype.setBattler = function(battler) {

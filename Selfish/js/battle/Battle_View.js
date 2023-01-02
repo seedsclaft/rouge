@@ -95,7 +95,7 @@ class Battle_View extends Scene_Base{
 
     setBattleSkill(data,index){
         if (this._skillWindow == null){
-            this._skillWindow = new Battle_MagicList(240,80,480,320);
+            this._skillWindow = new Battle_MagicList(200,80,540,320);
             this._skillWindow.setHandler("ok", this.setCommand.bind(this,{command:BattleCommand.SelectSkill}));
             this.addChild(this._skillWindow);
         }
@@ -191,6 +191,13 @@ class Battle_View extends Scene_Base{
     resetApMode(){
         this.clearLog();
         this._gridSpriteset.setPhase("ap");
+    }
+
+    bindDamage(bindBatllers){
+        bindBatllers.forEach(bindBatller => {
+            this._layerBattleParty.setDamagePopup(bindBatller,"hpDamage", 1,0);
+            this._layerBattleTroop.setDamagePopup(bindBatller,"hpDamage", 1,0);
+        });
     }
 
     startMpAnimation(battler, mp){
