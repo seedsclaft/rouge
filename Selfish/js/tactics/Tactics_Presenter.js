@@ -133,7 +133,7 @@ class Tactics_Presenter extends Presenter_Base{
             const _alchemyParam = this._model.alchemyParam(_category);
             this._view.setAlchemyParam(_alchemyParam);
         }
-        const _needEnergy = this._model.needTrainEnergy(_actorId);
+        const _needEnergy = this._model.needTrainEnergy(_category,_actorId);
         if (!_isSelected){
             if (this._model.energy() >= _needEnergy){
                 this._model.loseEnergy(_needEnergy);

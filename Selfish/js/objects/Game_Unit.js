@@ -331,7 +331,7 @@ Game_Party.prototype.battleMembers = function() {
 };
 
 Game_Party.prototype.maxBattleMembers = function() {
-    return 3;
+    return 5;
 };
 
 Game_Party.prototype.leader = function() {
@@ -808,44 +808,41 @@ Game_Troop.prototype.troopId = function() {
     return this._troopId;
 };
 
-Game_Troop.prototype.setup = function(troopIdList,lvMin,LvMax) {
+Game_Troop.prototype.setup = function(troopId,lvMin,LvMax) {
     this.clear();
-    this._troopId = troopIdList[0];
+    this._troopId = troopId;
     this._enemies = [];
-    troopIdList.forEach((troopId,index) => {
-        $dataTroops[troopId].members.forEach(member => {
-            if ($dataEnemies[member.enemyId]) {
-                let enemyId = member.enemyId;
-                let x = member.x;
-                let y = member.y;
-                let enemyLevel = Math.floor(Math.random() * (LvMax - lvMin) + lvMin);
-                let enemy = new Game_Enemy(enemyId, x, y,enemyLevel,index);
-                if (member.hidden) {
-                    enemy.hide();
-                }
-                this._enemies.push(enemy);
-                this._enemiesLine.push(index);
+    this.troop().members.forEach(function(member) {
+        if ($dataEnemies[member.enemyId]) {
+            let enemyId = member.enemyId;
+            let x = member.x;
+            let y = member.y;
+            let enemyLevel = Math.floor(Math.random() * (LvMax - lvMin) + lvMin);
+            let enemy = new Game_Enemy(enemyId, x, y,enemyLevel,0);
+            if (member.hidden) {
+                enemy.hide();
             }
-        }, this);
+            this._enemies.push(enemy);
+            this._enemiesLine.push(0);
+        }
     }, this);
     this.makeUniqueNames();
 };
 
-Game_Troop.prototype.setupBoss = function(troopIdList,lvMin,LvMax) {
-    troopIdList.forEach((troopId,index) => {
-        $dataTroops[troopId].members.forEach(member => {
-            if ($dataEnemies[member.enemyId]) {
-                let enemyId = member.enemyId;
-                let x = member.x;
-                let y = member.y;
-                let enemyLevel = Math.floor(Math.random() * (LvMax - lvMin) + lvMin);
-                let enemy = new Game_Enemy(enemyId, x, y,enemyLevel,2);
-                if (member.hidden) {
-                    enemy.hide();
-                }
-                this._enemies.push(enemy);
+Game_Troop.prototype.setupBoss = function(troopId,bossEnemy,bossLv) {
+    $dataTroops[troopId].members.forEach(member => {
+        if ($dataEnemies[bossEnemy]) {
+            let enemyId = bossEnemy;
+            let x = member.x;
+            let y = member.y;
+            let enemyLevel = bossLv;
+            let enemy = new Game_Enemy(enemyId, x, y,enemyLevel,1);
+            if (member.hidden) {
+                enemy.hide();
             }
-        }, this);
+            this._enemies.push(enemy);
+            this._enemiesLine.push(1);
+        }
     }, this);
     this.makeUniqueNames();
 }

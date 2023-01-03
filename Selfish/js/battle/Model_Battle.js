@@ -349,6 +349,7 @@ class Model_Battle extends Model_Base {
                         let a = battler;
                         let pam = $gameParty.aliveMembers();
                         let r = action.results();
+                        console.log(skill)
                         flag = eval(stateEval);
                     }
                     if (flag){
@@ -467,6 +468,7 @@ class Model_Battle extends Model_Base {
                     let stateEval = skill.skill.stateEval;
                     if (stateEval != null){
                         let a = battler;
+                        let p = $gameParty;
                         flag = eval(stateEval);
                     }
                     if (flag){
@@ -476,6 +478,39 @@ class Model_Battle extends Model_Base {
                         this._makeActionData.push(action);
                         this.setActingBattler(battler,false);
                         battler.paySkillCost(skill.skill);
+                    }
+                }
+            });
+        });
+    }
+    createDeathActionData(){
+        // timingがafterの固有を発動
+        const _battler = this.actionBattlers();
+        _battler.forEach(battler => {
+            let data = [];
+            if (battler.isActor()){
+                let skills = battler.skills().filter(a => a.occasion == 1);
+                skills.forEach(skill => {
+                    data.push({skill:skill,enable:battler._tp == 100 ,cost:battler.skillMpCost(skill) });
+                });
+            }
+            data.forEach(skill => {
+                if (skill.enable && skill.skill.timing == "death"){
+                    let flag = true;
+                    let stateEval = skill.skill.stateEval;
+                    if (stateEval != null){
+                        let a = battler;
+                        let p = $gameParty;
+                        flag = eval(stateEval);
+                    }
+                    if (flag){
+                        let action = new Game_Action(battler,false,"death");
+                        action.setSkill(skill.skill.id);
+                        action.makeActionResult();
+                        this._makeActionData.push(action);
+                        this.setActingBattler(battler,false);
+                        battler.paySkillCost(skill.skill);
+                        battler.removeState(1);
                     }
                 }
             });
@@ -990,8 +1025,11 @@ class Model_Battle extends Model_Base {
             this._turnForced = false;
         }
         
-        this._battleMembers = _.filter($gameParty.battleMembers().concat($gameTroop.members()),(battler) => battler.isAlive());
         return popupData;
+    }
+
+    resetActionBattlers(){
+        this._battleMembers = _.filter($gameParty.battleMembers().concat($gameTroop.members()),(battler) => battler.isAlive());
     }
 
     refreshPassive(members){

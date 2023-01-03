@@ -42,7 +42,7 @@ class Tactics_ActorSpriteList extends Sprite{
 
             let info = new Sprite();
             info.anchor.x = 0.5;
-            info.bitmap = new Bitmap(200,40);
+            info.bitmap = new Bitmap(200,80);
             this._infoSprites.push(info);
         });
         this._infoSprites.forEach(info => {
@@ -55,14 +55,19 @@ class Tactics_ActorSpriteList extends Sprite{
         this._infoSprites.forEach(sprite => {
             sprite.hide();
         });
-        
+        if (!data){
+            return;
+        }
         data.forEach((d,index) => {
             let info = this._infoSprites[index];
             
             info.show();
             info.bitmap.clear();
-            info.bitmap.fontSize = 21;
-            info.bitmap.drawText(d,0,0,200,40,"center");
+            info.bitmap.fontSize = 18;
+            let text = d.split("\n");
+            text.forEach((t,index) => {
+                info.bitmap.drawText(t,0,index * 20,200,40,"center");
+            });
 
             let _position = this._data[index].position();
             info.x = _position.x;
@@ -70,7 +75,7 @@ class Tactics_ActorSpriteList extends Sprite{
             if (_position < 0.5){
                 posScale = 0.5;
             }
-            info.y = _position.y - (440 * _position.scale * posScale);
+            info.y = _position.y - (400 * _position.scale * posScale);
         });
     }
 

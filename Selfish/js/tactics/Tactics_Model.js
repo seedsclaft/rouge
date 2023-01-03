@@ -69,8 +69,14 @@ class Tactics_Model {
         switch (category){
             case "train":
                 this._members.forEach(member => {
-                    let a = $gameActors.actor(member.actorId());
-                    info.push(eval( $gameDefine.data().TrainCurrency) + "pt");
+                    const a = $gameActors.actor(member.actorId());
+                    info.push(TextManager.getText(700) + "." + member.level + "\n" + TextManager.getText(740) + eval( $gameDefine.data().TrainCurrency) + "pt");
+                });
+                break;
+            case "recovery":
+                this._members.forEach(member => {
+                    const a = $gameActors.actor(member.actorId());
+                    info.push(TextManager.getText(500) + member.hp + TextManager.getText(710) + member.mhp + "\n" + TextManager.getText(740) + eval( $gameDefine.data().RecoveryCurrency) + "pt");
                 });
                 break;
             }
@@ -122,16 +128,22 @@ class Tactics_Model {
     selectedData(category){
         return this._selectedData[category];
     }
-    needTrainEnergy(actorId){
+    needTrainEnergy(category,actorId){
         let a = $gameActors.actor(actorId);
-        return eval( $gameDefine.data().TrainCurrency);
+        switch (category){
+            case "train":
+                return eval( $gameDefine.data().TrainCurrency);
+            case "recovery":
+                return eval( $gameDefine.data().RecoveryCurrency);
+        }
+        return 0;
     }
     needEnergy(category,selected){
         let cost = 0;
         switch (category){
             case "train":
                 selected.forEach(selectId => {
-                    cost += this.needTrainEnergy(selectId);
+                    cost += this.needTrainEnergy(category,selectId);
                 });
                 return cost;
             case "alchemy":

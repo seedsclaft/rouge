@@ -29,6 +29,10 @@
  * @desc 強化に必要なpt計算式
  * @default ""
  * 
+ * @param RecoveryCurrency
+ * @desc 回復に必要なpt計算式
+ * @default ""
+ * 
  * @param WaitSkillId
  * @desc 待機のスキルID
  * @default 271

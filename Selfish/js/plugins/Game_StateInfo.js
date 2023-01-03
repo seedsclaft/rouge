@@ -122,6 +122,8 @@ const StateType = {
     CHAIN_SELF :              "ChainSelf",      //拘束（する方）
     CHAIN_TARGET :            "ChainTarget",    //拘束（される方）
     REACT :                   "ReAct",          //リアクト
+    BARRIER :                   "Barrier",          //ステートバリア
+    FINITE :                  "Finite",         //宣告
     /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)
@@ -130,7 +132,6 @@ const StateType = {
     MP_DAMAGE :               "mpdamage",       //追加MPダメージ
     INVISIBLE :               "invisible",      //無敵
 
-    BARRIER :                 "barrier",        //ステートバリア
     CHARGE :                  "charge",         //チャージ
 
     DISCHARGE :               "discharge",      //暴発 
@@ -164,7 +165,6 @@ const StateType = {
     SEAL_SKILL :              "sealskill",      //特定スキル封印
     MPCOST_MAX :              "mpcostmax",      //最大MPコスト消費
     VANTAGE :                 "vantage",        //待ち伏せ
-    FINITE :                  "finite",         //宣告
     CONSCIOUS :               "conscious",      //レベル以下即死
     REFRECT :                 "refrect",        //スキルカウンター
     REDAMAGE :                "redamage",       //反ダメージ

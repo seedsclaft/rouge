@@ -14,23 +14,14 @@
  * @param id
  * @type number
  * 
- * @param rankMin
+ * @param phase
  * @type number
- * @default 0
- * 
- * @param rankMax
- * @type number
- * @default 0
- * 
- * @param rate
- * @type number
- * @default 0
  * 
  * @param enemy
  * @type enemy[]
  * 
  * @param enemyNum
- * @type number[]
+ * @type number
  * 
  * @param lvMin
  * @type number
@@ -44,6 +35,10 @@
  * @type enemy
  * 
  * @param bossLv
+ * @type number
+ * @default 0
+ * 
+ * @param pt
  * @type number
  * @default 0
  * 
@@ -68,15 +63,13 @@ Game_Search.prototype.initialize = function() {
     JsonEx.parse(data.SearchList).forEach(search => {
         let data = JSON.parse(search);
         data.id = Number(data.id);
-        data.rate = Number(data.rate);
-        data.rankMin = Number(data.rankMin);
-        data.rankMax = Number(data.rankMax);
         data.lvMin = Number(data.lvMin);
         data.lvMax = Number(data.lvMax);
         data.bossLv = Number(data.bossLv);
         data.bossEnemy = Number(data.bossEnemy);
         data.enemy = data.enemy.split(',').map(a => Number(a.replace(/[^0-9]/g,"")));
-        data.enemyNum = data.enemyNum.split(',').map(a => Number(a.replace(/[^0-9]/g,"")));
+        data.enemyNum = Number(data.enemyNum);
+        data.pt = Number(data.pt);
         this._data.push(data);
     });
 };

@@ -101,11 +101,27 @@ class Strategy_Model {
         
         const _searchId = $gameStage.searchId();
         const _searchData = $gameSearch.getData(_searchId);
+
+
+
+        console.log(_searchData)
         let troop = new Game_Troop();
-        troop.setup(_searchData.enemy,_searchData.lvMin,_searchData.lvMax);
-        troop.setupBoss([_searchData.bossEnemy],_searchData.bossLv,_searchData.bossLv);
+        let troopId = this.makeEncounterTroopId(_searchData.enemyNum,_searchData.enemy);
+        troop.setup(troopId,_searchData.lvMin,_searchData.lvMax);
+        troop.setupBoss(1,_searchData.bossEnemy,_searchData.bossLv);
         $gameTroop = troop;
     }
+
+    makeEncounterTroopId(enemyNum,enemyList) {
+        let troopData = $dataTroops[enemyNum];
+        let enemyId = 0;
+        for (var i = 0; i < enemyNum; i++) {
+            enemyId = Math.floor(( Math.random() * enemyList.length));
+            troopData.members[i].enemyId = enemyList[enemyId];
+        }
+        
+        return enemyNum;
+    };
 
     magicRecovery(){
         const _command = this.currentCommand();

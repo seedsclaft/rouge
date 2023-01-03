@@ -332,7 +332,10 @@ class Presenter_Battle extends Presenter_Base{
         if (action._type == "interrupt"){
             this._model.interrupt();
         }
+        this._model.createAfterActionData();
+        this._model.createDeathActionData();
         this._model.actionClear();
+        this._model.resetActionBattlers();
 
         this.refreshStatus();
         this._view.clearLog();
@@ -340,6 +343,7 @@ class Presenter_Battle extends Presenter_Base{
         // 隊列の変更
         this._model.changeTroopLine();
         //this._view.clearAnimation();
+
 
         if (this._model.checkDefeat()){
             this._model.processDefeat();
@@ -362,8 +366,6 @@ class Presenter_Battle extends Presenter_Base{
             }
         }
 
-        // 行動後覚醒
-        this._model.createAfterActionData();
 
         // 怒り行動
         if (!this._model.isActingBattler()){

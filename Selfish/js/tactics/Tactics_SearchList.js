@@ -4,6 +4,10 @@ class Tactics_SearchList extends Window_Selectable{
         this._data = [];
     }
 
+    itemHeight(){
+        return 80;
+    }
+
     setSearch(data){
         this._data = data;
         super.refresh();
@@ -25,13 +29,16 @@ class Tactics_SearchList extends Window_Selectable{
             this.contents.fontSize = 21;
             const _enemy = $dataEnemies[_search.bossEnemy];
             const width = 240;
-            const height = 80;
-            
-            const bitmap = ImageManager.loadFace(_enemy.faceName);
-            this.contents.blt(bitmap, 0, 0, width, height, rect.x, rect.y);
-            this.drawText("Lv." + _search.bossLv + " " + _enemy.name, rect.x + 200, rect.y,rect.width);
-            
-            this.drawText("+" + _enemy.gold +" pt", rect.x + 200, rect.y + 40,rect.width);
+            const height = 72;
+            const bitmap = ImageManager.loadEnemy(_enemy.battlerName);
+            this.contents.blt(bitmap, 0, 0, width, height, rect.x, rect.y - 16);
+            let text = TextManager.getText(700)  + "." + _search.bossLv + " " + _enemy.name;
+            if (_search.enemyNum){
+                text += " 他" + _search.enemyNum;
+            }
+            this.drawText(text, rect.x + 200, rect.y - 12,rect.width);
+
+            this.drawText("+" + _search.pt +" pt", rect.x + 200, rect.y + 16,rect.width);
         }
     }
 
