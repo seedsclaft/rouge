@@ -343,6 +343,10 @@ Game_BattlerBase.prototype.paramRate = function(paramId) {
         let rate = this.getStateEffect($gameStateInfo.getStateId(StateType.ATK_BUFF_RATE));
         if (rate){ value *= rate};
     }
+    if (paramId == 3){
+        let rate = this.getStateEffect($gameStateInfo.getStateId(StateType.DEF_BUFF_RATE));
+        if (rate){ value *= rate};
+    }
     return value;
 };
 
@@ -2168,7 +2172,6 @@ Game_Actor.prototype.paramPlus = function(paramId) {
     }
     if (paramId == 3){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.DEF_BUFF_ADD));
-        value += $gameParty.ironWillPlus();
     }
     if (paramId == 6){
         const agiBuffRId = $gameStateInfo.getStateId(StateType.AGI_BUFF_RATE);
@@ -2478,13 +2481,6 @@ Game_Actor.prototype.meetsUsableItemConditions = function(item) {
     return Game_BattlerBase.prototype.meetsUsableItemConditions.call(this, item);
 };
 
-
-
-
-
-
-
-
 Game_Actor.prototype.passiveSkills = function() {
     // パッシブは自動で発動
     let skills = [];
@@ -2631,6 +2627,7 @@ Game_Enemy.prototype.paramPlus = function(paramId) {
     if (paramId == 3){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.DEF_BUFF_ADD));
     }
+    
     if (paramId == 6){
         const agiBuffRId = $gameStateInfo.getStateId(StateType.AGI_BUFF_RATE);
         const total = this.getStateEffectTotal(agiBuffRId);
@@ -2685,11 +2682,11 @@ Game_Enemy.prototype.paramBase = function(paramId) {
 
 Game_Enemy.prototype.passiveSkills = function() {
     let list = [];
-    this._actionList.forEach((action,index) => {
+    this._actionList.forEach(action => {
         let skill = $dataSkills[action.skillId];
         if (skill){
             if (skill.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE){
-                list.push({skill:skill,slotId:index});
+                list.push(skill);
             }
         }
     });

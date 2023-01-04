@@ -123,7 +123,7 @@ const StateType = {
     CHAIN_TARGET :            "ChainTarget",    //拘束（される方）
     REACT :                   "ReAct",          //リアクト
     BARRIER :                   "Barrier",          //ステートバリア
-    FINITE :                  "Finite",         //宣告
+    DAMAGE_DRAIN :                  "DamageDrain",         //ドレイン
     /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)

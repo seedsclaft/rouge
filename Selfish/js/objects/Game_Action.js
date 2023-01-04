@@ -724,7 +724,6 @@ Game_Action.prototype.makeHpDamage = function(result, target, value,lastTarget) 
     //フロストウォール
     
     const damageCutId = $gameStateInfo.getStateId(StateType.DAMAGE_CUT);
-    console.log(target)
     if (value > 0 && target && target.isStateAffected(damageCutId)){
         result.hpDamage -= target.getStateEffectTotal(damageCutId);
         if (result.hpDamage < 1){
@@ -808,7 +807,7 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
     }
     
     baseValue += subject.damageRate();
-    baseValue = baseValue * 0.01 * subject.atk - target.def;
+    baseValue = Math.max(0, baseValue * 0.01 * subject.atk - target.def);
     let elementValue = this.calcElementRate(target);
     let value = baseValue * elementValue;
     if (this.isMagical()) {
@@ -913,7 +912,7 @@ Game_Action.prototype.executeHpDamage = function(result) {
             result.pushRemovedState(removeStateId);
         });
     }
-    this.gainDrainedHp(value);
+    this.gainDrainedHp(target.hp,value);
 };
 
 Game_Action.prototype.executeMpDamage = function(target, value) {
@@ -932,24 +931,32 @@ Game_Action.prototype.executeRpDamage = function(target, value) {
     }
     target.gainHp(-value);
     this.subject().gainAddDamage(value);
-    this.gainDrainedHp(value);
+    this.gainDrainedHp(target.hp,value);
 };
 
-Game_Action.prototype.gainDrainedHp = function(value) {
-    if (this.isDrain()) {
-        //0922 吸収＝PT全員回復
+Game_Action.prototype.gainDrainedHp = function(targetHp,value) {
+    let drainValue = Math.min(targetHp,value);
+    const _damageDrainId = $gameStateInfo.getStateId(StateType.DAMAGE_DRAIN);
+    if (this.subject().isStateAffected(_damageDrainId)){
+        const _effect = this.subject().getStateEffectTotal(_damageDrainId);
+        this.subject().gainHp(Math.floor(drainValue * 0.01 * _effect * (this.subject().hrg + 1.0)));
+    }
+    //if (this.isDrain()) {
+
+        /*
         var value = this.item().mpCost * 10;
         $gameParty.members().forEach(actor => {
             if (actor.isAlive()){
                 actor.gainHp(Math.floor(value * 0.01 * actor.mhp * (actor.hrg + 1.0)));
             }
         });
+        */
        //var gainTarget = this.subject();
        //if (this._reflectionTarget !== undefined) {
             //gainTarget = this._reflectionTarget;
         //}
        //gainTarget.gainHp(value);
-    }
+    //}
 };
 
 Game_Action.prototype.gainDrainedMp = function(value) {
