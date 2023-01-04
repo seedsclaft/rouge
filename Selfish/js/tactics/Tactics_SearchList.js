@@ -28,10 +28,10 @@ class Tactics_SearchList extends Window_Selectable{
             this.resetTextColor();
             this.contents.fontSize = 21;
             const _enemy = $dataEnemies[_search.bossEnemy];
-            const width = 240;
+            const width = 320;
             const height = 72;
             const bitmap = ImageManager.loadEnemy(_enemy.battlerName);
-            this.contents.blt(bitmap, 0, 0, width, height, rect.x, rect.y - 16);
+            this.contents.blt(bitmap, 0, _enemy.listY, width, height, rect.x + 24 + _enemy.listX, rect.y - 16);
             let text = TextManager.getText(700)  + "." + _search.bossLv + " " + _enemy.name;
             if (_search.enemyNum){
                 text += " 他" + _search.enemyNum;

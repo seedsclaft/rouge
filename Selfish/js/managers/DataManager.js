@@ -178,6 +178,8 @@ DataManager.createEnemyDataPlus = function() {
                 element.scale = json.scale ? Number(json.scale) : 1;
                 element.faceX = json.faceX ? Number(json.faceX) : 0;
                 element.faceY = json.faceY ? Number(json.faceY) : 0;
+                element.listX = json.listX ? Number(json.listX) : 0;
+                element.listY = json.listY ? Number(json.listY) : 0;
                 element.attackId = json.attackId ? Number(json.attackId) : 301;
                 element.elementId = json.elementId ? Number(json.elementId) : 1;   
             }
