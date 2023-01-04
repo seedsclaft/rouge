@@ -198,6 +198,9 @@ class Battle_View extends Scene_Base{
             this._layerBattleParty.setDamagePopup(bindBatller,"hpDamage", 1,0);
             this._layerBattleTroop.setDamagePopup(bindBatller,"hpDamage", 1,0);
         });
+        if (bindBatllers.length > 0){
+            this.refreshStatus();
+        }
     }
 
     startMpAnimation(battler, mp){
@@ -690,9 +693,9 @@ class Battle_View extends Scene_Base{
         // 複数音声を同時にならさない
         let noSound = false;
         dataList.forEach(data => {   
-            this._layerBattleTroop.startAnimation(data.battler,1664,false, 0,0.75,noSound,false);
+            this._layerBattleTroop.startAnimation(data.battler,45,false, 0,0.75,noSound,false);
             this._layerBattleTroop.setDamagePopup(data.battler,'hpHeal',Math.round(data.value));
-            this._layerBattleParty.startAnimation(data.battler,1664, false, 0,0.75,noSound,false);
+            this._layerBattleParty.startAnimation(data.battler,45, false, 0,0.75,noSound,false);
             this._layerBattleParty.setDamagePopup(data.battler,'hpHeal',Math.round(data.value));
             this._recordWindow.addDamageText(data.battler,'hpHeal',Math.round(data.value));
             noSound = true;

@@ -119,6 +119,11 @@ class Presenter_Battle extends Presenter_Base{
         const _actionBattler = this._model.actionBattler();
         if (_actionBattler.isActor()){
             this._model.claerAction();
+            if (!this._model.canInput()){        
+                const action = this._model.selectSkill($gameDefine.noActionSkillId);
+                this.commandAction();
+                return;
+            }
             const _battleSkill = this._model.battleSkill(_actionBattler);
             this._view.commandActive(_actionBattler,_battleSkill);    
         } else{
@@ -300,6 +305,7 @@ class Presenter_Battle extends Presenter_Base{
     }
 
     async endTurnAction(){
+        this.afterHealAction();
         this.slipTurnAction();
         
         let actionBattler = this._model.getActingBattler();
@@ -495,14 +501,14 @@ class Presenter_Battle extends Presenter_Base{
     afterHealAction(){
         if (this._model.needAfterHeal()){
             this._view.clearAnimation();
-            var attackAfterHealData = this._model.attackAfterHeal();
-            this._view.attackAfterHeal(attackAfterHealData);
+            const _attackAfterHealData = this._model.attackAfterHeal();
+            this._view.attackAfterHeal(_attackAfterHealData);
             this.refreshStatus();            
-            this.setActionType(ActionType.AFTERHEAL);
+            //this.setActionType(ActionType.AFTERHEAL);
             this._model.clearDrainState();
-            return;
+            //return;
         }
-        this.slipTurnAction();
+        //this.slipTurnAction();
     }
 
     slipTurnAction(){

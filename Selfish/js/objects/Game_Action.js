@@ -737,7 +737,6 @@ Game_Action.prototype.makeHpDamage = function(result, target, value,lastTarget) 
     }
     result.hpDamage = value;
     //フロストウォール
-    
     const damageCutId = $gameStateInfo.getStateId(StateType.DAMAGE_CUT);
     if (value > 0 && target && target.isStateAffected(damageCutId)){
         result.hpDamage -= target.getStateEffectTotal(damageCutId);
@@ -756,6 +755,16 @@ Game_Action.prototype.makeHpDamage = function(result, target, value,lastTarget) 
     if (value > 0 && target && target.isStateAffected($gameStateInfo.getStateId(StateType.FROZEN))){
         result.hpDamage = Math.round( result.hpDamage * $gameDefine.frozenDamageRate );
         result.pushRemovedState($gameStateInfo.getStateId(StateType.FROZEN));
+    }
+    // 状態異常特攻
+    const _antiVaccinationId = $gameStateInfo.getStateId(StateType.ANTI_VACCINATION);
+    if (value > 0 && this.subject().isStateAffected(_antiVaccinationId)){
+        for (let i = 4;i <= 11;i++){
+            if (target.isStateAffected(i)){
+                result.hpDamage = Math.round( result.hpDamage * this.subject().getStateEffectTotal(_antiVaccinationId) );
+                break;
+            }
+        }
     }
 };
 
@@ -1096,9 +1105,9 @@ Game_Action.prototype.itemEffectAddNormalState = function(result, effect) {
         result.pushResistedState(effect.dataId);
         return;
     }
-    // レベルで即死判定
-    if (this.isStateConsciousResist(result,effect)){
-        result.pushResistedState(effect.dataId);
+    // 即死判定
+    if (this.isStateInstantDeathResist(result,effect)){
+        result.pushAddedState(effect.dataId);
         return;
     }
     let chance = effect.value1;
@@ -1112,14 +1121,12 @@ Game_Action.prototype.itemEffectAddNormalState = function(result, effect) {
     }
 };
 
-Game_Action.prototype.isStateConsciousResist = function(result, effect) {
-    const consciousId = $gameStateInfo.getStateId(StateType.CONSCIOUS);
-    if (consciousId == effect.dataId){
-        if (this.subject().level > result.target.level){
-            const deathId = $gameStateInfo.getStateId(StateType.DEATH);
-            result.pushAddedState(deathId);
-        }
-        return this.subject().level <= result.target.level;
+Game_Action.prototype.isStateInstantDeathResist = function(result, effect) {
+    const instantDeathId = $gameStateInfo.getStateId(StateType.INSTANT_DEATH);
+    if (instantDeathId == effect.dataId){
+        const deathId = $gameStateInfo.getStateId(StateType.DEATH);
+        result.pushAddedState(deathId);
+        return true;
     }
     return false;
 }

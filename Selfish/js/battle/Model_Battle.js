@@ -196,7 +196,11 @@ class Model_Battle extends Model_Base {
     
     
         // 複数回カウント設定
-        this._attackTimesAdd = this.actionBattler().attackTimesAdd();
+        const _attackLengthId = $gameStateInfo.getStateId(StateType.ATTACK_LENGHT);
+        if (this.actionBattler().isStateAffected(_attackLengthId)){
+            //const _count = this.actionBattler().attackTimesAdd();
+            this._attackTimesAdd = this.actionBattler().getStateEffectTotal(_attackLengthId);
+        }
     }
 
     acnimationId(action){
@@ -304,12 +308,20 @@ class Model_Battle extends Model_Base {
         if (this._attackTimesAdd <= 0){
             return;
         }
-        this._attackTimesAdd -= 1;
-        this.actionBattler().makeActions();
-        let action = this.actionBattler().currentAction();
-        action.makeActionResult();
-        //行動者を追加
-        this.setActingBattler(this.actionBattler(),false);
+        const _attackLengthId = $gameStateInfo.getStateId(StateType.ATTACK_LENGHT);
+        const _battler = this.actionBattler();
+        if (_battler.isStateAffected(_attackLengthId)){
+            const _costMp = _battler.getStateEffectTotal(_attackLengthId);
+            if (_battler.mp >= _costMp){
+                _battler.gainMp(_costMp * -1);
+                this._attackTimesAdd -= 1;
+                let action = new Game_Action(_battler);
+                _battler.setAction(action);
+                action.makeActionResult();
+                this._makeActionData.push(action);
+                this.setActingBattler(_battler,false);
+            }
+        }
     }
 
     createInterruptActionData(){
@@ -562,8 +574,8 @@ class Model_Battle extends Model_Base {
         _action.applyGlobal();
     }
     needAfterHeal(){
-        let subject = this.getActingBattler();
-        let action = subject.currentAction();
+        const subject = this.getActingBattler();
+        const action = this.currentAction();
         let isDrain = false;
         if (action && action.results()[0] && !action.results()[0].missed){
             if (action.isContainsState($gameStateInfo.getStateId(StateType.DRAIN_HEAL))){
@@ -578,16 +590,10 @@ class Model_Battle extends Model_Base {
         }
         return isDrain;
     }
+
     attackAfterHeal(){
-        let subject = this.getActingBattler();
-        let action = subject.currentAction();
-        let data = [];
-        let unit = null;
-        if (subject.isActor()){
-            unit = $gameParty.aliveMembers();
-        } else{
-            unit = $gameTroop.aliveMembers();
-        }
+        const subject = this.getActingBattler();
+        const action = this.currentAction();
     
         let plusValue = 0;
         if (subject.isStateAffected($gameStateInfo.getStateId(StateType.DRAIN_HEALATK))){
@@ -597,32 +603,14 @@ class Model_Battle extends Model_Base {
             plusValue += Math.round(subject.getStateEffect($gameStateInfo.getStateId(StateType.REGENE_HP)));
         }
     
-        unit.forEach(element => {
-            var value = 0;
-            if (action.resultHpDamageValue() > 0 && action.isContainsState($gameStateInfo.getStateId(StateType.DRAIN_HEAL))){
-                if (subject.isActor()){
-                    let effectValue = $dataSkills[action.item().id].stateEffect;//subject.getStateEffect($gameStateInfo.getStateId(StateType.DRAIN_HEAL));
-                    if (effectValue){
-                        value = 0.08 + effectValue * 0.01;
-                    } else{
-                        value = 0.08 + subject.skillLevel(action.item().id) * 0.02;
-                    }
-                } else {
-                    value = 0.08 + subject.mdf * 0.02;
-                }
-                value *= $dataSkills[action.item().id].mpCost;
-                value = Math.round(value * element.mhp) * element.rec;
-            }
-            if (element == subject){
-                value += plusValue;
-            }
-            if (value > 0){
-                element.setHp(element.hp + value);
-                data.push({battler:element,value:value});
-            }
-        });
+        let data = [];
+        if (plusValue > 0){
+            subject.setHp(subject.hp + plusValue);
+            data.push({battler:subject,value:plusValue});
+        }
         return data;
     }
+
     clearDrainState(){
         const drainHealId = $gameStateInfo.getStateId(StateType.DRAIN_HEAL);
         const drainAttakHealId = $gameStateInfo.getStateId(StateType.DRAIN_HEALATK);
@@ -631,20 +619,27 @@ class Model_Battle extends Model_Base {
             battler.removeState(drainAttakHealId);
         });
     }
+    
     needSlipTurn(){
         // 毒が解除される予定ならスリップしない
         let flag = true;
+        const _action = this.currentAction();
+        if (!_action){
+            return false;
+        }
         const results = this.currentAction().results();
-        results.forEach(result => {
-            var removeStates = result.removedStateObjects();
-            if (removeStates){
-                removeStates.forEach(state => {
-                    if (state.id == $gameStateInfo.getStateId(StateType.POISON)){
-                        flag = false;
-                    }
-                });
-            }
-        });
+        if (results){
+            results.forEach(result => {
+                var removeStates = result.removedStateObjects();
+                if (removeStates){
+                    removeStates.forEach(state => {
+                        if (state.id == $gameStateInfo.getStateId(StateType.POISON)){
+                            flag = false;
+                        }
+                    });
+                }
+            });
+        }
         if (flag == false){
             return false;
         }

@@ -869,7 +869,7 @@ Sprite_Enemy.prototype.damageOffsetY = function() {
 
 Sprite_Enemy.prototype.refreshStatus = function() {
     this._battlerStatusSprite.changeHp();
-    //this._battlerStatusSprite.changeMp();
+    this._battlerStatusSprite.changeMp();
 }
 
 Sprite_Enemy.prototype.resetPosition = function(line) {

@@ -129,6 +129,9 @@ const StateType = {
     PENETRATE :               "Penetrate",      //貫通 
     REDAMAGE :                "ReDamage",       //反ダメージ
     COUNTER :                 "Counter",        //カウンター
+    ATTACK_LENGHT :           "AttackLength",   //攻撃回数加算
+    ANTI_VACCINATION :           "AntiVaccination",   //状態異常特攻
+    REGENE_HP :               "RegeneHp",       //リジェネHp
     /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)
@@ -141,7 +144,6 @@ const StateType = {
 
     DISCHARGE :               "discharge",      //暴発 
 
-    ATTACK_LENGHT :           "attacklength",   //攻撃回数加算
     SKILL_EXP :               "skillexp",       //スキル経験値アップ(未使用)
 
     DAMAGE_BLOCK :            "damageblock",    //ダメージブロック
@@ -150,7 +152,6 @@ const StateType = {
     SUBSTITUTE :              "substitute",     //かばう
     RESIST_STATE :            "resiststate",    //ステート無効
     CHAIN :                   "chain",          //チェイン
-    REGENE_HP :               "regenehp",       //リジェネHp
     ETHER :                   "ether",          //エーテル
     ADD_TURN_EFFECT :         "addTurnEffect",  //効果ターン数増加
     COST_DOWN :               "costdown",       //コストダウン
