@@ -189,7 +189,7 @@ class Model_Battle extends Model_Base {
         this.createInterruptActionData();
     
         // カウンター生成
-        //this.createCounterActionData();
+        this.createCounterActionData();
     
         // 行動後リザルト生成
         //this.createAfterActionData();
@@ -421,13 +421,12 @@ class Model_Battle extends Model_Base {
                 if (action.isDamage() && action.isHpEffect() && result.target.hp > result.hpDamage && result.target.isStateAffected(counterId)){   
                     if (!_.contains(counterTarget,result.target)){
                         if (this.actionBattler() != result.target){
-                            result.target.makeActions();
                             let counterAction = new Game_Action(result.target);
                             counterAction.setSkill(result.target.getStateEffect(counterId));
                             counterAction.setTarget(this.actionBattler().index());
-                            counterAction.prepare();
                             counterAction.makeActionResult();
                             counterAction.setCounter();
+                            this._makeActionData.push(counterAction);
                             this.setActingBattler(result.target,false);
                             counterTarget.push(result.target);
                         }
@@ -635,8 +634,7 @@ class Model_Battle extends Model_Base {
     needSlipTurn(){
         // 毒が解除される予定ならスリップしない
         let flag = true;
-        let action = this.actionBattler().currentAction();
-        let results = action.results();
+        const results = this.currentAction().results();
         results.forEach(result => {
             var removeStates = result.removedStateObjects();
             if (removeStates){

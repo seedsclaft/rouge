@@ -70,13 +70,13 @@ class Tactics_Model {
             case "train":
                 this._members.forEach(member => {
                     const a = $gameActors.actor(member.actorId());
-                    info.push(TextManager.getText(700) + "." + member.level + "\n" + TextManager.getText(740) + eval( $gameDefine.data().TrainCurrency) + "pt");
+                    info.push(TextManager.getText(700) + "." + member.level + "\n" + TextManager.getText(740) + eval( $gameDefine.data().TrainCurrency) + TextManager.currencyUnit);
                 });
                 break;
             case "recovery":
                 this._members.forEach(member => {
                     const a = $gameActors.actor(member.actorId());
-                    info.push(TextManager.getText(500) + member.hp + TextManager.getText(710) + member.mhp + "\n" + TextManager.getText(740) + eval( $gameDefine.data().RecoveryCurrency) + "pt");
+                    info.push(TextManager.getText(500) + member.hp + TextManager.getText(710) + member.mhp + "\n" + TextManager.getText(740) + eval( $gameDefine.data().RecoveryCurrency) + TextManager.currencyUnit);
                 });
                 break;
             }

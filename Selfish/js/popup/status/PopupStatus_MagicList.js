@@ -23,7 +23,6 @@ class PopupStatus_MagicList extends Window_Selectable{
     }
 
     setActor(actor){
-        console.log(actor)
         this._actor = actor;
     }
 
@@ -44,15 +43,11 @@ class PopupStatus_MagicList extends Window_Selectable{
             this.changePaintOpacity(this._actor.isLearnedSkill(_magic.id));
             this.drawText(TextManager.getSkillName(_magic.id), rect.x, rect.y - 12,rect.width);
 
-            this.drawText(_magic.mpCost, rect.x, rect.y -12, rect.width, "right");
+            const _textWidth = this.contents.measureTextWidth(TextManager.getSkillName(_magic.id));
             this.contents.fontSize = 16;
-            if (_magic.range != null){
-                let range = TextManager.getText(1510);
-                if (_magic.range == 1) range = TextManager.getText(1520);
-                this.drawText(TextManager.getText(1500) + range, rect.x, rect.y + 16, rect.width);
-            }
-            this.drawTextEx(_magic.description,rect.width - _magic.description.length * 16 + 12,rect.y + 20,rect.width);
-        
+            this.drawText("（" + _magic.mpCost + "）", rect.x + _textWidth, rect.y - 12, rect.width, "left");
+
+            this.drawItemDescription(_magic,rect.x, rect.y, rect.width);
         }
     }
 

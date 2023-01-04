@@ -264,6 +264,7 @@ Scene_Base.prototype.createScreenSprite = function() {
 Scene_Boot.prototype.loadSystemImages = function() {
     ColorManager.loadWindowskin();
     ImageManager.loadSystem("IconSet");
+    ImageManager.loadSystem("IconSet_075");
     ImageManager.loadSystem('Damage');
     ImageManager.loadSystem('States');
     ImageManager.loadSystem('keyMapIcons');

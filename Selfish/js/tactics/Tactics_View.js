@@ -129,7 +129,7 @@ class Tactics_View extends Scene_Base {
 
     setAlchemyParam(apchemyParam){
         if (this._alchemyParam == null){
-            this._alchemyParam = new Tactics_AlchemyParam(464,64,360,64);
+            this._alchemyParam = new Tactics_AlchemyParam(600,94,304,56);
             this.addChild(this._alchemyParam);
         }
         this._alchemyParam.setData(apchemyParam);
@@ -195,7 +195,7 @@ class Tactics_View extends Scene_Base {
 
     setMagicCategory(data){
         if (this._magicCategory == null){
-            this._magicCategory = new Tactics_MagicCategory(120,128,72,264);
+            this._magicCategory = new Tactics_MagicCategory(120,94,272,64);
             this.addChild(this._magicCategory);
         }
         this._magicCategory.setMagicCategory(data);
@@ -209,7 +209,7 @@ class Tactics_View extends Scene_Base {
 
     setAlchemyMagicList(data){
         if (this._alchemyMagicList == null){
-            this._alchemyMagicList = new Tactics_AlchemyMagicList(184,128,640,320);
+            this._alchemyMagicList = new Tactics_AlchemyMagicList(100,144,804,320);
             this._alchemyMagicList.setHandler("ok", this.setCommand.bind(this,TacticsCommand.AlchemySelect));
             this._alchemyMagicList.setHandler("cancel", this.setCommand.bind(this,TacticsCommand.DecideAlchemy));
             this._alchemyMagicList.setHandler("pageup", this.changeCategory.bind(this,1));
@@ -222,10 +222,10 @@ class Tactics_View extends Scene_Base {
 
     changeCategory(value){
         if (value > 0){
-            this._magicCategory.cursorUp();
+            this._magicCategory.cursorLeft();
         } else
         if (value < 0){
-            this._magicCategory.cursorDown();
+            this._magicCategory.cursorRight();
         }
         this.refreshCategoryIndex();
         this._alchemyMagicList.activate();
@@ -264,7 +264,7 @@ class Tactics_View extends Scene_Base {
 
     setSearchList(data){
         if (this._searchList == null){
-            this._searchList = new Tactics_SearchList(120,128,640,360);
+            this._searchList = new Tactics_SearchList(170,96,640,344);
             this._searchList.setHandler("ok", () => {
                 this._searchList.hide();
                 this.setCommand(TacticsCommand.SearchMember);

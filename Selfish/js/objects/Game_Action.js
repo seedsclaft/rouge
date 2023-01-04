@@ -596,7 +596,22 @@ Game_Action.prototype.makeResult = function(target,lastTarget) {
         result.length = number.length + 1;
     }
     this._results.push(result);
+    // 反ダメージ判定
+    this.makeResultReDamage(result);
 };
+
+Game_Action.prototype.makeResultReDamage = function(result) {
+    const redamageId = $gameStateInfo.getStateId(StateType.REDAMAGE);
+    if (result.target.isStateAffected(redamageId)){
+        if (result.isDead == false && result.hpDamage > 0 && result.isHit()){
+            const effect = result.target.getStateEffect(redamageId);
+            const damage = Math.round( result.hpDamage * effect );
+            if (damage > 0){
+                result.reDamage = damage;
+            }
+        }
+    }
+}
 
 Game_Action.prototype.makeResultTarget = function(result,target) {
     result.target = target;
@@ -807,7 +822,16 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
     }
     
     baseValue += subject.damageRate();
-    baseValue = Math.max(0, baseValue * 0.01 * subject.atk - target.def);
+    let defValue = target.def;
+    const berserkId = $gameStateInfo.getStateId(StateType.BERSERK);
+    if (target.isStateAffected(berserkId)){
+        defValue = 0;
+    }
+    const penetrateId = $gameStateInfo.getStateId(StateType.PENETRATE);
+    if (this.subject().isStateAffected(penetrateId)){
+        defValue = 0;
+    }
+    baseValue = Math.max(0, baseValue * 0.01 * subject.atk - defValue);
     let elementValue = this.calcElementRate(target);
     let value = baseValue * elementValue;
     if (this.isMagical()) {
@@ -876,6 +900,7 @@ Game_Action.prototype.applyVariance = function(damage, variance) {
 };
 
 Game_Action.prototype.applyGuard = function(damage, target) {
+    /*
     const penetrateId = $gameStateInfo.getStateId(StateType.PENETRATE);
     if (damage > 0 && target.isGuard() && !this.subject().isStateAffected(penetrateId)){
         const ironwillId = $gameStateInfo.getStateId(StateType.IRON_WILL);
@@ -884,6 +909,7 @@ Game_Action.prototype.applyGuard = function(damage, target) {
         }
         return Math.max(damage - target.def,1);
     }
+    */
     return damage;
 };
 

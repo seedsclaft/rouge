@@ -160,9 +160,11 @@ class Presenter_Battle extends Presenter_Base{
     async commandActionStart(){
         const actionBattler = this._model.getActingBattler();
         const action = this._model.currentAction();
+        console.log(actionBattler,action)
         this._model.applyGlobal();
 
         const results = this._model.currentAction().results();
+        console.log(results)
         if (results.length == 0){
             this.endTurnAction();
             return;
@@ -298,6 +300,8 @@ class Presenter_Battle extends Presenter_Base{
     }
 
     async endTurnAction(){
+        this.slipTurnAction();
+        
         let actionBattler = this._model.getActingBattler();
         let action = this._model.currentAction();
         let repeats = $dataSkills[action.item().id].repeats;
@@ -504,13 +508,13 @@ class Presenter_Battle extends Presenter_Base{
     slipTurnAction(){
         if (this._model.needSlipTurn()){
             this._view.clearAnimation();
-            var slipValue = this._model.slipTurn();
-            this._view.slipTurn(this._model.actionBattler(),slipValue);
+            const _slipValue = this._model.slipTurn();
+            this._view.slipTurn(this._model.actionBattler(),_slipValue);
             this.refreshStatus();
-            this.setActionType(ActionType.POISON);
-            return;
+            //this.setActionType(ActionType.POISON);
+            //return;
         }
-        this.endTurnAction();
+        //this.endTurnAction();
     }
 
 

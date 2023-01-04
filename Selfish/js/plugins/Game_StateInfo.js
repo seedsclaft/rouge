@@ -124,6 +124,11 @@ const StateType = {
     REACT :                   "ReAct",          //リアクト
     BARRIER :                   "Barrier",          //ステートバリア
     DAMAGE_DRAIN :                  "DamageDrain",         //ドレイン
+    ACCEL :                   "Accel",          //アクセル
+    BERSERK :                   "Berserk",          //バーサーク
+    PENETRATE :               "Penetrate",      //貫通 
+    REDAMAGE :                "ReDamage",       //反ダメージ
+    COUNTER :                 "Counter",        //カウンター
     /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)
@@ -138,7 +143,6 @@ const StateType = {
 
     ATTACK_LENGHT :           "attacklength",   //攻撃回数加算
     SKILL_EXP :               "skillexp",       //スキル経験値アップ(未使用)
-    COUNTER :                 "counter",        //カウンター
 
     DAMAGE_BLOCK :            "damageblock",    //ダメージブロック
     DRAIN_HEALATK :           "drainhealatk",   //ドレインヒール(攻撃付与)
@@ -149,7 +153,6 @@ const StateType = {
     REGENE_HP :               "regenehp",       //リジェネHp
     ETHER :                   "ether",          //エーテル
     ADD_TURN_EFFECT :         "addTurnEffect",  //効果ターン数増加
-    ACCEL :                   "accel",          //アクセル
     COST_DOWN :               "costdown",       //コストダウン
     GENUINE:                  "genuine",        //先天属性以外コストダウン
     BANISH:                   "banish",         //一度だけ戦闘不能を回避
@@ -167,8 +170,6 @@ const StateType = {
     VANTAGE :                 "vantage",        //待ち伏せ
     CONSCIOUS :               "conscious",      //レベル以下即死
     REFRECT :                 "refrect",        //スキルカウンター
-    REDAMAGE :                "redamage",       //反ダメージ
-    PENETRATE :               "penetrate",      //貫通 
     IRON_WILL :               "ironwill",       //アイアンウィル
     KISHIKAISEI:              "kishikaisei",    //起死回生
     SELFISH:                  "selfish",    　　//セルフィッシュ

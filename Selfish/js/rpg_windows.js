@@ -289,27 +289,71 @@ Window_Base.prototype.pendingColor = function() {
 };
 
 Window_Base.prototype.drawItemName = function(item, x, y, width,isSelect) {
-    if (item) {
-        const iconBoxWidth = ImageManager.iconWidth;
-        this.drawIcon(item.iconIndex,x, y + 3);
-        const isNew = _.find($gameParty._newSkillIdList,(s) => s == item.id);
-        if (isNew){
-            this.contents.fontSize = 12;
-            this.changeTextColor(this.powerUpColor());
-            this.drawText(TextManager.getNewText(), x + iconBoxWidth + 8, y - 18, width - iconBoxWidth);
-        } else{
-            this.resetTextColor();
-        }
-        this.contents.fontSize = 22;
-        this.drawText(TextManager.getSkillName(item.id), x + iconBoxWidth + 4, y, width - iconBoxWidth);
-        
-        if (isSelect){
-            this.contents.fontSize = 16;
-            this.changeTextColor(this.equipedColor());
-            this.drawText(TextManager.getText(350), x + 16, y - 14, width - iconBoxWidth,"left",true);
-        }
-        this.resetFontSettings();
+    if (!item) return;
+    const iconBoxWidth = ImageManager.iconWidth;
+    this.drawIcon(item.iconIndex,x, y + 3);
+    const isNew = _.find($gameParty._newSkillIdList,(s) => s == item.id);
+    if (isNew){
+        this.contents.fontSize = 12;
+        this.changeTextColor(this.powerUpColor());
+        this.drawText(TextManager.getNewText(), x + iconBoxWidth + 8, y - 18, width - iconBoxWidth);
+    } else{
+        this.resetTextColor();
     }
+    this.contents.fontSize = 21;
+    this.drawText(TextManager.getSkillName(item.id), x + iconBoxWidth + 4, y, width - iconBoxWidth);
+    
+    if (isSelect){
+        this.contents.fontSize = 16;
+        this.changeTextColor(this.equipedColor());
+        this.drawText(TextManager.getText(350), x + 16, y - 14, width - iconBoxWidth,"left",true);
+    }
+    this.resetFontSettings();
+};
+
+Window_Base.prototype.drawItemDescription = function(item, x, y, width) {
+    if (!item) return;
+    this.contents.fontSize = 16;
+    if (item.stypeId == Game_BattlerBase.SKILL_TYPE_PASSIVE) {
+        this.drawText(TextManager.getText(1560), x, y + 16, width);
+    } else{
+        if (item.range != null){
+            let range = TextManager.getText(1510);
+            if (item.range == 1) range = TextManager.getText(1520);
+            this.drawText(TextManager.getText(1500) + range, x, y + 16, width);
+        }
+        if (item.damage.formula){
+            this.drawText(TextManager.getText(1540) + " " + TextManager.getText(1550), x + 80, y + 16, width);
+            if (item.damage){
+                this.drawText("x" + (Number(item.damage.formula) * 0.01).toFixed(2), x + 136, y + 16, 120, "rigth");
+            } else{
+                this.drawText(item.damage.formula, x + 136, y + 16, 120, "rigth");
+            }
+        }
+    }
+        
+    /*
+    if (item.scope >= 7 && item.scope <= 14){
+        let scopeText = 0;
+        if (item.scope == 7){
+            scopeText = 1580;
+        } else
+        if (item.scope == 8){
+            scopeText = 1570;
+        } else
+        if (item.scope == 11){
+            scopeText = 1590;
+        }
+        this.drawText(TextManager.getText(scopeText), x, y + 16, width);
+    }
+    */
+
+    const _textLine = item.description.split("\n");
+    _textLine.forEach((text,index) => {
+        let textWidth = this.contents.measureTextWidth(text);
+        this.drawTextEx(text,width - textWidth + 12,y + 20 + index * 26 - (_textLine.length-1) * 26,width);
+    });
+    this.resetFontSettings();
 };
 
 Window_Base.prototype.drawGauge = function(x, y, width, rate, color1, color2,needBack) {
@@ -340,12 +384,12 @@ Window_Base.prototype.refreshDimmerBitmap = function() {
     }
 };
 
-Window_Base.prototype.drawCommandIcon = function(iconIndex, x, y) {
-    var bitmap = ImageManager.loadSystem('IconSet');
-    var pw = Window_Base._iconWidth;
-    var ph = Window_Base._iconHeight;
-    var sx = iconIndex % 16 * pw;
-    var sy = Math.floor(iconIndex / 16) * ph;
+Window_Base.prototype.drawIconMini = function(iconIndex, x, y) {
+    const bitmap = ImageManager.loadSystem("IconSet_075");
+    const pw = ImageManager.iconWidth * 0.75;
+    const ph = ImageManager.iconHeight  * 0.75;
+    const sx = (iconIndex % 16) * pw;
+    const sy = Math.floor(iconIndex / 16) * ph;
     this.contents.blt(bitmap, sx, sy, pw, ph, x, y);
 };
 

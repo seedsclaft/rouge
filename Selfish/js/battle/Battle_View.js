@@ -700,9 +700,9 @@ class Battle_View extends Scene_Base{
     }
 
     slipTurn(battler,value){
-        this._layerBattleTroop.startAnimation(battler,1346, false, 0,1,false,false);
+        this._layerBattleTroop.startAnimation(battler,59, false, 0,1,false,false);
         this._layerBattleTroop.setDamagePopup(battler,'hpDamage',Math.round((-1*value)));
-        this._layerBattleParty.startAnimation(battler,1346, false, 0,1,false,false);
+        this._layerBattleParty.startAnimation(battler,59, false, 0,1,false,false);
         this._layerBattleParty.setDamagePopup(battler,'hpDamage',Math.round((-1*value)));
         this._recordWindow.addDamageText(battler,'hpDamage',Math.round((-1*value)));
     }

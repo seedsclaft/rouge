@@ -4,14 +4,14 @@ class Tactics_AlchemyParam extends Window_Base{
     }
 
     setData(data){
-        this.contents.clear();
-        this.contents.fontSize = 21;
-        const _element = $dataSystem.elements;
         const _elementId = [1,2,3,4,5];
+        this.contents.clear();
+        this.contents.fontSize = 18;
+        const _element = $dataSystem.elements;
         _elementId.forEach((eId,index) => {
-            this.drawText(_element[eId],4 + 68 * index,0,120);
+            this.drawIconMini($gameElement.data()[index].iconIndex,4 + 56 * index , 4);
             if (data && data.length > index){
-                this.drawElementStatus(data[index],4 + index * 68,0);
+                this.drawElementStatus(data[index],4 + index * 56,-2);
             }
         });
     }

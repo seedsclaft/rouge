@@ -8,12 +8,12 @@ class PopupStatus_View  {
         this._listWindow.setHandler('pagedown',     this.changeActor.bind(this,1));
         this._listWindow.setHandler('shift',     this.changeSkill.bind(this));
         
-        this._magicCategory = new Tactics_MagicCategory(200 - 160,128,72,264);
+        this._magicCategory = new Tactics_MagicCategory(40,94,272,64);
         
         this._magicCategory.setMagicCategory($gameElement.data());
         this._magicCategory.select(0);
 
-        this._magicList = new PopupStatus_MagicList(264 - 160,128,480,320);
+        this._magicList = new PopupStatus_MagicList(40,144,540,320);
         this._magicList.select(0);
         
         
@@ -23,7 +23,7 @@ class PopupStatus_View  {
         this._magicList.setHandler("pageup", this.changeCategory.bind(this,1));
         this._magicList.setHandler("pagedown", this.changeCategory.bind(this,-1));
             
-        this._spParam = new PopupStatus_SpParam(504 - 160,80,240,56);
+        this._spParam = new PopupStatus_SpParam(504 - 160,94,240,56);
         this._spParam.hide();
         /*
         this._listWindow.setHandler('ok',     this.selectActor.bind(this));
@@ -40,16 +40,16 @@ class PopupStatus_View  {
         if (this._magicCategory.parent){
             this._magicCategory.parent.removeChild(this._magicCategory);
         }
-        if (this._magicList.parent){
-            this._magicList.parent.removeChild(this._magicList);
-        }
         if (this._spParam.parent){
             this._spParam.parent.removeChild(this._spParam);
         }
+        if (this._magicList.parent){
+            this._magicList.parent.removeChild(this._magicList);
+        }
         SceneManager._scene.addChild(this._listWindow);
         SceneManager._scene.addChild(this._magicCategory);
-        SceneManager._scene.addChild(this._magicList);
         SceneManager._scene.addChild(this._spParam);
+        SceneManager._scene.addChild(this._magicList);
     }
 
     static setData(data,cancelCall){
@@ -82,10 +82,10 @@ class PopupStatus_View  {
 
     static changeCategory(value){
         if (value > 0){
-            this._magicCategory.cursorUp();
+            this._magicCategory.cursorLeft();
         } else
         if (value < 0){
-            this._magicCategory.cursorDown();
+            this._magicCategory.cursorRight();
         }
         this.refreshCategoryIndex();
         this._magicList.activate();

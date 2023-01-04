@@ -347,6 +347,10 @@ Game_BattlerBase.prototype.paramRate = function(paramId) {
         let rate = this.getStateEffect($gameStateInfo.getStateId(StateType.DEF_BUFF_RATE));
         if (rate){ value *= rate};
     }
+    if (paramId == 6){
+        let rate = this.getStateEffect($gameStateInfo.getStateId(StateType.AGI_BUFF_RATE));
+        if (rate){ value *= rate};
+    }
     return value;
 };
 
@@ -2168,18 +2172,16 @@ Game_Actor.prototype.paramPlus = function(paramId) {
     if (paramId == 2){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.ATK_BUFF_ADD));
         value += $gameParty.involvementPlus();
+        const berserkId = $gameStateInfo.getStateId(StateType.BERSERK);
+        if (this.isStateAffected(berserkId)){
+            value += this.def * this.getStateEffectTotal(berserkId);
+        }
         //value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
     }
     if (paramId == 3){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.DEF_BUFF_ADD));
     }
     if (paramId == 6){
-        const agiBuffRId = $gameStateInfo.getStateId(StateType.AGI_BUFF_RATE);
-        const total = this.getStateEffectTotal(agiBuffRId);
-        if (total > 0){
-            value = Math.floor(this.paramBase(paramId) * total);
-            value -= this.paramBase(paramId);
-        }
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.AGI_BUFF_ADD));
         // アクセル
         const accelId = $gameStateInfo.getStateId(StateType.ACCEL);
@@ -2623,19 +2625,27 @@ Game_Enemy.prototype.paramPlus = function(paramId) {
     if (paramId == 2){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.ATK_BUFF_ADD));
         //value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
+    
+        const berserkId = $gameStateInfo.getStateId(StateType.BERSERK);
+        if (this.isStateAffected(berserkId)){
+            value += this.def * this.getStateEffectTotal(berserkId);
+        }
     }
     if (paramId == 3){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.DEF_BUFF_ADD));
     }
     
     if (paramId == 6){
-        const agiBuffRId = $gameStateInfo.getStateId(StateType.AGI_BUFF_RATE);
-        const total = this.getStateEffectTotal(agiBuffRId);
-        if (total > 0){
-            value = Math.floor(this.paramBase(paramId) * total);
-            value -= this.paramBase(paramId);
-        }
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.AGI_BUFF_ADD));
+    
+        const accelId = $gameStateInfo.getStateId(StateType.ACCEL);
+        if (this.isStateAffected(accelId)){
+            let plusAccel = ((this._turnCount - 1) * this.getStateEffectTotal(accelId));
+            if (plusAccel >= 10){
+                plusAccel = 10;
+            }
+            value += plusAccel;
+        }
     }
     return value;
 };
@@ -2959,7 +2969,7 @@ Game_Enemy.prototype.selectAllActions = function(actionList) {
 
 Game_Enemy.prototype.setAction = function(action) {
     let actionList = this._actionList.filter(function(a) {
-        return this.isActionValid(a);
+        return this.isActionValid(a) && ($dataSkills[a.skillId].stypeId != Game_BattlerBase.SKILL_TYPE_PASSIVE);
     }, this);
     if (action) {
         const ratingMax = Math.max.apply(null, actionList.map(function(a) {

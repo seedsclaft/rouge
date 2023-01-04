@@ -4,6 +4,8 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
         this._data = [];
         this._magicList = [];
         this._selected = [];
+        this._window = new Window_Base(new Rectangle(500,0,304,height ));
+        this.addChildAt(this._window,1)
     }
 
     setAlchemyMagic(data){
@@ -35,30 +37,32 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
                 this.drawBack(rect.x,rect.y-12,rect.width,this.itemHeight(),0xFFFFFF,64);
             }
             this.drawText(TextManager.getSkillName(_alchemy.skill.id), rect.x, rect.y - 12,rect.width);
-            
+            const _textWidth = this.contents.measureTextWidth(TextManager.getSkillName(_alchemy.skill.id));
+            this.contents.fontSize = 16;
+            this.drawText("（" + _alchemy.skill.mpCost + "）", rect.x + _textWidth, rect.y - 12, rect.width, "left");
+ 
+            //if (_alchemy.skill.stypeId == Game_BattlerBase.SKILL_TYPE_MAGIC){
+            //    this.drawText(_alchemy.skill.mpCost, rect.x, rect.y - 12, rect.width - 296, "right");
+            //}
+            this.drawItemDescription(_alchemy.skill,rect.x,rect.y,rect.width - 296);
+
+            this.contents.fontSize = 18;
             const _element = $dataSystem.elements;
             if (_alchemy.needRank) {
                 let needIndex = 0;
                 _alchemy.needRank.forEach((rank,index) => {
                     if (rank == 0){
-                        //rank = "－";
+                        rank = "－";
                         return;
                     }
-                    this.drawText(_element[index+1] + rank, rect.x + 344 + 32 * needIndex, rect.y  - 12,80,"left");
+                    this.drawIconMini($gameElement.data()[index].iconIndex,rect.x + 500 + 32 * needIndex , rect.y - 8);
+                    this.drawText(rank,28 + rect.x + 500 + 32 * needIndex, rect.y - 16,80,"left");
                     needIndex++;
                 });
             }
-            this.drawText(_alchemy.cost + "pt", rect.x, rect.y  - 12,rect.width,"right");
-        
-            this.drawText(_alchemy.skill.mpCost, rect.x - 264, rect.y -12, rect.width, "right");
             this.contents.fontSize = 16;
-            if (_alchemy.skill.range != null){
-                let range = TextManager.getText(1510);
-                if (_alchemy.skill.range == 1) range = TextManager.getText(1520);
-                this.drawText(TextManager.getText(1500) + range, rect.x, rect.y + 16, rect.width);
-            }
-            let textWidth = this.contents.measureTextWidth(_alchemy.skill.description);
-            this.drawTextEx(_alchemy.skill.description,rect.width - 264 - textWidth + 12,rect.y + 20,rect.width);
+            this.drawText(TextManager.getText(750) + " : " + _alchemy.skill.mpCost,500 + rect.x, rect.y + 14,rect.width,"left");
+            this.drawText(_alchemy.cost + TextManager.currencyUnit, rect.x, rect.y + 14,rect.width,"right");
         
         }
     }
