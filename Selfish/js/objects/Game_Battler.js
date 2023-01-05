@@ -1693,7 +1693,17 @@ Game_Actor.prototype.setup = function(actorId) {
     this._positionData = null;
     this._paramUpRate = actor.paramUpRate;
     this._alchemyParam = actor.alchemyParam;
+
+    this._selectedIndex = 0;
 };
+
+Game_Actor.prototype.setSelectedIndex = function(value) {
+    this._selectedIndex = value;
+}
+
+Game_Actor.prototype.selectedIndex = function() {
+    return this._selectedIndex;
+}
 
 Game_Actor.prototype.position = function() {
     return this._positionData;
@@ -3115,8 +3125,8 @@ Game_Enemy.prototype.meetsConditionPlus = function(skill) {
         return isRemoval;
     }
     // MPDAMAGE判定
-    let isMpDamageState = _.find(item,(a) => a.code == Game_Action.EFFECT_ADD_STATE && a.dataId == $gameStateInfo.getStateId(StateType.MP_DAMAGE));
-    if (isMpDamageState){
+    const _isMpDamageState = _.find(item,(a) => a.code == Game_Action.EFFECT_ADD_STATE && a.dataId == $gameStateInfo.getStateId(StateType.MP_DAMAGE));
+    if (_isMpDamageState){
         return _.find(this.opponentsUnit().aliveMembers(),(enemy) => enemy.mp > 0);
     }
     return true;

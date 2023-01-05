@@ -46,6 +46,9 @@ class PopupStatus_View  {
         if (this._magicList.parent){
             this._magicList.parent.removeChild(this._magicList);
         }
+        console.log(this._listWindow)
+        console.log(this._listWindow.parent)
+        console.log(SceneManager._scene)
         SceneManager._scene.addChild(this._listWindow);
         SceneManager._scene.addChild(this._magicCategory);
         SceneManager._scene.addChild(this._spParam);
@@ -68,6 +71,19 @@ class PopupStatus_View  {
     static setLvupAfter(data,endCall){
         this._listWindow.setLvupAfter(data);
         this._listWindow.setHandler('ok',     () => {if (endCall) endCall() });
+    }
+
+    static setSelectData(data,okCall,cancelCall){
+        this._listWindow.setData(data);
+        this._listWindow.show();
+        this._listWindow.activate();
+        this._listWindow.selectLast();
+        this._listWindow.setHandler('ok',     () => {if (okCall) okCall() });
+        this._listWindow.setHandler('cancel',     () => {if (cancelCall) cancelCall() });
+    }
+
+    static selectedData(){
+        return this._listWindow.item();
     }
 
     static changeActor(value){
@@ -157,90 +173,13 @@ class PopupStatus_View  {
         this._magicCategory.hide();
         this._magicList.hide();
     }
-    
 
-    createKeyMapWindow(){
-        this._keyMapWindow = new Window_KeyMap();
-        if (!$gameDefine.mobileMode){
-            this.addChild(this._keyMapWindow);
-            this._keyMapWindow.refresh('PopupStatus');
-        }
-    }
-
-    createArrows(){
-    }
-
-    callPageArrow(plus){
-        SoundManager.playCursor();
-        if( plus > 0){
-            this._statusWindow.cursorRight();
-        } else{
-            this._statusWindow.cursorLeft();
-        }
-        this._statusWindow.refresh();
-        this.refreshArrows();
-    }
-
-    refreshArrows(){
-        this._statusWindow.refresh();
-        this._categoryRightButton.visible = (this._statusWindow.index() != 0) && (this._statusWindow._data.length != 1);
-        this._categoryLeftButton.visible = (this._statusWindow.index() != (this._statusWindow._data.length-1)) && (this._statusWindow._data.length != 1);
-    }
-
-    start(){
-        super.start();
-        this.setCommand(PopupStatusCommand.Start);
-    }
-
-    setActorData(data){
-        this._listWindow.setData(data);
-        this._listWindow.activate();
-        this._listWindow.selectLast();
-    }
-
-    changeSelectIndex(){
-    }
-
-
-    selectActor(){
-        this.setCommand(PopupStatusCommand.Select);
-        this.setCommand(PopupStatusCommand.Refresh);
-        this._listWindow.activate();
-    }
-
-    currentActorId(){
-        return this._listWindow.item().actorId();
-    }
-
-    update(){
-        super.update();
-    }
-
-    swipHelp(moveX){
-        this._statusWindow.swipHelp(moveX);
-    }
-
-    swipReset(){
-        this._statusWindow.swipReset();
-    }
-
-    swipEndHelp(moveX){
-        this._statusWindow.swipEndHelp(moveX);
-    }
-
-    commandNextHelpStatus(cursor){
-        SoundManager.playCursor();
-        if( cursor > 0){
-            this._statusWindow.cursorRight();
-        } else{
-            this._statusWindow.cursorLeft();
-        }
-        this._statusWindow.refresh();
-        this.refreshArrows();
-    }
-
-    refresh(param){
-        this._listWindow.selectActorId(param.selectActorId);
+    static remove() {
+        const _scene = SceneManager._scene;
+        _scene.removeChild(this._listWindow);
+        _scene.removeChild(this._magicCategory);
+        _scene.removeChild(this._magicList);
+        _scene.removeChild(this._spParam);
     }
 }
 

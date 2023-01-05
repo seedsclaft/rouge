@@ -78,6 +78,8 @@ class Tactics_Presenter extends Presenter_Base{
     }
 
     commandStart(){
+        AudioManager.playBgm(this._model.stageBgm());
+        this._view.setBackGround(this._model.backGround());
         this._view.setEnergyData(this._model.energy());
         this._view.setTurnInfoData(this._model.turnInfo());
         const _speiteList = this._model.actorSpriteList();
@@ -120,22 +122,16 @@ class Tactics_Presenter extends Presenter_Base{
         const _actorId = this._view.selectActorId();
         const _category = this._view.selectCategory();
         const _isSelected = this._model.isSelectedActor(_category,_actorId);
+        
         if (_isSelected){
-            this._model.removeSelectData(_category,_actorId);
         } else{
-            this._model.addSelectData(_category,_actorId);
-            if (_category == "search"){
-                const _serach = this._view.selectSearch();
-                this._model.setSearchId(_serach.id);
-            }
         }
-        if (_category == "alchemy"){
-            const _alchemyParam = this._model.alchemyParam(_category);
-            this._view.setAlchemyParam(_alchemyParam);
-        }
+
+        
         const _needEnergy = this._model.needTrainEnergy(_category,_actorId);
         if (!_isSelected){
             if (this._model.energy() >= _needEnergy){
+                this._model.addSelectData(_category,_actorId);
                 this._model.loseEnergy(_needEnergy);
                 this._view.changeEnergyValue(_needEnergy * -1);
                 this._view.commandSelectOk(_isSelected,true);
@@ -143,9 +139,18 @@ class Tactics_Presenter extends Presenter_Base{
                 this._view.commandSelectOk(_isSelected,false);
             }
         } else{
+            this._model.removeSelectData(_category,_actorId);
             this._model.gainEnergy(_needEnergy);
             this._view.changeEnergyValue(_needEnergy);  
             this._view.commandSelectOk(_isSelected,true);
+        }
+        if (_category == "search"){
+            const _serach = this._view.selectSearch();
+            this._model.setSearchId(_serach.id);
+        }
+        if (_category == "alchemy"){
+            const _alchemyParam = this._model.alchemyParam(_category);
+            this._view.setAlchemyParam(_alchemyParam);
         }
     }
 

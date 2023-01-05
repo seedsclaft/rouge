@@ -53,7 +53,6 @@ class Title_View extends Scene_Base{
         BackGroundManager.setWeather("menu");
         //gsap.to(BackGroundManager._backGroundView._backSprite2, 4, {pixi:{opacity:128},repeat:-1,yoyo:true,ease: Expo.easeIn, });
         gsap.to(BackGroundManager._backGroundView._backSprite2, 16, {pixi:{opacity:128,scaleY:1.01},repeat:-1,yoyo:true,ease: RoughEase.ease.config({ template:  Power0.easeNone, strength: 1, points: 20, taper: "none", randomize: true, clamp: false}), });
-    
     }
     
     waitResourceLoad(){
@@ -142,6 +141,8 @@ class Title_View extends Scene_Base{
         this._commandWindow.hide();
         this._versionSprite.hide();
         SceneManager.goto(Menu_View);
+        
+        gsap.killTweensOf(BackGroundManager._backGroundView._backSprite2);
     }
 
     commandContinue(){

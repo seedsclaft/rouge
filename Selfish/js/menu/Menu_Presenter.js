@@ -26,6 +26,12 @@ class Menu_Presenter extends Presenter_Base{
             return this.commandStart();
             case MenuCommand.SelectStage:
             return this.commandSelectStage();
+            case MenuCommand.ActorSelect:
+            return this.commandActorSelect();
+            case MenuCommand.ActorSelectEnd:
+            return this.commandActorSelectEnd();
+            case MenuCommand.StageStart:
+            return this.commandStageStart();
         }
         this._view.clearCommand();
     }
@@ -35,14 +41,29 @@ class Menu_Presenter extends Presenter_Base{
         this._view.setBackGround(this._model.backGround());
         this._view.setStageData(this._model.stageData());
         this._view.commandStart();
+        FilterMzUtility.addFilter(FilterType.OldFilm);
     }
 
     commandSelectStage(){
         const _stage = this._view.selectStage();
         this._model.selectStage(_stage);
-        
-        SceneManager.goto(Tactics_View);
-        FilterMzUtility.removeFilter(FilterType.OldFilm);
+        this._view.commandSelectStage();
     }
 
+    commandActorSelect(){
+        FilterMzUtility.removeFilter(FilterType.OldFilm);
+        const _actorList = this._model.actorList();
+        this._view.commandActorSelect(_actorList);
+    }
+
+    commandActorSelectEnd(){
+        const _actor = this._view.selectedActor();
+        this._model.setStageActor(_actor);
+        const _stage = this._view.selectStage();
+        this._view.commandActorSelectEnd(_actor.name(),TextManager.getText(_stage.titleTextId));
+    }
+
+    commandStageStart(){
+        SceneManager.goto(Tactics_View);
+    }
 }

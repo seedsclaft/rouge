@@ -2,9 +2,9 @@ class Tactics_Model {
     constructor() {
         this._selectedData = $gameStage.selectedData();
 
-        const _actorList = $gameParty.members();
+        let _actorList = $gameParty.members();
+        _actorList = _.sortBy(_actorList,(a) => a.selectedIndex());
         let _position = $gameTacticsActorPosition.data();
-        _position = _.shuffle( _position );
         _actorList.forEach((actor,index) => {
             actor.setPosition(_position[index]);
         });
@@ -30,6 +30,14 @@ class Tactics_Model {
         });
 
         this._usedAlchemyParam = [0,0,0,0,0];
+    }
+
+    backGround(){
+        return ["stage1",null];
+    }
+
+    stageBgm(){
+        return $gameBGM.getBgm('stage1');
     }
 
     actorList(){

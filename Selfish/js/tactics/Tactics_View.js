@@ -39,6 +39,11 @@ class Tactics_View extends Scene_Base {
         */
     }
 
+    setBackGround(backGround){
+        BackGroundManager.changeBackGround(backGround[0],backGround[1]);
+        BackGroundManager.resetPosition();
+    }
+    
     createObjectAfter(){
 
         this.createHelpWindow();
@@ -448,6 +453,16 @@ class Tactics_View extends Scene_Base {
 
     refresh(param){
         this._listWindow.selectActorId(param.selectActorId);
+    }
+
+    terminate(){
+        super.terminate();
+        
+        EventManager.remove();
+        BackGroundManager.remove();
+        PopupStatus_View.remove();
+        TipsManager.remove();
+        this.destroy();
     }
 }
 

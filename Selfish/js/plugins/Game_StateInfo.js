@@ -118,26 +118,28 @@ const StateType = {
     PHARMACOLOGY :            "PHArmacology",   //回復効果
 
     SHIELD :  "Shield", // ダメージシールド
-    DAMAGE_CUT :              "DamageCut",      //ダメージ減算
+    //DAMAGE_CUT :              "DamageCut",      //ダメージ減算
     CHAIN_SELF :              "ChainSelf",      //拘束（する方）
     CHAIN_TARGET :            "ChainTarget",    //拘束（される方）
     REACT :                   "ReAct",          //リアクト
-    BARRIER :                   "Barrier",          //ステートバリア
-    DAMAGE_DRAIN :                  "DamageDrain",         //ドレイン
+    BARRIER :                 "Barrier",          //ステートバリア
+    DAMAGE_DRAIN :            "DamageDrain",         //ドレイン
     ACCEL :                   "Accel",          //アクセル
-    BERSERK :                   "Berserk",          //バーサーク
+    BERSERK :                 "Berserk",          //バーサーク
     PENETRATE :               "Penetrate",      //貫通 
     REDAMAGE :                "ReDamage",       //反ダメージ
     COUNTER :                 "Counter",        //カウンター
     ATTACK_LENGHT :           "AttackLength",   //攻撃回数加算
-    ANTI_VACCINATION :           "AntiVaccination",   //状態異常特攻
+    ANTI_VACCINATION :        "AntiVaccination",   //状態異常特攻
     REGENE_HP :               "RegeneHp",       //リジェネHp
+    DRAIN_HEAL :              "DrainHeal",   //ドレインヒール
+    MP_DAMAGE :               "MpDamage",       //追加MPダメージ
+    HP_CONSUME :               "HpConsume",       //Hp消費
     /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)
     SHADOW :                  "shadow",         //狙われ率(減少)
     SALT_TARGET :             "salttarget",     //挑発
-    MP_DAMAGE :               "mpdamage",       //追加MPダメージ
     INVISIBLE :               "invisible",      //無敵
 
     CHARGE :                  "charge",         //チャージ
@@ -147,7 +149,6 @@ const StateType = {
     SKILL_EXP :               "skillexp",       //スキル経験値アップ(未使用)
 
     DAMAGE_BLOCK :            "damageblock",    //ダメージブロック
-    DRAIN_HEALATK :           "drainhealatk",   //ドレインヒール(攻撃付与)
     HOLD_ON :                 "holdon",         //手加減
     SUBSTITUTE :              "substitute",     //かばう
     RESIST_STATE :            "resiststate",    //ステート無効

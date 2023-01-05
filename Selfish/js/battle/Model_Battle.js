@@ -596,8 +596,8 @@ class Model_Battle extends Model_Base {
         const action = this.currentAction();
     
         let plusValue = 0;
-        if (subject.isStateAffected($gameStateInfo.getStateId(StateType.DRAIN_HEALATK))){
-            plusValue += Math.round(action.resultHpDamageValue() * subject.getStateEffect($gameStateInfo.getStateId(StateType.DRAIN_HEALATK)));
+        if (action.isContainsState($gameStateInfo.getStateId(StateType.DRAIN_HEAL))){
+            plusValue += Math.round(action.resultHpDamageValue() * action.item().stateEffect * 0.01);
         }
         if (subject.isStateAffected($gameStateInfo.getStateId(StateType.REGENE_HP))){
             plusValue += Math.round(subject.getStateEffect($gameStateInfo.getStateId(StateType.REGENE_HP)));

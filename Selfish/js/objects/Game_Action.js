@@ -554,11 +554,16 @@ Game_Action.prototype.makeResult = function(target,lastTarget) {
                     result.weakness = true;
                 }
                 // ダメージシールド
-                let shieldValue = target.friendsUnit().shieldEffectValue();
+                let damageShieldId = $gameStateInfo.getStateId(StateType.SHIELD);
+                let shieldValue = target.getStateEffectTotal(damageShieldId);
                 if (shieldValue > 0){
-                    target.friendsUnit().eraseShield(shieldValue,result.hpDamage + target.def);
+                    let state = target.getStateData(damageShieldId);
+                    state._effect -= result.hpDamage;
                     result.hpDamage -= shieldValue;
                     result.hpDamage = Math.max(0,result.hpDamage);
+                    if (state._effect <= 0){
+                        result.target.removeState(damageShieldId);
+                    }
                 }
                 // 手加減
                 this.makeResultHoldOn(result);
@@ -764,6 +769,15 @@ Game_Action.prototype.makeHpDamage = function(result, target, value,lastTarget) 
                 result.hpDamage = Math.round( result.hpDamage * this.subject().getStateEffectTotal(_antiVaccinationId) );
                 break;
             }
+        }
+    }
+    // Hp消費
+    const _hpConsumeId = $gameStateInfo.getStateId(StateType.HP_CONSUME);
+    if (value > 0 && this.isContainsState(_hpConsumeId)){
+        const consume = this.item().stateEffect;
+        if (this.subject().hp > consume){
+            this.subject().gainHp(consume * -1);
+            result.hpDamage += consume;
         }
     }
 };
@@ -976,6 +990,14 @@ Game_Action.prototype.gainDrainedHp = function(targetHp,value) {
         const _effect = this.subject().getStateEffectTotal(_damageDrainId);
         this.subject().gainHp(Math.floor(drainValue * 0.01 * _effect * (this.subject().hrg + 1.0)));
     }
+    
+    /*
+    const _drainHealId = $gameStateInfo.getStateId(StateType.DRAIN_HEAL);
+    if (this.isContainsState(_drainHealId)){
+        const _effect = this.item().stateEffect;
+        this.subject().gainHp(Math.floor(drainValue * 0.01 * _effect * (this.subject().hrg + 1.0)));
+    }
+    */
     //if (this.isDrain()) {
 
         /*
@@ -1275,9 +1297,10 @@ Game_Action.prototype.popupData = function(actor) {
             });
         }
         // MPダメージ
-        var mpDamageId = $gameStateInfo.getStateId(StateType.MP_DAMAGE);
-        if (this.isContainsState(mpDamageId)){
-            popup.push(new PopupTextData(result.target,PopupTextType.Text,TextManager.getStateName(mpDamageId) + ' ' + data.stateEffect + TextManager.getStateMessage3(mpDamageId)));
+        const _mpDamageId = $gameStateInfo.getStateId(StateType.MP_DAMAGE);
+        if (this.isContainsState(_mpDamageId)){
+            popup.push(new PopupTextData(result.target,PopupTextType.Text,TextManager.getStateName(_mpDamageId) + ' ' + data.stateEffect + TextManager.getStateMessage3(_mpDamageId)));
+            
         }
         // 手加減発動
         if (result.holdon){

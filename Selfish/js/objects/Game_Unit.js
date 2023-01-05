@@ -152,35 +152,6 @@ Game_Unit.prototype.getAutoTargetIndex = function() {
     return _.sortBy(this.aliveMembers(),(target) => target.hp)[0].index();
 }
 
-Game_Unit.prototype.shieldEffectValue = function() {
-    const _stateId = $gameStateInfo.getStateId(StateType.SHIELD);
-    const _member = this.aliveMembers().filter(a => a.isStateAffected(_stateId));
-    let value = 0;
-    if (_member.length > 0){
-        _member.forEach(member => {
-            let effect = member.getStateEffect(_stateId);
-            if (value < effect){
-                value = effect;
-            }
-        });
-    }
-    return value;
-}
-
-Game_Unit.prototype.eraseShield = function(value,minus) {
-    const _stateId = $gameStateInfo.getStateId(StateType.SHIELD);
-    if (minus >= value){
-        this.aliveMembers().forEach(member => {
-            member.removeState(_stateId);
-        });
-    } else{
-        this.aliveMembers().forEach(member => {
-            let stateData = member.getStateData(_stateId);
-            member.updateStateData(_stateId,stateData.turns,value - minus,stateData.passive,stateData.battlerId);
-        });
-    }
-}
-
 //-----------------------------------------------------------------------------
 // Game_Party
 //

@@ -104,7 +104,6 @@ class Strategy_Model {
 
 
 
-        console.log(_searchData)
         let troop = new Game_Troop();
         let troopId = this.makeEncounterTroopId(_searchData.enemyNum,_searchData.enemy);
         troop.setup(troopId,_searchData.lvMin,_searchData.lvMax);

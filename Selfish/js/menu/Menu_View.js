@@ -13,6 +13,8 @@ class Menu_View extends Scene_Base{
     create(){
         super.create();
         BackGroundManager.resetup();
+        PopupStatus_View.resetUp();
+        PopupStatus_View.close();
         this.createHelpWindow();
     
     
@@ -53,7 +55,6 @@ class Menu_View extends Scene_Base{
     setBackGround(backGround){
         BackGroundManager.changeBackGround(backGround[0],backGround[1]);
         BackGroundManager.resetPosition();
-        FilterMzUtility.addFilter(FilterType.OldFilm);
     }
 
     setStageData(data){
@@ -64,6 +65,51 @@ class Menu_View extends Scene_Base{
 
     selectStage(){
         return this._stageList.item();
+    }
+
+    commandSelectStage(){
+        const mainText = TextManager.getText(14020);
+        const text1 = TextManager.getDecideText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:null});
+        _popup.setHandler(text1,'ok',() => {
+            this._stageList.hide();
+            this.setCommand(MenuCommand.ActorSelect);
+        });
+        _popup.open();
+    }
+
+    commandActorSelect(actorList){
+        PopupStatus_View.setSelectData(actorList,
+            () => {
+                PopupStatus_View.close();
+                this.setCommand(MenuCommand.ActorSelectEnd);
+            },
+            () => {
+                FilterMzUtility.addFilter(FilterType.OldFilm);
+                PopupStatus_View.close();
+                this._stageList.activate();
+                this._stageList.show();
+        });
+    }
+
+    selectedActor(){
+        return PopupStatus_View.selectedData();
+    }
+
+    commandActorSelectEnd(actorName,stageName){
+        const mainText = TextManager.getText(14030).replace("/d",actorName).replace("/d2",stageName);
+        const text1 = TextManager.getDecideText();
+        const text2 = TextManager.getCancelText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:null});
+        _popup.setHandler(text1,'ok',() => {
+            this.setCommand(MenuCommand.StageStart);
+        });
+        _popup.setHandler(text2,'cancel',() => {
+            this.setCommand(MenuCommand.ActorSelect);
+        });
+        _popup.open();
     }
 
     createFeatureWindow(){
@@ -91,6 +137,7 @@ class Menu_View extends Scene_Base{
         super.terminate();
         EventManager.remove();
         BackGroundManager.remove();
+        PopupStatus_View.remove();
         TipsManager.remove();
         this.destroy();
     }
@@ -107,5 +154,8 @@ class Menu_View extends Scene_Base{
 
 const MenuCommand = {
     Start : 0,
-    SelectStage : 1
+    SelectStage : 1,
+    ActorSelect : 2,
+    ActorSelectEnd : 3,
+    StageStart : 4
 }
