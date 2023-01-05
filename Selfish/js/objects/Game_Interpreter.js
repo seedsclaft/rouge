@@ -1684,7 +1684,7 @@ Game_Interpreter.prototype.command340 = function() {
 // Open Menu Screen
 Game_Interpreter.prototype.command351 = function() {
     if (!$gameParty.inBattle()) {
-        SceneManager.push(Menu_Scene);
+        SceneManager.push(Menu_View);
         Window_MenuListCommand.initCommandPosition();
     }
     return true;

@@ -1,9 +1,9 @@
-class Presenter_Title extends Presenter_Base{
+class Title_Presenter extends Presenter_Base{
     constructor(view) {
         super();
         this._busy = false;
         this._view = view;
-        this._model = new Model_Title();
+        this._model = new Title_Model();
         this.setEvent();
         //this.start();
     }
@@ -32,8 +32,9 @@ class Presenter_Title extends Presenter_Base{
             return;
         }
         const _currentCommand = this._view._command.pop();
-        console.log(_currentCommand)
         switch (_currentCommand){
+            case TitleCommand.Start:
+            return this.commandStart();
             case TitleCommand.NewGame:
             return this.commandNewGame();
             case TitleCommand.Continue:
@@ -82,6 +83,10 @@ class Presenter_Title extends Presenter_Base{
             return this.commandOutputDeployAll();
         }
         this._view.clearCommand();
+    }
+
+    commandStart(){
+        this._view.setBackGround(this._model.titleBackGround());
     }
 
     commandNewGame(){

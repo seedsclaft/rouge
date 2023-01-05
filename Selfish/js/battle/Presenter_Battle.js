@@ -431,11 +431,6 @@ class Presenter_Battle extends Presenter_Base{
         this.refreshStatus();
         this._view.displayPartyCommand();
         TipsManager.setTips();
-        if ($gameTemp._needDisPlayEffectChange){
-            BackGroundManager.setWeather($gameScreen.backGroundWeather());
-            EventManager.setWeather($gameScreen.eventWeather());
-            $gameTemp._needDisPlayEffectChange = false;
-        }
 
     }
 
@@ -630,7 +625,7 @@ class Presenter_Battle extends Presenter_Base{
     commandMenu(){
         SceneManager.snapForBackground();
         this._model.setBattleCalledMenu(true);
-        SceneManager.push(Menu_Scene);
+        SceneManager.push(Menu_View);
     }
 
     commandSkillOk(){

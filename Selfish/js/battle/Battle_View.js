@@ -994,7 +994,7 @@ class Battle_View extends Scene_Base{
         PopupManager.openBattleLose(() => {
             if (okhundler) okhundler();
         },() => {
-            SceneManager.goto(Title_Scene);
+            SceneManager.goto(Title_View);
         });
     }
 

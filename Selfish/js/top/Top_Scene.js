@@ -33,7 +33,7 @@ class Top_Scene extends Scene_Base{
 
 
     commandGameStart(){
-        SceneManager.goto(Title_Scene);
+        SceneManager.goto(Title_View);
         Window_TitleCommand.initCommandPosition();
     }
 

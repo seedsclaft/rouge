@@ -322,11 +322,11 @@ Scene_Boot.prototype.startNormalGame = function() {
     DataManager.setupNewGame();
     SceneManager.goto(Top_Scene);
     /*
-    SceneManager.goto(Title_Scene);
+    SceneManager.goto(Title_View);
     Window_TitleCommand.initCommandPosition();
     */
 };
 
 Scene_Gameover.prototype.gotoTitle = function() {
-    SceneManager.goto(Title_Scene);
+    SceneManager.goto(Title_View);
 };

@@ -1,5 +1,9 @@
-class Model_Title {
+class Title_Model {
     constructor() {
+    }
+
+    titleBackGround(){
+        return ["title","title2"];
     }
 
     outputDeproy(platform,basePath,targetPath,isWindows){

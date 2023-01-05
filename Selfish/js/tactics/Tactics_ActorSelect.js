@@ -34,9 +34,6 @@ class Tactics_ActorSelect extends Window_Selectable{
         }
     }
 
-    selectLast(){
-        this.selectSymbol(Window_MenuListCommand._lastCommandSymbol);
-    }
 
     update(){
         super.update();

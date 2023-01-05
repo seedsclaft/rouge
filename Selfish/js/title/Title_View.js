@@ -1,20 +1,17 @@
 //-----------------------------------------------------------------------------
-// Title_Scene
+// Title_View
 //
-class Title_Scene extends Scene_Base{
+class Title_View extends Scene_Base{
     constructor(){
         super();
         this._resourceData = null;
-        this._presenter = new Presenter_Title(this);
+        this._presenter = new Title_Presenter(this);
         this._lastLanguage = null;
     }
 
     create(){
         super.create();
         BackGroundManager.resetup();
-        BackGroundManager.changeBackGround("nexfan_01",null);
-        BackGroundManager.resetPosition();
-        BackGroundManager.move(0,-40,-200);
         //BackGroundManager.moveUV(1,-40,-200,false);
         BackGroundManager.clearWeather();
         EventManager.resetup();
@@ -47,6 +44,16 @@ class Title_Scene extends Scene_Base{
         this.playTitleMusic();
         this.startFadeIn(this.fadeSpeed(), false);
         this._commandWindow.activate();
+        this.setCommand(TitleCommand.Start);
+    }
+
+    setBackGround(title){
+        BackGroundManager.changeBackGround(title[0],title[1]);
+        BackGroundManager.resetPosition();
+        BackGroundManager.setWeather("menu");
+        //gsap.to(BackGroundManager._backGroundView._backSprite2, 4, {pixi:{opacity:128},repeat:-1,yoyo:true,ease: Expo.easeIn, });
+        gsap.to(BackGroundManager._backGroundView._backSprite2, 16, {pixi:{opacity:128,scaleY:1.01},repeat:-1,yoyo:true,ease: RoughEase.ease.config({ template:  Power0.easeNone, strength: 1, points: 20, taper: "none", randomize: true, clamp: false}), });
+    
     }
     
     waitResourceLoad(){
@@ -62,8 +69,7 @@ class Title_Scene extends Scene_Base{
     }
 
     createCommandWindow(){
-        const rectData = this.convertRect(0.75, 0.65, 320, 180);
-        this._commandWindow = new Window_TitleCommandList(rectData.x, rectData.y, 320, 180);
+        this._commandWindow = new Title_CommandList(640, 280, 400, 200);
         this._commandWindow.setHandler('newGame',  this.commandNewGame.bind(this));
         this._commandWindow.setHandler('continue', this.commandContinue.bind(this));
         this._commandWindow.setHandler('option', this.commandOptions.bind(this));
@@ -133,10 +139,9 @@ class Title_Scene extends Scene_Base{
     commandNewGame(){
         SoundManager.playOk();
         DataManager.setupNewGame();
-        $gameStage.initialize(1);
         this._commandWindow.hide();
         this._versionSprite.hide();
-        SceneManager.goto(Tactics_View);
+        SceneManager.goto(Menu_View);
     }
 
     commandContinue(){
@@ -166,7 +171,7 @@ class Title_Scene extends Scene_Base{
             this.setMenuSprite("");
             const lastLanguage = $dataOption.getUserData('language');
             if (lastLanguage != this._lastLanguage){
-                SceneManager.goto(Title_Scene);
+                SceneManager.goto(Title_View);
             }
         },5);
         if (this._keyMapWindow){
@@ -453,9 +458,10 @@ class Title_Scene extends Scene_Base{
 }
 
 const TitleCommand = {
-    NewGame : 0,
-    Continue : 1,
-    Debug : 2,
+    Start : 0,
+    NewGame : 1,
+    Continue : 2,
+    Debug : 3,
     OutputEventFile : 11,
     OutputAndroid : 12,
     VersionCheck : 13,

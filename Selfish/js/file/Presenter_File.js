@@ -44,7 +44,7 @@ class Presenter_File extends Presenter_Base {
     }
 
     async commandLoad(){
-        if (SceneManager._previousClass.name == 'Title_Scene'){
+        if (SceneManager._previousClass.name == 'Title_View'){
             BackGroundManager.changeBackGround(null,null);
         }
         

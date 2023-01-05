@@ -116,12 +116,12 @@ class FilterMzUtility {
 
     static oldFilmFilter(isBack){
         let oldFilmFilter = new PIXI.filters.OldFilmFilter();
-        oldFilmFilter.sepia = 0.05;
-        oldFilmFilter.noise = 0.5;
-        oldFilmFilter.scratchDensity = 0;
+        oldFilmFilter.sepia = 0.0;
+        oldFilmFilter.noise = 0.3;
+        oldFilmFilter.scratchDensity = 0.2;
         oldFilmFilter.noiseSize = 1;
         oldFilmFilter.seed = 1;
-        oldFilmFilter.vignettingBlur = 0.5;
+        oldFilmFilter.vignettingBlur = 0;
         let layer;
         if (isBack){
             layer = BackGroundManager._backGroundView._layer;

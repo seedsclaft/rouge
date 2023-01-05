@@ -96,7 +96,6 @@ class Tactics_CommandList extends Window_HorzCommand{
     }
 
     selectLast(){
-        this.selectSymbol(Window_MenuListCommand._lastCommandSymbol);
     }
 
     update(){

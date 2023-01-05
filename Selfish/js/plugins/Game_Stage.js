@@ -15,6 +15,13 @@
  * @type number
  * @default 0
  * 
+ * @param titleTextId
+ * @type number
+ * @default 0
+ * 
+ * @param description
+ * @type multiline_string
+ * 
  * @param turns
  * @type number
  * @default 0
@@ -38,6 +45,8 @@ Game_StageData.prototype.initialize = function() {
     let list = [];
     JSON.parse(this._data.StageDataList).forEach(data => {
         data = JSON.parse(data);
+        data.titleTextId = Number(data.titleTextId);
+        data.description = String(data.description);
         data.id = Number(data.id);
         data.turns = Number(data.turns);
         data.bossId = Number(data.bossId);

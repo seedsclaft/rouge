@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------------
-// Window_TitleCommandList
+// Title_CommandList
 //
 
-class Window_TitleCommandList extends Window_Command {
+class Title_CommandList extends Window_Command {
     constructor(x,y,width,height){
         super(new Rectangle( x,y,width,height ));
         this.x = x;
@@ -19,7 +19,11 @@ class Window_TitleCommandList extends Window_Command {
     }
 
     itemTextAlign(){
-        return 'center';
+        return 'left';
+    }
+
+    lineHeight(){
+        return 48;
     }
 
     makeCommandList(){
@@ -45,30 +49,17 @@ class Window_TitleCommandList extends Window_Command {
         }
     }
 
-    itemTextAlign(){
-        return 'left';
-    }
-
-    itemLineRect(index){
-        const rect = this.itemRectWithPadding(index);
-        const padding = (rect.height - this.lineHeight()) / 2;
-        rect.x += padding * 12;
-        rect.y += padding;
-        rect.height -= padding * 2;
-        return rect;
-    }
-
     drawItem(index){
         const rect = this.itemLineRect(index);
         const align = this.itemTextAlign();
         this.resetTextColor();
-        //this.setFlatMode();
         if (this.currentData() && this.currentData().symbol == this.commandSymbol(index)){
-            this.drawBackSkewX(rect.x ,rect.y ,rect.width ,rect.height,this.cursorColor(),128);
+            this.drawBackFadeRight(rect.x ,rect.y + 4 ,96 ,40,this.cursorColor(),128);
+            this.drawBack(rect.x + 96 ,rect.y + 4 ,rect.width -96 ,40,this.cursorColor(),128);
             this.resetTextColor();
         }
         this.changePaintOpacity(this.isCommandEnabled(index));
-        this.drawText(this.commandName(index), rect.x + 24 + index * -12, rect.y, rect.width, align);
+        this.drawText(this.commandName(index), rect.x + 64, rect.y, rect.width, align);
     }
 
     update(){
@@ -79,7 +70,6 @@ class Window_TitleCommandList extends Window_Command {
         }
     }
 
-    
     _updateCursor(){
 
     }
