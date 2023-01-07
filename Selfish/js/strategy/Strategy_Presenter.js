@@ -144,14 +144,19 @@ class Strategy_Presenter extends Presenter_Base{
             this._model.magicRecovery();
             this._view.commandMagicStart(_recoveryName);
         } else{
-            this._model.turnend();
-            SceneManager.goto(Tactics_View);
+            this.commandMagicResult();
         }
     }
 
     commandMagicResult(){
         this._model.turnend();
-        SceneManager.goto(Tactics_View);
+        const _event = this._model.eventCheck();
+        if (_event){
+            EventManager.setup(_event);
+            EventManager.resetup();
+        } else{
+            SceneManager.goto(Tactics_View);
+        }
     }
 
     commandRefresh(){

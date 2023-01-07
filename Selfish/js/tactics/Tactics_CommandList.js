@@ -4,6 +4,7 @@ class Tactics_CommandList extends Window_HorzCommand{
     }
 
     initialize(x, y, width, commandData){
+
         this._commandData = commandData;
         super.initialize(new Rectangle( x, y ,width , commandData.length * 40));
         this._cursorSprite.opacity = 0;
@@ -11,6 +12,14 @@ class Tactics_CommandList extends Window_HorzCommand{
         this._lastIndex = this.index();
         this.selectLast();
         this.refresh();
+        
+        let commandListBack = new Sprite();
+        commandListBack.bitmap = ImageManager.loadSystem("textplateC");
+        commandListBack.x = 48;
+        commandListBack.y = 416;
+        commandListBack.scale.x = 1.2;
+        commandListBack.scale.y = 1.2;
+        this.addChild(commandListBack);
     }
 
     currentCommand() {

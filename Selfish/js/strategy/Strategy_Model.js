@@ -3,6 +3,19 @@ class Strategy_Model {
         this._commandIndex = 0;
     }
 
+    eventCheck(){
+        const _stageData = $gameStageData.stageData($gameStage._stageId);
+        if (_stageData){
+            const _turn = (_stageData.turns) - $gameStage._turns;
+            const _timing = 1;
+            const event = _stageData.eventData.find(a => a.turns == _turn && a.timing == _timing);
+            if (event){
+                return event.eventName;
+            }
+        }
+        return null;
+    }
+
     currentCommand(){
         return this.commandList()[this._commandIndex];
     }
@@ -105,27 +118,36 @@ class Strategy_Model {
 
 
         let troop = new Game_Troop();
-        let troopId = this.makeEncounterTroopId(_searchData.enemyNum,_searchData.enemy);
-        troop.setup(troopId,_searchData.lvMin,_searchData.lvMax);
-        troop.setupBoss(1,_searchData.bossEnemy,_searchData.bossLv);
+        this.makeEncounterTroopId(_searchData.enemyNum);
+        troop.setup(_searchData.enemyNum,$gameParty.enemyRank(),$gameParty.enemyRank()+2);
+        troop.setupBoss(6,_searchData.bossEnemy,$gameParty.enemyRank()+_searchData.bossLv);
         $gameTroop = troop;
     }
 
-    makeEncounterTroopId(enemyNum,enemyList) {
+    makeEncounterTroopId(enemyNum) {
+        let enemyList = []
+        for (let i = 1;i < 21;i++){
+            enemyList.push(i);
+        }
         let troopData = $dataTroops[enemyNum];
         let enemyId = 0;
-        for (var i = 0; i < enemyNum; i++) {
+        for (let i = 0; i < enemyNum; i++) {
             enemyId = Math.floor(( Math.random() * enemyList.length));
             troopData.members[i].enemyId = enemyList[enemyId];
         }
-        
-        return enemyNum;
     };
 
     magicRecovery(){
         const _command = this.currentCommand();
         const _selectedData = $gameStage.selectedData()[_command.key];
-        $gameParty.gainGold(_selectedData.length * 200);
+        let value = 0;
+        _selectedData.forEach(select => {
+            const a = $gameActors.actor( select );
+            console.log(select)
+            value += eval( $gameDefine.data().MagicRecover);
+        });
+        console.log($gameDefine.data().MagicRecover)
+        $gameParty.gainGold(value);
     }
 
     magicRecoveryNameList(){

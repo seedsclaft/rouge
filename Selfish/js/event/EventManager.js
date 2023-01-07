@@ -101,7 +101,6 @@ EventManager.setupEvent = function(event,endCall) {
 }
 
 EventManager.start = async function(event) {
-    Debug.log(event)
     this._label = null;
     this._messageName = {};
     this._skipEnable = (event.name && !event.name.includes('common'));
@@ -118,13 +117,15 @@ EventManager.start = async function(event) {
         Presenter_Loading.open();
     }
     this._interpreter.setup(event.list);
-    this._bgmLoader.setCommand(event.list);
-    this._pictureLoader.setCommand(event.list);
+    //this._bgmLoader.setCommand(event.list);
+    //this._pictureLoader.setCommand(event.list);
+    /*
     if (event && event.name && !event.name.includes('common')){
         await Promise.all(
             [this._bgmLoader.loadBgmFirst(),this._pictureLoader.loadPictureFirst()]
         )
     }
+    */
     if (this._skipEnable){
         Presenter_Loading.close();
     }
@@ -339,11 +340,6 @@ EventManager.nextStagebusy = function() {
 EventManager.update = function() {
     if (this._interpreter == null){
         return;
-    }
-    if (this._quizEvent && this._quizstate == 2){
-        if ($gameTimer._frames == 0){
-            this.skipQuiz();
-        }
     }
     if (this._scene != SceneManager._scene){
         //return;

@@ -46,9 +46,6 @@ class PopupStatus_View  {
         if (this._magicList.parent){
             this._magicList.parent.removeChild(this._magicList);
         }
-        console.log(this._listWindow)
-        console.log(this._listWindow.parent)
-        console.log(SceneManager._scene)
         SceneManager._scene.addChild(this._listWindow);
         SceneManager._scene.addChild(this._magicCategory);
         SceneManager._scene.addChild(this._spParam);
@@ -78,7 +75,7 @@ class PopupStatus_View  {
         this._listWindow.show();
         this._listWindow.activate();
         this._listWindow.selectLast();
-        this._listWindow.setHandler('ok',     () => {if (okCall) okCall() });
+        this._listWindow.setHandler('ok',     () => {if (okCall) okCall(this.selectedData()) });
         this._listWindow.setHandler('cancel',     () => {if (cancelCall) cancelCall() });
     }
 

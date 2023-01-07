@@ -147,9 +147,7 @@ class Title_View extends Scene_Base{
 
     commandContinue(){
         this._commandWindow.close();
-        DataManager.loadGame(0)
-            .then(() => this.onLoadSuccess())
-            .catch(() => this.onLoadFailure());
+        SceneManager.push(Scene_Load);
     }
 
     onLoadSuccess(){

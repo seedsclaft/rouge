@@ -161,7 +161,6 @@ DataManager.createSkillDataPlus = function() {
                 if (element.repeatPlus){
                     element.repeats += element.repeatPlus;
                 }
-                element.chargeTurn = json.chargeTurn ? Number(json.chargeTurn) : 0;
                 element.range = json.range != null ? Number(json.range) : null;
                 element.line = json.line != null ? Boolean(json.line == 1) : false;
             }
@@ -435,6 +434,21 @@ DataManager.createGameObjects = function() {
     $gameStage = new Game_Stage();
 };
 
+DataManager.extractSaveContents = function(contents) {
+    $gameSystem = contents.system;
+    $gameScreen = contents.screen;
+    $gameTimer = contents.timer;
+    $gameSwitches = contents.switches;
+    $gameVariables = contents.variables;
+    $gameSelfSwitches = contents.selfSwitches;
+    $gameActors = contents.actors;
+    $gameParty = contents.party;
+    $gameMap = contents.map;
+    $gamePlayer = contents.player;
+    $gameStage = contents.stage;
+};
+
+
 DataManager.setupBattleTest = function() {
     this.createGameObjects();
     $gameParty.setupBattleTest();
@@ -476,6 +490,7 @@ DataManager.makeSaveContents = function() {
     contents.party        = $gameParty;
     contents.map          = $gameMap;
     contents.player       = $gamePlayer;
+    contents.stage        = $gameStage;
     //contents.troop        = $gameTroop;
     contents.saveImage    = CriateSpriteManager._saveImage;
     return contents;

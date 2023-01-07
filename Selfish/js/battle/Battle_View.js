@@ -28,6 +28,10 @@ class Battle_View extends Scene_Base{
         return true;
     }
 
+    isGuard(){
+        return Input.isPressed("cancel");
+    }
+
     start(){
         super.start();
         this.setCommand({command:BattleCommand.Start});
@@ -299,6 +303,10 @@ class Battle_View extends Scene_Base{
         if (this._checkedActive){
             this._checkedActive = false;
             this.setCommand({command: BattleCommand.CheckActive});
+        }
+        if (this._battleEnd && Input.isTriggered("ok")){
+            this._battleEnd = false;
+            this.setCommand({command: BattleCommand.BattleEnd});
         }
         super.update();
         if (this.animationEnd() && this._checkedAnimation){
@@ -841,10 +849,8 @@ class Battle_View extends Scene_Base{
     createEnemyWindow(){
     }
 
-    async processVictory(){
-        let levelup = new Sprite_Levelup();
-        this.addChild(levelup);
-        await levelup.setup(LevelUpType.Victory);
+    processVictory(){
+        this._battleEnd = true;
     }
 
     passiveSkillsStatePopup(battlers){
@@ -1018,7 +1024,7 @@ class Battle_View extends Scene_Base{
         this.addChild(this._dockMenu);
         this._dockMenu.hide();
     }
-
+/*
     terminate(){
         super.terminate();
         this.clearAnimation();
@@ -1070,6 +1076,7 @@ class Battle_View extends Scene_Base{
         TipsManager.remove();
         this.destroy();
     }
+    */
 
     async newRecord(recordData){
         let levelup = new Sprite_Levelup();
@@ -1095,6 +1102,7 @@ const BattleCommand = {
     SelectSkill : 110,
     Action : 111,
     ActionEnd: 112,
+    BattleEnd : 200,
     MENU : 1,
     SkillOk : 7,
     Ready : 11,

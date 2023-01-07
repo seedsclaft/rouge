@@ -569,6 +569,7 @@ StorageManager.jsonToObject = function(json) {
     return new Promise((resolve, reject) => {
         try {
             const object = JsonEx.parse(json);
+            console.log(object)
             resolve(object);
         } catch (e) {
             reject(e);

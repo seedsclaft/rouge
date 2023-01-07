@@ -62,6 +62,8 @@ class Presenter_Battle extends Presenter_Base{
             return this.commandAction(_currentCommand.isEnemy);
             case BattleCommand.ActionEnd:
             return this.commandActionEnd();
+            case BattleCommand.BattleEnd:
+            return this.commandBattleEnd();
             /*
             case BattleCommand.MENU:
             return this.commandMenu();
@@ -81,6 +83,7 @@ class Presenter_Battle extends Presenter_Base{
         }
         this._view.clearCommand();
     }
+
 
 
     commandStart(){
@@ -108,8 +111,28 @@ class Presenter_Battle extends Presenter_Base{
     }
 
 
+    updateGuardState(isGuarding){
+        if (!this._isPressed){
+            if (isGuarding){
+                SoundManager.playGuard();
+                this._model.addGuardState();
+                this._isPressed = isGuarding;
+            }
+        }
+        if (isGuarding) {
+            if (!this._isPressed) {
+                SoundManager.playGuard();
+                this._model.addGuardState();
+            }
+        } else {
+            this._model.eraseGuardState();
+        }
+        this._isPressed = isGuarding;
+    }
+    
     commandCheckActive(){
-        const _actionBattler = this._model.updateApGain();
+        const _isGuard = this._view.isGuard();
+        const _actionBattler = this._model.updateApGain(_isGuard);
         this._view.commandCheckActive(_actionBattler);
         const _bindedBattler = this._model.bindedBattlers();
         this._view.bindDamage(_bindedBattler);
@@ -417,6 +440,17 @@ class Presenter_Battle extends Presenter_Base{
         }
     }
 
+    commandBattleEnd(){
+        if (DataManager.isBattleTest()){
+            return;
+        }
+        this._view.clearLog();
+        $gameParty.resetBattleParameter();
+        $gameTroop.clear();
+
+        SceneManager.push(Strategy_View);
+    }
+    
     commandPreReady(){
         const prereadyEvent = this._model.prereadyEvent();
         if (!prereadyEvent){
@@ -485,11 +519,7 @@ class Presenter_Battle extends Presenter_Base{
             return;
         }
         if (Input.isTriggered('ok') || Input.isTriggered('cancel') || TouchInput.isTriggered()){
-            this._view.clearLog();
-            $gameParty.resetBattleParameter();
-            $gameTroop.clear();
 
-            SceneManager.push(Strategy_View);
         }
     }
 
@@ -522,7 +552,7 @@ class Presenter_Battle extends Presenter_Base{
     async victoryAction(){
         this._model.processVictory();
         // 勝利演出
-        await this._view.processVictory();
+        this._view.processVictory();
         this.refreshStatus();
         this.processVictory();
     }

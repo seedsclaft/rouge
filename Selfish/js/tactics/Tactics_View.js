@@ -6,7 +6,6 @@ class Tactics_View extends Scene_Base {
 
     create(){
         BackGroundManager.resetup();
-        EventManager.resetup();
         super.create();
         this.createDisplayObjects();
     }
@@ -43,7 +42,17 @@ class Tactics_View extends Scene_Base {
         BackGroundManager.changeBackGround(backGround[0],backGround[1]);
         BackGroundManager.resetPosition();
     }
-    
+
+    eventStart(){
+        this._commandList.deactivate();
+        this._commandList.hide();
+    }
+
+    eventEnd(){
+        this._commandList.show();
+        this._commandList.activate();
+    }
+
     createObjectAfter(){
 
         this.createHelpWindow();
@@ -113,13 +122,6 @@ class Tactics_View extends Scene_Base {
 
     setCommandData(commandData){
         if (this._commandList != null) return;
-        let commandListBack = new Sprite();
-        commandListBack.bitmap = ImageManager.loadSystem("textplateC");
-        commandListBack.x = 48;
-        commandListBack.y = 416;
-        commandListBack.scale.x = 1.2;
-        commandListBack.scale.y = 1.2;
-        this.addChild(commandListBack);
         this._commandList = new Tactics_CommandList(144,384,680,commandData);
         commandData.forEach((command,index) => {
             this._commandList.setHandler(command.key, this.commandDecide.bind(this,index));
@@ -429,6 +431,9 @@ class Tactics_View extends Scene_Base {
     
     update(){
         super.update();
+        if (Input.isTriggered("menu")){
+            SceneManager.push(Scene_Save);
+        }
     }
 
     swipHelp(moveX){

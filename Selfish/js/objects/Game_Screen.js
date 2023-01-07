@@ -150,3 +150,19 @@ Game_Screen.prototype.updateShake = function() {
         this._shakeDuration--;
     }
 };
+
+Game_Screen.prototype.weatherType = function() {
+    return this._weatherType;
+};
+
+Game_Screen.prototype.weatherPower = function() {
+    return this._weatherPower;
+};
+
+Game_Screen.prototype.clearZoom = function() {
+    this._zoomX = 0;
+    this._zoomY = 0;
+    this._zoomScale = 1;
+    this._zoomScaleTarget = 1;
+    this._zoomDuration = 0;
+};

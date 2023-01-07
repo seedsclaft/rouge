@@ -1015,11 +1015,10 @@ Game_Battler.prototype.addState = function(stateId,turns,effect,passive,battlerI
         if (!this.isStateAffected(stateId,battlerId,slotId)) {
             this.addNewState(stateId);
             this.addNewStateData(stateId,turns,effect,passive,battlerId,slotId);
-            this.refresh();
         } else{
             this.updateStateData(stateId,turns,effect,passive,battlerId,slotId);
-            this.refresh();
         }
+        this.refresh();
         this.resetStateCounts(stateId);
     }
 };
@@ -1338,7 +1337,7 @@ Game_Battler.prototype.onBattleEnd = function() {
     // bindBattlerを初期化
     this._bindBatllers = [];
     // 永続アップを初期化
-    this.clearParamPlus();
+    //this.clearParamPlus();
 };
 
 Game_Battler.prototype.onDamage = function() {
@@ -1407,7 +1406,6 @@ Game_Battler.prototype.performSubstitute = function(target) {
 
 Game_Battler.prototype.performCollapse = function() {
 };
-
 
 Game_Battler.prototype.gainDefineAp = function() {
     //凍結
@@ -2542,7 +2540,6 @@ Game_Actor.prototype.getSkillData = function(skillId,skillLv) {
     return skillId > 0 ? $dataSkills[skillId] : null;
 }
 
-
 //-----------------------------------------------------------------------------
 // Game_Enemy
 //
@@ -2611,6 +2608,11 @@ Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel,line) {
         }
     });
     this.resetAp();
+    this.randApParam();
+};
+
+Game_Enemy.prototype.randApParam = function() {
+    this._ap += Math.randomInt(200) - 100;
 };
 
 Game_Enemy.prototype.line = function() {
@@ -3027,30 +3029,15 @@ Game_Enemy.prototype.battlerId = function() {
 }
 
 
-//-----------------------------------------------------------------------------
-// Game_Actors
-//
-// The wrapper class for an actor array.
-
-function Game_Actors() {
-    this.initialize.apply(this, arguments);
-}
-
-Game_Actors.prototype.initialize = function() {
-    this._data = [];
-};
-
-Game_Actors.prototype.actor = function(actorId) {
-    if ($dataActors[actorId]) {
-        if (!this._data[actorId]) {
-            this._data[actorId] = new Game_Actor(actorId);
-        }
-        return this._data[actorId];
-    }
-    return null;
-};
 
 Game_Enemy.prototype.meetsConditionPlus = function(skill) {
+    // 射程外は除外
+    if (skill.line != null){
+        if (skill.range < this.line()){
+            return false
+        }
+    }
+
     // 全員MPがフルの時は打たない
     if (skill.damage.type == 4){
         let isFull = _.every($gameTroop.aliveMembers(), function(enemy) { return enemy.mp == enemy.mmp; });
@@ -3198,3 +3185,26 @@ const ActionConditionType = {
     PartyLv : 5, // EnemyLv
     Switch : 6
 }
+
+//-----------------------------------------------------------------------------
+// Game_Actors
+//
+// The wrapper class for an actor array.
+
+function Game_Actors() {
+    this.initialize.apply(this, arguments);
+}
+
+Game_Actors.prototype.initialize = function() {
+    this._data = [];
+};
+
+Game_Actors.prototype.actor = function(actorId) {
+    if ($dataActors[actorId]) {
+        if (!this._data[actorId]) {
+            this._data[actorId] = new Game_Actor(actorId);
+        }
+        return this._data[actorId];
+    }
+    return null;
+};

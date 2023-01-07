@@ -27,8 +27,10 @@ Game_Action.HITTYPE_PHYSICAL        = 1;
 Game_Action.HITTYPE_MAGICAL         = 2;
 
 Game_Action.prototype.initialize = function(subject, forcing,type) {
-    this._subject = subject;
+    this._subjectActorId = 0;
+    this._subjectEnemyIndex = -1;
     this._forcing = forcing || false;
+    this.setSubject(subject);
     this._type = type;
     this.clear();
 };
@@ -40,8 +42,22 @@ Game_Action.prototype.clear = function() {
     this._counter = false;
 };
 
+Game_Action.prototype.setSubject = function(subject) {
+    if (subject.isActor()) {
+        this._subjectActorId = subject.actorId();
+        this._subjectEnemyIndex = -1;
+    } else {
+        this._subjectEnemyIndex = subject.index();
+        this._subjectActorId = 0;
+    }
+};
+
 Game_Action.prototype.subject = function() {
-    return this._subject;
+    if (this._subjectActorId > 0) {
+        return $gameActors.actor(this._subjectActorId);
+    } else {
+        return $gameTroop.members()[this._subjectEnemyIndex];
+    }
 };
 
 Game_Action.prototype.friendsUnit = function() {
@@ -89,7 +105,7 @@ Game_Action.prototype.isItem = function() {
 };
 
 Game_Action.prototype.numRepeats = function() {
-    var repeats = this.item().repeats;
+    let repeats = this.item().repeats;
     if (this.isAttack()) {
         repeats += this.subject().attackTimesAdd();
     }
@@ -208,7 +224,7 @@ Game_Action.prototype.isMagicSkill = function() {
 };
 
 Game_Action.prototype.decideRandomTarget = function() {
-    var target;
+    let target;
     if (this.isForDeadFriend()) {
         target = this.friendsUnit().randomDeadTarget();
     } else if (this.isForFriend()) {
@@ -260,12 +276,11 @@ Game_Action.prototype.makeTargets = function() {
 };
 
 Game_Action.prototype.repeatTargets = function(targets) {
-    var repeatedTargets = [];
-    var repeats = this.numRepeats();
-    for (var i = 0; i < targets.length; i++) {
-        var target = targets[i];
+    const repeatedTargets = [];
+    const repeats = this.numRepeats();
+    for (const target of targets) {
         if (target) {
-            for (var j = 0; j < repeats; j++) {
+            for (let i = 0; i < repeats; i++) {
                 repeatedTargets.push(target);
             }
         }
@@ -302,7 +317,7 @@ Game_Action.prototype.targetsForOpponents = function() {
     }
 
     if (this.isForRandom()) {
-        for (var i = 0; i < this.numTargets(); i++) {
+        for (let i = 0; i < this.numTargets(); i++) {
             targets.push(unit.randomTarget());
         }
     } else if (this.item().line) {
@@ -384,16 +399,16 @@ Game_Action.prototype.targetsForFriends = function() {
 };
 
 Game_Action.prototype.evaluate = function() {
-    var value = 0;
-    this.itemTargetCandidates().forEach(function(target) {
-        var targetValue = this.evaluateWithTarget(target);
+    let value = 0;
+    for (const target of this.itemTargetCandidates()) {
+        const targetValue = this.evaluateWithTarget(target);
         if (this.isForAll()) {
             value += targetValue;
         } else if (targetValue > value) {
             value = targetValue;
             this._targetIndex = target.index();
         }
-    }, this);
+    }
     value *= this.numRepeats();
     if (value > 0) {
         value += Math.random();
@@ -417,11 +432,11 @@ Game_Action.prototype.itemTargetCandidates = function() {
 
 Game_Action.prototype.evaluateWithTarget = function(target) {
     if (this.isHpEffect()) {
-        var value = this.makeDamageValue(target, false);
+        const value = this.makeDamageValue(target, false);
         if (this.isForOpponent()) {
             return value / Math.max(target.hp, 1);
         } else {
-            var recovery = Math.min(-value, target.mhp - target.hp);
+            const recovery = Math.min(-value, target.mhp - target.hp);
             return recovery / target.mhp;
         }
     }
@@ -504,8 +519,8 @@ Game_Action.prototype.itemEva = function(target) {
 };
 
 Game_Action.prototype.itemCri = function(target) {
-    var value = 0;
-    var critcalStateId = $gameStateInfo.getStateId(StateType.CRITICAL_BUFF_ADD);
+    let value = 0;
+    const critcalStateId = $gameStateInfo.getStateId(StateType.CRITICAL_BUFF_ADD);
     if (this.subject().isStateAffected(critcalStateId)){
         value += this.subject().getStateEffect(critcalStateId) * 0.01;
     }
@@ -549,22 +564,12 @@ Game_Action.prototype.makeResult = function(target,lastTarget) {
             if (this.isHpEffect()) {
                 this.makeHpDamage(result,result.target,value,lastTarget);
                 // 属性判定
-                var elementValue = this.calcElementRate(result.target);
+                let elementValue = this.calcElementRate(result.target);
                 if (elementValue > 1 && result.hpDamage > 0){
                     result.weakness = true;
                 }
                 // ダメージシールド
-                let damageShieldId = $gameStateInfo.getStateId(StateType.SHIELD);
-                let shieldValue = target.getStateEffectTotal(damageShieldId);
-                if (shieldValue > 0){
-                    let state = target.getStateData(damageShieldId);
-                    state._effect -= result.hpDamage;
-                    result.hpDamage -= shieldValue;
-                    result.hpDamage = Math.max(0,result.hpDamage);
-                    if (state._effect <= 0){
-                        result.target.removeState(damageShieldId);
-                    }
-                }
+                this.makeResultShield(result,target);
                 // 手加減
                 this.makeResultHoldOn(result);
                 // 起死回生
@@ -622,7 +627,7 @@ Game_Action.prototype.makeResultTarget = function(result,target) {
     result.target = target;
 
     // かばう人がいる
-    var unit = this.opponentsUnit().aliveMembers();
+    const unit = this.opponentsUnit().aliveMembers();
     unit.forEach(member => {
         if (member != target){
             if (member.isStateAffected($gameStateInfo.getStateId(StateType.SUBSTITUTE))){
@@ -635,16 +640,25 @@ Game_Action.prototype.makeResultTarget = function(result,target) {
     });
 }
 
+Game_Action.prototype.makeResultShield = function(result,target) {
+    const damageShieldId = $gameStateInfo.getStateId(StateType.SHIELD);
+    const shieldValue = target.getStateEffectTotal(damageShieldId);
+    if (shieldValue > 0){
+        let state = target.getStateData(damageShieldId);
+        state._effect -= result.hpDamage;
+        result.hpDamage -= shieldValue;
+        result.hpDamage = Math.max(0,result.hpDamage);
+        if (state._effect <= 0){
+            target.removeState(damageShieldId);
+        }
+    }
+}
+
 Game_Action.prototype.makeResultHoldOn = function(result) {
-    let isHoldOn = false;
     const holdOnId = $gameStateInfo.getStateId(StateType.HOLD_ON);
     if (this.subject().isStateAffected(holdOnId)){
-        isHoldOn = true;
-    }
-
-    if (isHoldOn){
         // 累計ダメージ
-        var tempHpDamage = 0;
+        let tempHpDamage = 0;
         this._results.forEach(res => {
             if (res.target == result.target){
                 tempHpDamage += res.hpDamage;
@@ -659,15 +673,10 @@ Game_Action.prototype.makeResultHoldOn = function(result) {
 }
 
 Game_Action.prototype.makeResultKishikaisei = function(result) {
-    let isKishikaisei = false;
     const kishikaiseiId = $gameStateInfo.getStateId(StateType.KISHIKAISEI);
     if (result.target && result.target.isStateAffected(kishikaiseiId)){
-        isKishikaisei = true;
-    }
-
-    if (isKishikaisei){
         // 累計ダメージ
-        var tempHpDamage = 0;
+        let tempHpDamage = 0;
         this._results.forEach(res => {
             if (res.target == result.target){
                 tempHpDamage += res.hpDamage;
@@ -766,7 +775,7 @@ Game_Action.prototype.makeHpDamage = function(result, target, value,lastTarget) 
     if (value > 0 && this.subject().isStateAffected(_antiVaccinationId)){
         for (let i = 4;i <= 11;i++){
             if (target.isStateAffected(i)){
-                result.hpDamage = Math.round( result.hpDamage * this.subject().getStateEffectTotal(_antiVaccinationId) );
+                result.hpDamage = Math.round( result.hpDamage * subject.getStateEffectTotal(_antiVaccinationId) );
                 break;
             }
         }
@@ -775,8 +784,8 @@ Game_Action.prototype.makeHpDamage = function(result, target, value,lastTarget) 
     const _hpConsumeId = $gameStateInfo.getStateId(StateType.HP_CONSUME);
     if (value > 0 && this.isContainsState(_hpConsumeId)){
         const consume = this.item().stateEffect;
-        if (this.subject().hp > consume){
-            this.subject().gainHp(consume * -1);
+        if (subject.hp > consume){
+            subject.gainHp(consume * -1);
             result.hpDamage += consume;
         }
     }
@@ -797,7 +806,7 @@ Game_Action.prototype.makeMpDamage = function(result,target, value) {
 };
 
 Game_Action.prototype.apply = function(target) {
-    var result = target.result();
+    const result = target.result();
     if (!result.missed) {
         if (this.item().damage.type > 0) {
             this.executeDamage(target);
@@ -917,22 +926,20 @@ Game_Action.prototype.applyCritical = function(damage) {
 };
 
 Game_Action.prototype.applyVariance = function(damage, variance) {
-    var amp = Math.floor(Math.max(Math.abs(damage) * variance / 100, 0));
-    var v = Math.randomInt(amp + 1) + Math.randomInt(amp + 1) - amp;
+    const amp = Math.floor(Math.max(Math.abs(damage) * variance / 100, 0));
+    const v = Math.randomInt(amp + 1) + Math.randomInt(amp + 1) - amp;
     return damage >= 0 ? damage + v : damage - v;
 };
 
 Game_Action.prototype.applyGuard = function(damage, target) {
-    /*
     const penetrateId = $gameStateInfo.getStateId(StateType.PENETRATE);
     if (damage > 0 && target.isGuard() && !this.subject().isStateAffected(penetrateId)){
         const ironwillId = $gameStateInfo.getStateId(StateType.IRON_WILL);
         if (target && target.isStateAffected(ironwillId)){
             damage -= target.getStateEffectTotal(ironwillId);
         }
-        return Math.max(damage - target.def,1);
+        return Math.max(damage - (target.def * 1.5),1);
     }
-    */
     return damage;
 };
 
@@ -1018,7 +1025,7 @@ Game_Action.prototype.gainDrainedHp = function(targetHp,value) {
 
 Game_Action.prototype.gainDrainedMp = function(value) {
     if (this.isDrain()) {
-       var gainTarget = this.subject();
+       let gainTarget = this.subject();
        if (this._reflectionTarget !== undefined) {
            gainTarget = this._reflectionTarget;
        }
@@ -1059,7 +1066,7 @@ Game_Action.prototype.applyItemEffect = function(result, effect) {
 };
 
 Game_Action.prototype.itemEffectRecoverHp = function(target, effect) {
-    var value = (target.mhp * effect.value1 + effect.value2) * target.rec;
+    let value = (target.mhp * effect.value1 + effect.value2) * target.rec;
     if (this.isItem()) {
         value *= this.subject().pha;
     }
@@ -1073,7 +1080,7 @@ Game_Action.prototype.itemEffectRecoverHp = function(target, effect) {
 };
 
 Game_Action.prototype.itemEffectRecoverMp = function(result, effect) {
-    var value = (result.target.mmp * effect.value1 + effect.value2) * result.target.rec;
+    let value = (result.target.mmp * effect.value1 + effect.value2) * result.target.rec;
     if (this.isItem()) {
         value *= this.subject().pha;
     }
@@ -1084,7 +1091,7 @@ Game_Action.prototype.itemEffectRecoverMp = function(result, effect) {
 };
 
 Game_Action.prototype.itemEffectGainTp = function(target, effect) {
-    var value = Math.floor(effect.value1);
+    let value = Math.floor(effect.value1);
     if (value !== 0) {
         target.gainTp(value);
     }
@@ -1100,7 +1107,7 @@ Game_Action.prototype.itemEffectAddState = function(result, effect) {
 
 Game_Action.prototype.itemEffectAddAttackState = function(target, effect) {
     this.subject().attackStates().forEach(function(stateId) {
-        var chance = effect.value1;
+        let chance = effect.value1;
         chance *= target.stateRate(stateId);
         chance *= this.subject().attackStatesRate(stateId);
         if (Math.random() < chance) {
@@ -1154,7 +1161,7 @@ Game_Action.prototype.isStateInstantDeathResist = function(result, effect) {
 }
 
 Game_Action.prototype.itemEffectRemoveState = function(result, effect) {
-    var chance = effect.value1;
+    let chance = effect.value1;
     if (Math.random() < chance) {
         if (result.target && result.target.isStateAffected(effect.dataId)) {
             result.pushRemovedState(effect.dataId);
@@ -1194,7 +1201,7 @@ Game_Action.prototype.itemEffectCommonEvent = function(target, effect) {
 };
 
 Game_Action.prototype.applyItemUserEffect = function(target) {
-    var value = Math.floor(this.item().tpGain * this.subject().tcr);
+    const value = Math.floor(this.item().tpGain * this.subject().tcr);
     this.subject().gainSilentTp(value);
 };
 
@@ -1205,6 +1212,7 @@ Game_Action.prototype.applyGlobal = function() {
         }
     }, this);
 };
+
 Game_Action.prototype.isContainsState = function(stateId) {
     const item = this._item.object().effects;
     return _.find(item,(a) => a.code == Game_Action.EFFECT_ADD_STATE && a.dataId == stateId);
@@ -1222,7 +1230,7 @@ Game_Action.prototype.isAddState = function(stateId) {
 Game_Action.prototype.setCounter = function() {
     this._counter = true;
 }
-// リザルトをカウンターにする
+
 Game_Action.prototype.counter = function() {
     return this._counter;
 }
@@ -1236,11 +1244,10 @@ Game_Action.prototype.countered = function() {
     return this._countered;
 }
 
-// リザルトをカウンターにする
 Game_Action.prototype.setMadness = function() {
     this._madness = true;
 }
-// リザルトをカウンターにする
+
 Game_Action.prototype.madness = function() {
     return this._madness;
 }
@@ -1267,7 +1274,7 @@ Game_Action.prototype.popupData = function(actor) {
         }
         const chargeId = $gameStateInfo.getStateId(StateType.CHARGE);
         // ステート付与
-        var addStates = result.addedStateObjects();
+        const addStates = result.addedStateObjects();
         if (addStates){
             addStates.forEach(state => {
                 if (state.iconIndex > 0 && state.id != chargeId){
@@ -1279,7 +1286,7 @@ Game_Action.prototype.popupData = function(actor) {
             });
         }
         // ステート無効
-        var resitStates = result.resistStateObjects();
+        const resitStates = result.resistStateObjects();
         if (resitStates){
             resitStates.forEach(state => {
                 if (state.iconIndex > 0 && state.id != $gameStateInfo.getStateId(StateType.CHARGE)){
@@ -1288,7 +1295,7 @@ Game_Action.prototype.popupData = function(actor) {
             });
         }
         // 状態異常カウンター
-        var restrictStates = result.restrictStateObjects();
+        const restrictStates = result.restrictStateObjects();
         if (restrictStates){
             restrictStates.forEach(state => {
                 if (state.iconIndex > 0 && state.id != $gameStateInfo.getStateId(StateType.CHARGE)){
@@ -1323,8 +1330,8 @@ Game_Action.prototype.popupData = function(actor) {
             popup.push(new PopupTextData(actor,PopupTextType.RemoveState,TextManager.getStateName($gameStateInfo.getStateId(StateType.CHARGE))));
         }
         // 拘束自動解除
-        var chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
-        var chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
+        const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
+        const chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
         if (actor.isStateAffected(chainSelfId)){
             actor._bindBatllers.forEach(target => {
                 popup.push(new PopupTextData(target,PopupTextType.RemoveState,TextManager.getStateName(chainTargetId)));
@@ -1338,7 +1345,7 @@ Game_Action.prototype.popupData = function(actor) {
         }
         // 拘束を使用した本人に拘束付与
         if (this.isContainsState(chainTargetId)){
-            var effects = _.every(this.results(),(r) => r.target.isStateResist(chainTargetId))
+            let effects = _.every(this.results(),(r) => r.target.isStateResist(chainTargetId))
             if (!effects){
                 popup.push(new PopupTextData(actor,PopupTextType.AddState,TextManager.getStateName(chainSelfId)));
             }
@@ -1414,7 +1421,7 @@ Game_Action.prototype.popupSelfSkill = function(popup,actor,skillId) {
 }
 
 Game_Action.prototype.resultHpDamageValue = function() {
-    var value = 0;
+    let value = 0;
     this._results.forEach(reselt => {
         if (reselt.hpDamage){
             value += reselt.hpDamage;
@@ -1466,23 +1473,4 @@ Game_Action.prototype.resetDischargeResult = function() {
         tempHpDamage += res.hpDamage;
         res.isDead = (res.target.hp <= tempHpDamage);
     });
-}
-
-Game_Action.prototype.chargeTurn = function() {
-    if (this.item() == null) return 0;
-    if (this.isSkill()){
-        return $dataSkills[this.item().id].chargeTurn;
-    }
-    return 0;
-}
-
-Game_Action.prototype.setAgi = function(agi) {
-    this._agi = agi;
-    if (this.item() && this.item().speed){
-        this._agi += this.item().speed;
-    }
-}
-
-Game_Action.prototype.agi = function() {
-    return this._agi;
 }

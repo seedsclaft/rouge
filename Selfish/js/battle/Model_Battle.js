@@ -55,7 +55,8 @@ class Model_Battle extends Model_Base {
 
     initMembers(){
         if (DataManager.isBattleTest()){
-            $gameTroop.setup($dataSystem.testTroopId,$gameVariables.value(1),$gameVariables.value(1));
+            $gameTroop.setup($dataSystem.testTroopId,Number($dataTroops[$dataSystem.testTroopId].name),Number($dataTroops[$dataSystem.testTroopId].name) + 2);
+            $gameTroop.setupBoss(6,$dataTroops[$dataSystem.testTroopId+1].members[0].enemyId,Number($dataTroops[$dataSystem.testTroopId+1].name));
         }
         this._actionForcedBattler = null;
         this._battleMembers = [];
@@ -111,10 +112,17 @@ class Model_Battle extends Model_Base {
         return this._actionBattler ? this._actionBattler : null;
     }
 
-    updateApGain(){
+    updateApGain(isGuard){
+        if (isGuard){
+            this.addGuardState();
+        } else{
+            this.eraseGuardState();
+        }
         this._battleMembers.forEach(battler => {
-            battler.gainDefineAp();
-            battler.updateStateTimes();
+            if ((battler.isActor() && !isGuard) || battler.isEnemy()){
+                battler.gainDefineAp();
+                battler.updateStateTimes();
+            }
         });
         let actionBattler = _.find(this._battleMembers,(battler) => battler._ap <= 0);
         if (actionBattler != null){
@@ -1318,6 +1326,11 @@ class Model_Battle extends Model_Base {
         });
     }
 
+    eraseGuardState(){
+        $gameParty.aliveMembers().forEach(member => {
+            member.eraseState($gameStateInfo.getStateId(StateType.GUARD));
+        });
+    }
 
     selectActorSkillItems(index){
         const element = this.actionBattler().slotElement(index);

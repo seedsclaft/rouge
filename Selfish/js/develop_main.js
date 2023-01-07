@@ -93,6 +93,7 @@ const scriptUrls = [
 	"js/event/PictureLoader_Event.js",
 	"js/event/Sprite_EventMenu.js",
 	"js/event/Window_BackLog.js",
+	"js/event/Window_Message.js",
 	"js/event/Sprite_EventPicture.js",
 	"js/event/Sprite_EventFast.js",
 	"js/event/Event_Scene.js",

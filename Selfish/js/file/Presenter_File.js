@@ -20,7 +20,8 @@ class Presenter_File extends Presenter_Base {
             return;
         }
         super.updateCommand();
-        switch (this._view._command){
+        const _currentCommand = this._view._command.pop();
+        switch (_currentCommand){
             case FileCommand.Load:
             return this.commandLoad();
             case FileCommand.Save:

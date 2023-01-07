@@ -5,7 +5,7 @@ class View_Event {
         this.createMapEventPicture();
         this.createWeather();
         this.createFadeSprite();
-        //this.createMessageWindow();
+        this.createMessageWindow();
         this.createTransFadeSprite();
         this.createFlashSprite();
         this.createAutoSprite();
@@ -372,12 +372,12 @@ class View_Event {
         gsap.to(this._fadeSprite,duration / 60,{opacity:opacity});
     }
 
-    //createMessageWindow(){
-        //const rect = this.messageWindowRect();
-        //this._messageWindow = new Window_Message(rect);
-        //this._layer.addChild(this._messageWindow);
-        //this._messageWindow.deactivate();
-    //}
+    createMessageWindow(){
+        const rect = this.messageWindowRect();
+        this._messageWindow = new Window_Message(rect);
+        this._layer.addChild(this._messageWindow);
+        this._messageWindow.deactivate();
+    }
 
     messageWindowRect(){
         const ww = Graphics.boxWidth;

@@ -2,133 +2,134 @@
 // Spriteset_BattleGrid
 //
 // The sprite for displaying a button.
-
-function Spriteset_BattleGrid() {
-    this.initialize.apply(this, arguments);
-}
-
-Spriteset_BattleGrid.prototype = Object.create(Sprite.prototype);
-Spriteset_BattleGrid.prototype.constructor = Spriteset_BattleGrid;
-
-Spriteset_BattleGrid.prototype.initialize = function() {
-    Sprite.prototype.initialize.call(this);
-    //this._phase = "init";
-
-
-    this._orderSprites = [];
-   /*
-    var sprite = new Sprite()
-    this._nextOrder = new Sprite_BattleOrder();
-    this._nextOrder.initialize();
-    this._nextOrder.setBattler($gameParty.battleMembers()[0]);
-    this._nextOrder.setNextText()
-    this._nextOrder.x = Graphics.boxWidth - 168;
-    this._nextOrderAnimation = gsap.to(sprite,0.75,{alpha:0.75,repeat:-1,yoyo:true});
-    this._nextOrder.opacity = 0;
-    this.addChild(sprite);
-    sprite.addChild(this._nextOrder);
-
-    */
-    this.refresh();
-};
-
-Spriteset_BattleGrid.prototype.addMember = function(member) {
-    let order = new Sprite_BattleOrder();
-    order.initialize();
-    order.setBattler(member);
-    if (member.isActor()){
-        order.x = 4;
-    } else{
-        order.x = 96;
+class Spriteset_BattleGrid extends Sprite{
+    constructor(){
+        super();
     }
-    this.addChild(order);
-    this._orderSprites.push(order);
-}
 
-Spriteset_BattleGrid.prototype.ready = function() {
-}
+    initialize() {
+        Sprite.prototype.initialize.call(this);
+        //this._phase = "init";
+    
+        this._battleLayer = new Sprite();
+        this.addChild(this._battleLayer);
+        this._orderSprites = [];
+       /*
+        var sprite = new Sprite()
+        this._nextOrder = new Sprite_BattleOrder();
+        this._nextOrder.initialize();
+        this._nextOrder.setBattler($gameParty.battleMembers()[0]);
+        this._nextOrder.setNextText()
+        this._nextOrder.x = Graphics.boxWidth - 168;
+        this._nextOrderAnimation = gsap.to(sprite,0.75,{alpha:0.75,repeat:-1,yoyo:true});
+        this._nextOrder.opacity = 0;
+        this.addChild(sprite);
+        sprite.addChild(this._nextOrder);
+    
+        */
+        this.refresh();
+    };
 
-Spriteset_BattleGrid.prototype.setPhase = function(phase) {
-}
-
-Spriteset_BattleGrid.prototype.refresh = function() {
-    this._orderSprites = _.sortBy(this._orderSprites, (sprite) => sprite.battler()._ap);
-    this._orderSprites = this._orderSprites.reverse();
-    this._orderSprites.forEach(sprite => {
-        if (!sprite.battler().isAlive()){
-            sprite.alpha = 0;
-        } else{
-            sprite.alpha = 1;
-        }
-    });
-}
-
-Spriteset_BattleGrid.prototype.refreshPosition = function() {
-    this._orderSprites.forEach(sprite => {
-        sprite.refreshPosition();
-    });
-    this.refresh();
-}
-
-Spriteset_BattleGrid.prototype.update = function() {
-    switch (this._phase){
-        case 'init':
-        this._orderSprites.forEach(sprite => {
-            sprite.setInitAnim();
-        });
-        break;
-        case 'ap':
-        this._orderSprites.forEach(sprite => {
-            sprite.setApAnim();
-        });
-        break;
-        case 'wait':
-        this._orderSprites.forEach(sprite => {
-            sprite.setWaitAnim();
-        });
-        break;
-        case 'action':
-        this._orderSprites.forEach(sprite => {
-            sprite.setActionAnim();
-        });
-        break;
-    }
-}
-
-Spriteset_BattleGrid.prototype.showNextOrder = function(battler,nextap) {
-    return
-    if (battler && battler.isActor()){
-        this._nextOrder.opacity = 255;
-        this._nextOrder.changeBattler(battler);
-        this._nextOrder.changeFace(battler.characterName());
-        this._nextOrder.y = Sprite_BattleOrder._basePositionY - (nextap);
-    }
-}
-
-Spriteset_BattleGrid.prototype.clearNextOrder = function() {
-    this._nextOrder.opacity = 0;
-}
-
-Spriteset_BattleGrid.prototype.addTroops = function(troops) {
-    troops.forEach(enemy => {
-        var order = new Sprite_BattleOrder();
+    addMember(member){
+        let order = new Sprite_BattleOrder();
         order.initialize();
-        order.setBattler(enemy);
-        order.x = Graphics.boxWidth - 88;
-        this.addChild(order);
-    });
-}
-
-Spriteset_BattleGrid.prototype.terminate = function() {
-    this._nextOrderAnimation.kill();
-    this._nextOrderAnimation = null;
-    for (let i = this._orderSprites.length-1; i >= 0; i--){
-        this._orderSprites[i].terminate(); 
+        order.setBattler(member);
+        if (member.isActor()){
+            order.x = 4;
+        } else{
+            order.x = 96;
+        }
+        this._battleLayer.addChild(order);
+        this._orderSprites.push(order);
     }
-    this._nextOrder.terminate();
 
-    this._nextOrder = null;
-    this.destroy();
+    ready(){
+
+    }
+
+    setPhase(){
+
+    }
+
+    refresh(){
+        this._battleLayer.children = _.sortBy(this._battleLayer.children, (sprite) => sprite.battler()._ap);
+        this._battleLayer.children = this._battleLayer.children.reverse();
+        this._battleLayer.children.forEach(sprite => {
+            if (!sprite.battler().isAlive()){
+                sprite.alpha = 0;
+            } else{
+                sprite.alpha = 1;
+            }
+        });
+    }
+
+    refreshPosition(){
+        this._orderSprites.forEach(sprite => {
+            sprite.refreshPosition();
+        });
+        this.refresh();
+    }
+
+    update(){
+        switch (this._phase){
+            case 'init':
+            this._orderSprites.forEach(sprite => {
+                sprite.setInitAnim();
+            });
+            break;
+            case 'ap':
+            this._orderSprites.forEach(sprite => {
+                sprite.setApAnim();
+            });
+            break;
+            case 'wait':
+            this._orderSprites.forEach(sprite => {
+                sprite.setWaitAnim();
+            });
+            break;
+            case 'action':
+            this._orderSprites.forEach(sprite => {
+                sprite.setActionAnim();
+            });
+            break;
+        }
+    }
+
+    showNextOrder(battler,nextap){
+        return
+        if (battler && battler.isActor()){
+            this._nextOrder.opacity = 255;
+            this._nextOrder.changeBattler(battler);
+            this._nextOrder.changeFace(battler.characterName());
+            this._nextOrder.y = Sprite_BattleOrder._basePositionY - (nextap);
+        }
+    }
+
+    clearNextOrder(){
+        this._nextOrder.opacity = 0;
+    }
+
+    addTroops(troops){
+        troops.forEach(enemy => {
+            var order = new Sprite_BattleOrder();
+            order.initialize();
+            order.setBattler(enemy);
+            order.x = Graphics.boxWidth - 88;
+            this.addChild(order);
+        });
+    }
+
+    terminate(){
+        this._nextOrderAnimation.kill();
+        this._nextOrderAnimation = null;
+        for (let i = this._orderSprites.length-1; i >= 0; i--){
+            this._orderSprites[i].terminate(); 
+        }
+        this._nextOrder.terminate();
+    
+        this._nextOrder = null;
+        this.destroy();
+    }
 }
 
 //-----------------------------------------------------------------------------

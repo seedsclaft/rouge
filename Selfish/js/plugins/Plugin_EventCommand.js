@@ -5,6 +5,23 @@
  * @plugindesc イベントコマンドを管理する。
  * @author econa
  * 
+ * @command setTroop
+ * @desc 敵データ作成してバトルスタート
+ * 
+ * @arg searchId
+ * @type number
+ * @default 0
+ * 
+ * 
+ * @command selectAddActor
+ * @desc 仲間を選択する
+ * 
+ * @arg selectIndex
+ * @type number
+ * @default 0
+ * 
+ * 
+ * 
  * @command moveActors
  * @desc 移動演出。
  * 2:後 4:左 6:右 8:前
@@ -147,8 +164,42 @@
 (() => {
     const pluginName = "Plugin_EventCommand";
     const _eManager = EventManager;
-    PluginManager.registerCommand(pluginName, "moveActors", args => {
-        _eManager.moveActors(Number(args.direction));
+    PluginManager.registerCommand(pluginName, "setTroop", args => {
+        const _searchData = $gameSearch.getData(args.searchId);
+        let troopData = $dataTroops[_searchData.enemyNum];
+        for (let i = 0; i < _searchData.enemy.length; i++) {
+            troopData.members[i].enemyId = _searchData.enemy[i];
+        }
+        let troop = new Game_Troop();
+        troop.setup(_searchData.enemyNum,_searchData.lvMin,_searchData.lvMax);
+        troop.setupBoss(6,_searchData.bossEnemy,_searchData.bossLv);
+        $gameTroop = troop;
+        SceneManager.goto(Battle_View);
+    });
+
+    PluginManager.registerCommand(pluginName, "selectAddActor", args => {
+        const mainText = TextManager.getText(14040);
+        const text1 = TextManager.getDecideText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:null});
+        _popup.setHandler(text1,'ok',() => {
+            let actorList = [];
+            $gameActors._data.forEach(actorData => {
+                if (actorData && actorData.selectedIndex() == 0){
+                    actorList.push(actorData);
+                } 
+            });
+            PopupStatus_View.setSelectData(actorList,
+                (data) => {
+                    PopupStatus_View.close();
+                    data.setSelectedIndex(Number(args.selectIndex));
+                    $gameParty.addActor(data.actorId())
+                },
+                () => {
+                    PopupStatus_View.close();
+            });
+        });
+        _popup.open();
     });
 
     PluginManager.registerCommand(pluginName, "clearPictures", () => {

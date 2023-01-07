@@ -90,6 +90,18 @@ class Tactics_Presenter extends Presenter_Base{
         this._view.setMagicCategory(this._model.magicCategory());
         this._view.setAlchemyMagicList(this._model.alchemyMagicList());
         this._view.setSearchList(this._model.searchList());
+        
+        const _event = this._model.eventCheck();
+        if (_event){
+            EventManager.setup(_event,() => this._view.enentEnd());
+            EventManager.resetup();
+            this._view.eventStart();
+        }
+        if (DataManager.isEventTest()){
+            EventManager.setupTest($testEvent);
+            EventManager.resetup();
+            this._view.eventStart();
+        }
     }
 
     commandCommandOk(){;

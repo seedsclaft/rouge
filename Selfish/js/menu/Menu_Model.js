@@ -20,7 +20,7 @@ class Menu_Model extends Model_Base {
     }
     
     selectStage(stage){
-        $gameStage.initialize(stage.id);
+        $gameStage.setup(stage.id);
     }
 
     actorList(){

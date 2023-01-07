@@ -92,7 +92,7 @@ class Strategy_View extends Scene_Base {
     }
 
     commandMagicStart(nameList){
-        const mainText = TextManager.getText(11010).replace("/d",nameList);
+        const mainText = TextManager.getText(11030).replace("/d",nameList);
         const text = TextManager.getDecideText();
         const _popup = PopupManager;
         _popup.setPopup(mainText,{select:0,subText:null});

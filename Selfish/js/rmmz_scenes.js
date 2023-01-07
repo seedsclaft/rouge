@@ -2336,7 +2336,8 @@ Scene_Load.prototype.onLoadSuccess = function() {
     SoundManager.playLoad();
     this.fadeOutAll();
     this.reloadMapIfUpdated();
-    SceneManager.goto(Scene_Map);
+    //SceneManager.goto(Scene_Map);
+    SceneManager.goto(Tactics_View);
     this._loadSuccess = true;
 };
 

@@ -1,7 +1,7 @@
 class Tactics_Model {
     constructor() {
         this._selectedData = $gameStage.selectedData();
-
+        console.log(this._selectedData)
         let _actorList = $gameParty.members();
         _actorList = _.sortBy(_actorList,(a) => a.selectedIndex());
         let _position = $gameTacticsActorPosition.data();
@@ -30,6 +30,19 @@ class Tactics_Model {
         });
 
         this._usedAlchemyParam = [0,0,0,0,0];
+    }
+
+    eventCheck(){
+        const _stageData = $gameStageData.stageData($gameStage._stageId);
+        if (_stageData){
+            const _turn = (_stageData.turns) - $gameStage._turns;
+            const _timing = 0;
+            const event = _stageData.eventData.find(a => a.turns == _turn && a.timing == _timing);
+            if (event){
+                return event.eventName;
+            }
+        }
+        return null;
     }
 
     backGround(){
@@ -106,7 +119,7 @@ class Tactics_Model {
     }
 
     searchList(){
-        return $gameSearch.data();
+        return $gameSearch.data().filter(a => a.eventFlag == false);
     }
 
     selectAlchemy(){

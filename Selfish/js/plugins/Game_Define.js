@@ -33,6 +33,10 @@
  * @desc 回復に必要なpt計算式
  * @default ""
  * 
+ * @param MagicRecover
+ * @desc 魔力補充の回復計算式
+ * @default ""
+ * 
  * @param WaitSkillId
  * @desc 待機のスキルID
  * @default 271

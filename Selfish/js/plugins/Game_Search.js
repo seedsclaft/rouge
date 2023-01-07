@@ -42,6 +42,9 @@
  * @type number
  * @default 0
  * 
+ * @param eventFlag
+ * @type boolean
+ * 
  * @param memo
  * @type string
  * @default ""
@@ -67,9 +70,10 @@ Game_Search.prototype.initialize = function() {
         data.lvMax = Number(data.lvMax);
         data.bossLv = Number(data.bossLv);
         data.bossEnemy = Number(data.bossEnemy);
-        data.enemy = data.enemy.split(',').map(a => Number(a.replace(/[^0-9]/g,"")));
+        data.enemy = data.enemy != null ? data.enemy.split(',').map(a => Number(a.replace(/[^0-9]/g,""))) : [];
         data.enemyNum = Number(data.enemyNum);
         data.pt = Number(data.pt);
+        data.eventFlag = Boolean(data.eventFlag && data.eventFlag == "true");
         this._data.push(data);
     });
 };

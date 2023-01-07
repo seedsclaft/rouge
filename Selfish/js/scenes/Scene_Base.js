@@ -284,7 +284,7 @@ Scene_Boot.prototype.start = async function() {
         SceneManager.goto(Battle_View);
     } else if (DataManager.isEventTest()) {
         DataManager.setupEventTest();
-        SceneManager.goto(Map_Scene);
+        SceneManager.goto(Tactics_View);
     } else {
         this.startNormalGame();
     }
@@ -322,7 +322,6 @@ Scene_Boot.prototype.startNormalGame = function() {
     DataManager.setupNewGame();
     SceneManager.goto(Top_Scene);
     /*
-    SceneManager.goto(Title_View);
     Window_TitleCommand.initCommandPosition();
     */
 };

@@ -8,7 +8,7 @@ class Model_File extends Model_Base {
     }
     
     saveFiles(){
-        let auto = [DataManager.autoSavefile()];
+        let auto = [];
         let data = auto.concat(DataManager.savefiles());
         // 新規作成リスト用
         if (SceneManager._scene instanceof Save_Scene && data.length < 100){

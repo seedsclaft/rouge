@@ -200,10 +200,16 @@ Game_Party.prototype.initialize = function() {
     this._helpKeyData = [];
 
     this.getHelpKeyData();
+    this._enemyRank = 0;
 };
 
 Game_Party.prototype.setup = function() {
     this._gold = Number( $gameDefine.data().InitCurrency );
+    this._enemyRank = 1;
+}
+
+Game_Party.prototype.enemyRank = function() {
+    return this._enemyRank;
 }
 
 Game_Party.prototype.getHelpKeyData = function() {
@@ -255,7 +261,6 @@ Game_Party.prototype.checkReadTutorial = function(key) {
     }
     return _.contains(this._readTutorialKey,key);
 }
-
 
 Game_Party.prototype.enemyInfoData = function() {
     return this._enemyInfoData;
@@ -318,11 +323,7 @@ Game_Party.prototype.reviveBattleMembers = function() {
 };
 
 Game_Party.prototype.items = function() {
-    var list = [];
-    for (var id in this._items) {
-        list.push($dataItems[id]);
-    }
-    return list;
+    return Object.keys(this._items).map(id => $dataItems[id]);
 };
 
 Game_Party.prototype.weapons = function() {
@@ -330,13 +331,8 @@ Game_Party.prototype.weapons = function() {
 };
 
 Game_Party.prototype.armors = function() {
-    var list = [];
-    for (var id in this._armors) {
-        list.push($dataArmors[id]);
-    }
-    return list;
+    return Object.keys(this._armors).map(id => $dataArmors[id]);
 };
-
 
 Game_Party.prototype.equipItems = function() {
     return this.weapons().concat(this.armors());
@@ -493,10 +489,10 @@ Game_Party.prototype.isAnyMemberEquipped = function(item) {
 };
 
 Game_Party.prototype.gainItem = function(item, amount, includeEquip) {
-    var container = this.itemContainer(item);
+    const container = this.itemContainer(item);
     if (container) {
-        var lastNumber = this.numItems(item);
-        var newNumber = lastNumber + amount;
+        const lastNumber = this.numItems(item);
+        const newNumber = lastNumber + amount;
         container[item.id] = newNumber.clamp(0, this.maxItems(item));
         if (container[item.id] === 0) {
             delete container[item.id];
@@ -504,18 +500,19 @@ Game_Party.prototype.gainItem = function(item, amount, includeEquip) {
         if (includeEquip && newNumber < 0) {
             this.discardMembersEquip(item, -newNumber);
         }
+        $gameMap.requestRefresh();
     }
 };
 
 
 Game_Party.prototype.discardMembersEquip = function(item, amount) {
-    var n = amount;
-    this.members().forEach(function(actor) {
+    let n = amount;
+    for (const actor of this.members()) {
         while (n > 0 && actor.isEquipped(item)) {
             actor.discardEquip(item);
             n--;
         }
-    });
+    }
 };
 
 Game_Party.prototype.loseItem = function(item, amount, includeEquip) {
@@ -549,9 +546,9 @@ Game_Party.prototype.isAllDead = function() {
 };
 
 Game_Party.prototype.menuActor = function() {
-    var actor = $gameActors.actor(this._menuActorId);
-    if (!this.allMembers().contains(actor)) {
-        actor = this.allMembers()[0];
+    let actor = $gameActors.actor(this._menuActorId);
+    if (!this.members().includes(actor)) {
+        actor = this.members()[0];
     }
     return actor;
 };
@@ -561,27 +558,27 @@ Game_Party.prototype.setMenuActor = function(actor) {
 };
 
 Game_Party.prototype.makeMenuActorNext = function() {
-    var index = this.allMembers().indexOf(this.menuActor());
+    let index = this.members().indexOf(this.menuActor());
     if (index >= 0) {
-        index = (index + 1) % this.allMembers().length;
-        this.setMenuActor(this.allMembers()[index]);
+        index = (index + 1) % this.members().length;
+        this.setMenuActor(this.members()[index]);
     } else {
-        this.setMenuActor(this.allMembers()[0]);
+        this.setMenuActor(this.members()[0]);
     }
 };
 
 Game_Party.prototype.makeMenuActorPrevious = function() {
-    var index = this.allMembers().indexOf(this.menuActor());
+    let index = this.members().indexOf(this.menuActor());
     if (index >= 0) {
-        index = (index + this.allMembers().length - 1) % this.allMembers().length;
-        this.setMenuActor(this.allMembers()[index]);
+        index = (index + this.members().length - 1) % this.members().length;
+        this.setMenuActor(this.members()[index]);
     } else {
-        this.setMenuActor(this.allMembers()[0]);
+        this.setMenuActor(this.members()[0]);
     }
 };
 
 Game_Party.prototype.swapOrder = function(index1, index2) {
-    var temp = this._actors[index1];
+    const temp = this._actors[index1];
     this._actors[index1] = this._actors[index2];
     this._actors[index2] = temp;
     $gamePlayer.refresh();
@@ -654,7 +651,6 @@ Game_Party.prototype.resetBattleParameter = function() {
         actor.resetTurnCount();
     });
 };
-
 
 // 全員攻撃アップ
 Game_Party.prototype.involvementPlus = function() {
@@ -847,11 +843,11 @@ Game_Troop.prototype.letterTable = function() {
 };
 
 Game_Troop.prototype.troopName = function() {
-    var enemy = this.members()[0];
+    let enemy = this.members()[0];
     if (this.members().length == 1){
         return enemy.originalName();
     }
-    var boss = _.find(this.members(),(m) => m.collapseType() == 1);
+    let boss = _.find(this.members(),(m) => m.collapseType() == 1);
     if (boss){
         enemy = boss;
     }
@@ -859,7 +855,7 @@ Game_Troop.prototype.troopName = function() {
 };
 
 Game_Troop.prototype.meetsConditions = function(page) {
-    var c = page.conditions;
+    let c = page.conditions;
     if (!c.turnEnding && !c.turnValid && !c.enemyValid &&
             !c.actorValid && !c.switchValid) {
         return false;  // Conditions not set
@@ -868,9 +864,9 @@ Game_Troop.prototype.meetsConditions = function(page) {
             return false;
     }
     if (c.turnValid) {
-        var n = this._turnCount;
-        var a = c.turnA;
-        var b = c.turnB;
+        const n = this._turnCount;
+        const a = c.turnA;
+        const b = c.turnB;
         if ((b === 0 && n !== a)) {
             return false;
         }
@@ -879,13 +875,13 @@ Game_Troop.prototype.meetsConditions = function(page) {
         }
     }
     if (c.enemyValid) {
-        var enemy = $gameTroop.members()[c.enemyIndex];
+        const enemy = $gameTroop.members()[c.enemyIndex];
         if (!enemy || enemy.hpRate() * 100 > c.enemyHp) {
             return false;
         }
     }
     if (c.actorValid) {
-        var actor = $gameActors.actor(c.actorId);
+        const actor = $gameActors.actor(c.actorId);
         if (!actor || actor.hpRate() * 100 > c.actorHp) {
             return false;
         }
@@ -903,9 +899,9 @@ Game_Troop.prototype.setupBattleEvent = function() {
         if (this._interpreter.setupReservedCommonEvent()) {
             return;
         }
-        var pages = this.troop().pages;
+        const pages = this.troop().pages;
         for (var i = 0; i < pages.length; i++) {
-            var page = pages[i];
+            const page = pages[i];
             if (this.meetsConditions(page) && !this._eventFlags[i]) {
                 this._interpreter.setup(page.list);
                 if (page.span <= 1) {
@@ -918,9 +914,9 @@ Game_Troop.prototype.setupBattleEvent = function() {
 };
 
 Game_Troop.prototype.increaseTurn = function() {
-    var pages = this.troop().pages;
-    for (var i = 0; i < pages.length; i++) {
-        var page = pages[i];
+    const pages = this.troop().pages;
+    for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
         if (page.span === 1) {
             this._eventFlags[i] = false;
         }
