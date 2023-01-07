@@ -371,7 +371,15 @@ Game_BattlerBase.prototype.sparam = function(sparamId) {
 };
 
 Game_BattlerBase.prototype.elementRate = function(elementId) {
-    return this.traitsPi(Game_BattlerBase.TRAIT_ELEMENT_RATE, elementId);
+    let value = 1;
+    if ($gameElement.gainElement(elementId,this.selfElement())){
+        value *= $gameDefine.gainElementRate;
+    }
+    if ($gameElement.lessElement(elementId,this.selfElement())){
+        value *= $gameDefine.lessElementRate;
+    }
+    console.log(value * this.traitsPi(Game_BattlerBase.TRAIT_ELEMENT_RATE, elementId))
+    return value * this.traitsPi(Game_BattlerBase.TRAIT_ELEMENT_RATE, elementId);
 };
 
 Game_BattlerBase.prototype.stateRate = function(stateId) {
@@ -1693,6 +1701,7 @@ Game_Actor.prototype.setup = function(actorId) {
     this._alchemyParam = actor.alchemyParam;
 
     this._selectedIndex = 0;
+    this.setSelfElement();
 };
 
 Game_Actor.prototype.setSelectedIndex = function(value) {
@@ -1752,6 +1761,18 @@ Game_Actor.prototype.addStatePlus = function(id,value) {
         this._statePlus[id] = 0;
     }
     this._statePlus[id] += value;
+}
+
+Game_Actor.prototype.setSelfElement = function() {
+    if (this.actor().elementId){
+        this._selfElement = this.actor().elementId[0];
+    } else{    
+        this._selfElement = 1;
+    }
+}
+
+Game_Actor.prototype.selfElement = function() {
+    return this._selfElement;
 }
 
 Game_Actor.prototype.actorId = function() {
@@ -2597,18 +2618,25 @@ Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel,line) {
         }
     }
     this.recoverAll();
+    let removeSkills = [];
     this.enemy().actions.forEach(action => {
         // レベル制限
         if (action.conditionType == ActionConditionType.PartyLv){ // enemyLv
-            if (enemylevel >= action.conditionParam1){
-                this._actionList.push(action);
+            if (enemylevel < action.conditionParam1){
+                removeSkills.push(action.skillId);
+                console.log(removeSkills)
             }
-        } else{
+        }
+    });
+    this.enemy().actions.forEach(action => {
+        if (!removeSkills.contains( action.skillId)){
             this._actionList.push(action);
         }
     });
+    console.log(this._actionList)
     this.resetAp();
     this.randApParam();
+    this.setSelfElement();
 };
 
 Game_Enemy.prototype.randApParam = function() {
@@ -3174,6 +3202,14 @@ Game_Enemy.prototype.setMadness = function(isMadness) {
 
 Game_Enemy.prototype.madness = function() {
     return this._madness;
+}
+
+Game_Enemy.prototype.setSelfElement = function() {
+    this._selfElement = this.enemy().elementId;
+}
+
+Game_Enemy.prototype.selfElement = function() {
+    return this._selfElement;
 }
 
 const ActionConditionType = {

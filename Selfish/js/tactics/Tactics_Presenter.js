@@ -73,6 +73,8 @@ class Tactics_Presenter extends Presenter_Base{
                 return this.commandSearchMember();
             case TacticsCommand.Turnend:
                 return this.commandTurnend();
+            case TacticsCommand.EventEnd:
+                return this.commandEventEnd();
         }
         this._view.clearCommand();
     }
@@ -237,6 +239,10 @@ class Tactics_Presenter extends Presenter_Base{
     commandTurnend(){
         this._model.turnend();
         SceneManager.goto(Strategy_View);
+    }
+
+    commandEventEnd(){
+        this._view.eventEnd();
     }
 
     commandRefresh(){

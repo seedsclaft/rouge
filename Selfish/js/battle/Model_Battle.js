@@ -56,7 +56,10 @@ class Model_Battle extends Model_Base {
     initMembers(){
         if (DataManager.isBattleTest()){
             $gameTroop.setup($dataSystem.testTroopId,Number($dataTroops[$dataSystem.testTroopId].name),Number($dataTroops[$dataSystem.testTroopId].name) + 2);
-            $gameTroop.setupBoss(6,$dataTroops[$dataSystem.testTroopId+1].members[0].enemyId,Number($dataTroops[$dataSystem.testTroopId+1].name));
+            if ($dataTroops[$dataSystem.testTroopId+1].members.length  > 0){
+                $gameTroop.setupBoss(6,$dataTroops[$dataSystem.testTroopId+1].members[0].enemyId,Number($dataTroops[$dataSystem.testTroopId+1].name));
+        
+            }
         }
         this._actionForcedBattler = null;
         this._battleMembers = [];

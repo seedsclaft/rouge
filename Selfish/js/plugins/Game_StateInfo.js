@@ -135,6 +135,7 @@ const StateType = {
     DRAIN_HEAL :              "DrainHeal",   //ドレインヒール
     MP_DAMAGE :               "MpDamage",       //追加MPダメージ
     HP_CONSUME :               "HpConsume",       //Hp消費
+    CHARGE :               "Charge",       //チャージ
     /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)

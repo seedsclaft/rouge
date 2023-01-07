@@ -193,11 +193,10 @@
                 (data) => {
                     PopupStatus_View.close();
                     data.setSelectedIndex(Number(args.selectIndex));
-                    $gameParty.addActor(data.actorId())
-                },
-                () => {
-                    PopupStatus_View.close();
-            });
+                    $gameParty.addActor(data.actorId());
+                    EventManager.setLabel("End");
+                }
+            );
         });
         _popup.open();
     });

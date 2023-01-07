@@ -315,7 +315,7 @@ class Sprite_BattlerStatus extends Sprite{
         this._stateIconSprite = new Sprite_StateIcon();
         this._stateIconSprite.setup(this._battler);
         this._stateIconSprite.x = -66;
-        this._stateIconSprite.y = 60;
+        this._stateIconSprite.y = 0;
         this.addChild(this._stateIconSprite);
     }
 

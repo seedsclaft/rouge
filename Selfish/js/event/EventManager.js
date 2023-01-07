@@ -31,6 +31,7 @@ EventManager.init = function() {
     this._busyLogSprites = [];
     this._waitLogData = [];
     this.createLogSprite();
+    this._eventEnded = false;
 }
 
 EventManager.createLogSprite = function() {
@@ -75,6 +76,7 @@ EventManager.startLogText = function(text) {
 
 //イベントの再生開始
 EventManager.setup = async function(eventName,endCall) {
+    this._eventEnded = false;
     this._loading = true;
     if (this._interpreter.isRunning()){
         this.setNextEvent(eventName,endCall);
@@ -222,6 +224,7 @@ EventManager.getEventPicture = function(labelName) {
 EventManager.setLabel = function(label){
     this._label = label;
     if (label == 'End'){
+        this._eventEnded = true;
         this._eventSkip = true;
         this._eventView.hideEventMenu();
     }

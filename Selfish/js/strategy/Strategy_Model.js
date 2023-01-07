@@ -5,11 +5,13 @@ class Strategy_Model {
 
     eventCheck(){
         const _stageData = $gameStageData.stageData($gameStage._stageId);
+        const _readEvent = $gameStage.readEvent();
         if (_stageData){
             const _turn = (_stageData.turns) - $gameStage._turns;
             const _timing = 1;
             const event = _stageData.eventData.find(a => a.turns == _turn && a.timing == _timing);
-            if (event){
+            if (event && !_readEvent.contains(event.eventName)){
+                $gameStage.addReadEvent(event.eventName);
                 return event.eventName;
             }
         }

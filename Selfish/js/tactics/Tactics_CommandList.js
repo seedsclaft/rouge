@@ -15,11 +15,11 @@ class Tactics_CommandList extends Window_HorzCommand{
         
         let commandListBack = new Sprite();
         commandListBack.bitmap = ImageManager.loadSystem("textplateC");
-        commandListBack.x = 48;
-        commandListBack.y = 416;
+        commandListBack.x = 48 - x;
+        commandListBack.y = 24;
         commandListBack.scale.x = 1.2;
         commandListBack.scale.y = 1.2;
-        this.addChild(commandListBack);
+        this.addChildAt(commandListBack,1);
     }
 
     currentCommand() {

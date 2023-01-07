@@ -42,7 +42,6 @@ function Game_Element() {
           let elementData = JSON.parse(data[keys]);
           this._data.push(elementData);
       });
-      console.log(this._data)
   };
 
   Game_Element.prototype.data = function() {
@@ -50,12 +49,12 @@ function Game_Element() {
   }
   
   Game_Element.prototype.gainElement = function(id,elementId) {
-      const data = _.find(this._data,(d) => d.id == id);
+      const data = _.find(this._data,(d) => d.elementId == id);
       return data && data.gain == elementId;
   };
   
   Game_Element.prototype.lessElement = function(id,elementId) {
-      const data = _.find(this._data,(d) => d.id == id);
+      const data = _.find(this._data,(d) => d.elementId == id);
       return data && data.less == elementId;
   };
   

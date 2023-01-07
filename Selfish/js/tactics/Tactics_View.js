@@ -46,6 +46,7 @@ class Tactics_View extends Scene_Base {
     eventStart(){
         this._commandList.deactivate();
         this._commandList.hide();
+        this._eventStart = true;
     }
 
     eventEnd(){
@@ -431,6 +432,11 @@ class Tactics_View extends Scene_Base {
     
     update(){
         super.update();
+        if (this._eventStart && EventManager._eventEnded == true){
+            this._eventStart = false;
+            this.setCommand(TacticsCommand.EventEnd);
+            return;
+        }
         if (Input.isTriggered("menu")){
             SceneManager.push(Scene_Save);
         }
@@ -486,5 +492,6 @@ const TacticsCommand = {
     AlchemyEnd :83,
     SearchMember :91,
     Turnend :111,
+    EventEnd : 200,
     Refresh : 100
 }

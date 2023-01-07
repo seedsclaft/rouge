@@ -78,8 +78,8 @@ class PopupStatus_ActorListItem extends Window_Base{
         const _powerUpColor = ColorManager.powerUpColor();
 
         const _lineHeight = this.lineHeight() - 4;
-        const _statusTextId = [500,510,520,530,540];
-        const _statusParamId = [0,1,2,6,3];
+        const _statusTextId = [500,510,520,540,530];
+        const _statusParamId = [0,1,2,3,6];
 
         this.contents.fontSize = 20;
         let _textColor = _normalColor;

@@ -102,6 +102,7 @@ Game_Stage.prototype.initialize = function() {
     this._selectedData = {};
     this._alchemyData = [];
     this._searchId = 0;
+    this._readEvent = [];
 }
 
 Game_Stage.prototype.setup = function(stageId){
@@ -110,6 +111,7 @@ Game_Stage.prototype.setup = function(stageId){
     });
     this._stageId = stageId;
     this._turns = $gameStageData.stageData(stageId).turns;
+    this._readEvent = [];
 }
 
 Game_Stage.prototype.selectedData = function(){
@@ -146,4 +148,12 @@ Game_Stage.prototype.clearSelect = function(){
     });
     this._alchemyData = [];
     this._searchId = 0;
+}
+
+Game_Stage.prototype.addReadEvent = function(eventName){
+    this._readEvent.push(eventName);
+}
+
+Game_Stage.prototype.readEvent = function(){
+    return this._readEvent;
 }

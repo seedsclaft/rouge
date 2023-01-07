@@ -264,7 +264,7 @@ Game_Action.prototype.makeTargets = function() {
     } else if (this.isForFriend()) {
         targets.push(...this.targetsForFriends());
     }
-    if (this.item() && this.isForOpponent()){
+    if (this.item() && this.isForOpponent() && targets.length > 0){
         const _range = this.item().range;
         if (this.subject().isActor()){
             targets = targets.filter(a => (a.line() - _range) <= 0);
@@ -864,8 +864,10 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
         defValue = 0;
     }
     baseValue = Math.max(0, baseValue * 0.01 * subject.atk - defValue);
+    console.log(baseValue)
     let elementValue = this.calcElementRate(target);
     let value = baseValue * elementValue;
+    console.log(value)
     if (this.isMagical()) {
         value *= target.pdr;
     }
