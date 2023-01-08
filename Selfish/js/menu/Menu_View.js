@@ -62,6 +62,7 @@ class Menu_View extends Scene_Base{
         this._stageList.select(0);
         this._stageList.activate();
         this._helpWindow.setText(TextManager.getText(5040));
+        this._keyMapWindow.refresh('menuCommand');
     }
 
     selectStage(){
@@ -76,6 +77,7 @@ class Menu_View extends Scene_Base{
         _popup.setHandler(text1,'ok',() => {
             this._stageList.hide();
             this._helpWindow.setText(TextManager.getText(5050));
+            this._keyMapWindow.refresh('memberSelect');
             this.setCommand(MenuCommand.ActorSelect);
         });
         _popup.open();
@@ -93,6 +95,7 @@ class Menu_View extends Scene_Base{
                 this._stageList.activate();
                 this._stageList.show();
                 this._helpWindow.setText(TextManager.getText(5040));
+                this._keyMapWindow.refresh('menuCommand');
         });
     }
 
@@ -127,7 +130,6 @@ class Menu_View extends Scene_Base{
         this._keyMapWindow = new Window_KeyMap();
         if (!$gameDefine.mobileMode){
             this.addChild(this._keyMapWindow);
-            this._keyMapWindow.refresh('menuCommand');
         }
     }
 

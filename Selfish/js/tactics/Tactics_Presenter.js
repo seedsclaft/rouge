@@ -198,6 +198,10 @@ class Tactics_Presenter extends Presenter_Base{
         if (_category == "alchemy"){
             this._view.commandSelectAlchemy(this._model.alchemyMagicList());
         }
+
+        if (this._model.decidedAll()){
+            this._view.commandCommandTurnend();
+        }
     }
     
     commandAlchemySelect(){

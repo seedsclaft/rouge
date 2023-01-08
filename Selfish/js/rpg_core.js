@@ -301,7 +301,6 @@ Input.update = function() {
     }
     if (this._virtualButton) {
         this._latestButton = this._virtualButton;
-        console.error(this._virtualButton)
         this._pressedTime = 0;
         this._virtualButton = null;
     }
@@ -448,7 +447,7 @@ TouchInput._onTouchStart = function(event) {
         event.preventDefault();
     }
 };
-
+/*
 // メソッド変更
 WebAudio._onHide = function() {
     const context = this._context;
@@ -496,7 +495,7 @@ WebAudio.prototype.fadeTo = function(duration,volume) {
         gain.linearRampToValueAtTime(volume, currentTime + duration);
     }
 };
-
+*/
 Utils._supportPassiveEvent = null;
 /**
  * Test this browser support passive event feature
@@ -523,17 +522,6 @@ Utils.isSupportPassiveEvent = function() {
 
 Utils._shouldUseDecoder = function() {
     return !Utils.canPlayOgg() && typeof VorbisDecoder === "function";
-};
-
-
-Window.prototype._createFrameSprite = function() {
-    this._frameSprite = new Sprite();
-    for (let i = 0; i < 8; i++) {
-        this._frameSprite.addChild(new Sprite());
-    }
-    //Windowフレームを削除
-    //this._frameSprite.alpha = 0;
-    this._container.addChild(this._frameSprite);
 };
 
 /**

@@ -22,18 +22,18 @@ class Window_KeyMap extends Window_Base{
         this.contents.clear();
         this._addX = 0;
         let x = this.drawTextEx(this._text, 0, 0);
-        this.x = 924 - ((x + this._addX)*0.9);
+        this.x = 924 - ((x + this._addX)*1);
 
-        let scale = 0.9;
+        let scale = 1;
         if (this.x < 240){
             scale *= (( 1440 - this.x) / 1440);
         }
         this.scale.x = this.scale.y = scale;
         if (scale < 0.9){
             this.x = this.x + ((0.9 - scale) * 880);
-            this.y = 492 + ((0.9 - scale) * 24);
+            this.y = -4 + ((0.9 - scale) * 24);
         } else{
-            this.y = 492;
+            this.y = -4;
         }
         if (this._lastNo != key){
             this._lastNo = key;
@@ -42,6 +42,14 @@ class Window_KeyMap extends Window_Base{
             gsap.to(this,0.25,{alpha:1,x:this.x - 48});
         }
     }
+
+    drawTextEx (text, x, y, width) {
+        //this.resetFontSettings();
+        this.contents.fontSize = 18;
+        const textState = this.createTextState(text, x, y, width);
+        this.processAllText(textState);
+        return textState.outputWidth;
+    };
 
     showAnimation(){
         this.show();
@@ -113,7 +121,7 @@ class Window_KeyMap extends Window_Base{
         if (iconIndex == 68 || iconIndex == 70){
             width = 2;
         }
-        this.drawKeyIcon(iconIndex, textState.x + 2, textState.y + 8,width);
+        this.drawKeyIcon(iconIndex, textState.x + 2, textState.y + 4,width);
         if (iconIndex == 68 || iconIndex == 70){
             textState.x += 24;
             this._addX += 24;

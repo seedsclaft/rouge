@@ -412,6 +412,7 @@ class Tactics_View extends Scene_Base {
     }
 
     commandCommandTurnend(){
+        this._commandList.deactivate();
         const mainText = TextManager.getText(10020);
         const text1 = TextManager.getDecideText();
         const text2 = TextManager.getCancelText();

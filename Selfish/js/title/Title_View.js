@@ -104,12 +104,12 @@ class Title_View extends Scene_Base{
 
     createVersionSprite(){
         this._versionSprite = new Sprite();
-        this._versionSprite.x = 732;
+        this._versionSprite.x = 12;
         this._versionSprite.y = 0;
         this._versionSprite.scale.x = 0.66;
         this._versionSprite.scale.y = 0.66;
         let bitmap = new Bitmap(320,128);
-        bitmap.drawText(TextManager.getText(100300) + $gameDefine.gameVersion,0,0,320,64,"right")
+        bitmap.drawText(TextManager.getText(100300) + $gameDefine.gameVersion,0,0,320,64,"left")
         this._versionSprite.bitmap = bitmap;
         this.addChild(this._versionSprite);
     }
@@ -124,6 +124,7 @@ class Title_View extends Scene_Base{
     
     createKeyMapWindow(){
         this._keyMapWindow = new Window_KeyMap();
+        this._keyMapWindow.refresh("title");
         if (!$gameDefine.mobileMode){
             this.addChild(this._keyMapWindow);
         }

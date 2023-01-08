@@ -257,6 +257,7 @@ class Tactics_Model {
         });
         this._selectAlchemy.push(alchemy.skill.id);
     }
+
     removeAlchemy(alchemy){
         this.gainEnergy(alchemy.cost);
         alchemy.needRank.forEach((need,index) => {
@@ -275,6 +276,10 @@ class Tactics_Model {
 
     setSearchId(serachId){
         $gameStage.setSearchId(serachId);
+    }
+
+    decidedAll(){
+        return this._members.length == 0;
     }
 
     turnend(){
