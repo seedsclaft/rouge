@@ -379,8 +379,7 @@ class Battle_Model extends Model_Base {
                     if (stateEval != null){
                         let a = battler;
                         let pam = $gameParty.aliveMembers();
-                        let r = action.results();
-                        console.log(skill)
+                        let r = action.results() != null ? action.results() : [];
                         flag = eval(stateEval);
                     }
                     if (flag){
@@ -484,6 +483,7 @@ class Battle_Model extends Model_Base {
     createAfterActionData(){
         // timingがafterの固有を発動
         const _battler = this.actionBattlers();
+        const action = this.currentAction();
         _battler.forEach(battler => {
             let data = [];
             if (battler.isActor()){
@@ -491,6 +491,13 @@ class Battle_Model extends Model_Base {
                 skills.forEach(skill => {
                     data.push({skill:skill,enable:battler.canUse(skill) ,cost:battler.skillMpCost(skill) });
                 });
+            } else{
+                let skills = battler._actionList;
+                console.log(action.results())
+                skills.forEach(action => {
+                    data.push({skill:$dataSkills[action.skillId],enable:battler.canUse($dataSkills[action.skillId]) });
+                });
+                console.log(skills)
             }
             data.forEach(skill => {
                 if (skill.enable && skill.skill.timing == "after"){
@@ -499,6 +506,7 @@ class Battle_Model extends Model_Base {
                     if (stateEval != null){
                         let a = battler;
                         let p = $gameParty;
+                        let r = action.results() != null ? action.results() : [];
                         flag = eval(stateEval);
                     }
                     if (flag){
@@ -716,9 +724,9 @@ class Battle_Model extends Model_Base {
         this.selfSkill();
         this.wavySkill();
         this.deleteBuff();
-        if (!_isRemove){
+        //if (!_isRemove){
             this.actionBattler().resetAp();
-        }
+        //}
         return popup;
     }
 

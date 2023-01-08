@@ -441,7 +441,7 @@ class Battle_View extends Scene_Base{
         this._skillWindow.selectLast();
 
         //this._keyMapWindow.show();
-        this._gridSpriteset.clearNextOrder();
+        //this._gridSpriteset.clearNextOrder();
         var actor = this._skillWindow.actor();
         this.layerBattlePicture().refreshBattlerPicture(actor);
     
@@ -496,7 +496,7 @@ class Battle_View extends Scene_Base{
         this._skillWindow.showAnimation();
         this._skillWindow.selectLast();
         this._keyMapWindow.show();
-        this._gridSpriteset.clearNextOrder();
+        //this._gridSpriteset.clearNextOrder();
         
         if (this._dockMenu){
             this._dockMenu.show();

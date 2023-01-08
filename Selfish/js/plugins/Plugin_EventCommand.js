@@ -12,6 +12,14 @@
  * @type number
  * @default 0
  * 
+ * @arg plusEnemyLevel
+ * @type number
+ * @default 0
+ * 
+ * @arg plusBossLevel
+ * @type number
+ * @default 0
+ * 
  * 
  * @command selectAddActor
  * @desc 仲間を選択する
@@ -166,13 +174,15 @@
     const _eManager = EventManager;
     PluginManager.registerCommand(pluginName, "setTroop", args => {
         const _searchData = $gameSearch.getData(args.searchId);
+        const _plusEnemyLevel = Number(args.plusEnemyLevel);
+        const _plusBossLevel = Number(args.plusBossLevel);
         let troopData = $dataTroops[_searchData.enemyNum];
         for (let i = 0; i < _searchData.enemy.length; i++) {
             troopData.members[i].enemyId = _searchData.enemy[i];
         }
         let troop = new Game_Troop();
-        troop.setup(_searchData.enemyNum,_searchData.lvMin,_searchData.lvMax);
-        troop.setupBoss(6,_searchData.bossEnemy,_searchData.bossLv);
+        troop.setup(_searchData.enemyNum,_searchData.lvMin + _plusEnemyLevel,_searchData.lvMax + _plusEnemyLevel);
+        troop.setupBoss(6,_searchData.bossEnemy,_searchData.bossLv + _plusBossLevel);
         $gameTroop = troop;
         SceneManager.goto(Battle_View);
     });

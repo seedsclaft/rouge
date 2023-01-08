@@ -2641,6 +2641,7 @@ Game_Enemy.prototype.setup = function(enemyId, x, y,enemylevel,line) {
         this._paramPlus[2] = atk;
         this._paramPlus[6] = agi;
         this._paramPlus[0] += Math.floor((enemylevel-1) * 0.05 * data.params[0]);
+        this._paramPlus[1] += Math.floor(enemylevel / 4);
         this._paramPlus[2] += Math.floor(enemylevel / 4);
         this._paramPlus[6] += Math.floor(enemylevel / 2);
         if (enemylevel >= 4){
@@ -3092,7 +3093,7 @@ Game_Enemy.prototype.battlerId = function() {
 
 Game_Enemy.prototype.meetsConditionPlus = function(skill) {
     // 射程外は除外
-    if (skill.line != null){
+    if (skill.line != null && (skill.scope == ScopeType.ONE_ENEMY || skill.scope == ScopeType.ALL_ENEMY)){
         if (skill.range < this.line()){
             return false
         }
