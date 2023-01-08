@@ -76,6 +76,13 @@ Window_Help.prototype.refresh = function() {
     this.drawTextEx(this._text, 32, 0);
 };
 
+Window_Help.prototype.drawTextEx = function(text, x, y, width) {
+    //this.resetFontSettings();
+    this.contents.fontSize = 21;
+    const textState = this.createTextState(text, x, y, width);
+    this.processAllText(textState);
+    return textState.outputWidth;
+};
 
 
 //-----------------------------------------------------------------------------

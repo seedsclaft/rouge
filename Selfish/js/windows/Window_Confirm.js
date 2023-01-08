@@ -29,11 +29,14 @@ class Window_Confirm extends Window_Command{
         super.refresh();
         if (this._mainText){
             if (this._subText){
+                this.contents.fontSize = 21;
                 const text = this.convertEscapeCharacters(this._mainText);
                 this.drawText(text,40,8,Graphics.width,'center');
+                this.contents.fontSize = 18;
                 const text2 = this.convertEscapeCharacters(this._subText);
                 this.drawText(text2,40,40,Graphics.width,'center');
             } else{
+                this.contents.fontSize = 22;
                 const text = this.convertEscapeCharacters(this._mainText);
                 this.drawText(text,40,24,Graphics.width,'center');
             }
@@ -89,6 +92,7 @@ class Window_Confirm extends Window_Command{
             this.drawBack(rect.x, rect.y , rect.width,rect.height ,"rgba(216,96,132,255)",164);
         }
         this.changePaintOpacity(this.isCommandEnabled(index));
+        this.contents.fontSize = 21;
         this.drawText(this.commandName(index), rect.x, rect.y, rect.width, align);
     }
 

@@ -151,6 +151,7 @@ class EditBoxImpl{
         
         setTimeout(() => {
             this._edTxt.focus();
+            this._edTxt.value = "アルト"
         }, 0.5);
     }
 

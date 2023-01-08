@@ -6,20 +6,21 @@ class PopupStatus_View  {
         this._listWindow = new PopupStatus_ActorList(584,56,344,416);
         this._listWindow.setHandler('pageup',     this.changeActor.bind(this,-1));
         this._listWindow.setHandler('pagedown',     this.changeActor.bind(this,1));
-        this._listWindow.setHandler('shift',     this.changeSkill.bind(this));
+        this._listWindow.setHandler('shift',     this.changeParam.bind(this));
+        this._listWindow.setHandler('menu',     this.changeSkill.bind(this));
         
-        this._magicCategory = new Tactics_MagicCategory(40,94,272,64);
+        this._magicCategory = new Tactics_MagicCategory(40,102,272,64);
         
         this._magicCategory.setMagicCategory($gameElement.data());
         this._magicCategory.select(0);
 
-        this._magicList = new PopupStatus_MagicList(40,144,540,320);
+        this._magicList = new PopupStatus_MagicList(40,152,540,320);
         this._magicList.select(0);
         
         
-        this._magicList.setHandler("ok", this.commandMagicSelect.bind(this));
+        //this._magicList.setHandler("ok", this.commandMagicSelect.bind(this));
         this._magicList.setHandler("cancel", this.commandMagicCancel.bind(this));
-        this._magicList.setHandler('shift',     this.changeResetSkill.bind(this,-1));
+        //this._magicList.setHandler('shift',     this.changeResetSkill.bind(this,-1));
         this._magicList.setHandler("pageup", this.changeCategory.bind(this,1));
         this._magicList.setHandler("pagedown", this.changeCategory.bind(this,-1));
             
@@ -41,14 +42,14 @@ class PopupStatus_View  {
             this._magicCategory.parent.removeChild(this._magicCategory);
         }
         if (this._spParam.parent){
-            this._spParam.parent.removeChild(this._spParam);
+            //this._spParam.parent.removeChild(this._spParam);
         }
         if (this._magicList.parent){
             this._magicList.parent.removeChild(this._magicList);
         }
         SceneManager._scene.addChild(this._listWindow);
         SceneManager._scene.addChild(this._magicCategory);
-        SceneManager._scene.addChild(this._spParam);
+        //SceneManager._scene.addChild(this._spParam);
         SceneManager._scene.addChild(this._magicList);
     }
 
@@ -58,6 +59,7 @@ class PopupStatus_View  {
         this._listWindow.activate();
         this._listWindow.selectLast();
         this._listWindow.setHandler('cancel',     () => {if (cancelCall) cancelCall() });
+        SceneManager._scene._keyMapWindow.refresh("actorInfo");
     }
 
     static setLvupData(data,endCall){
@@ -151,11 +153,16 @@ class PopupStatus_View  {
         _popup.open();
     }
 
+    static changeParam(){
+        this._listWindow.changeStatus();
+        SceneManager._scene._keyMapWindow.refresh("paramUp");
+    }
+
     static changeSkill(){
         const _actor = this._listWindow.item();
         this._magicList.setActor(_actor);
         const _magic = $gameParty._learnedSkills.map(a => $dataSkills[a]);
-        this._magicList.setMagic(_magic);
+        this._magicList.setMagic(_actor.skills());
         this._magicList.show();
         this._magicList.activate();
         //this._magicList.selectLast();
@@ -177,6 +184,10 @@ class PopupStatus_View  {
         _scene.removeChild(this._magicCategory);
         _scene.removeChild(this._magicList);
         _scene.removeChild(this._spParam);
+    }
+
+    static busy(){
+        return this._listWindow.active;
     }
 }
 

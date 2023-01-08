@@ -1700,6 +1700,7 @@ Game_Actor.prototype.initMembers = function() {
 
     this._sp = 0;
     this._useSp = 0;
+    this._tempParamPlus = [0,0,0,0,0];
 };
 
 Game_Actor.prototype.setup = function(actorId) {
@@ -1729,7 +1730,7 @@ Game_Actor.prototype.setup = function(actorId) {
     this._elementId = actor.elementId;
 
     this._positionData = null;
-    this._paramUpRate = actor.paramUpRate;
+    this._paramUpCost = actor.paramUpCost;
     this._alchemyParam = actor.alchemyParam;
 
     this._selectedIndex = 0;
@@ -1752,14 +1753,15 @@ Game_Actor.prototype.setPosition = function(position) {
     this._positionData = position;
 }
 
-Game_Actor.prototype.paramUpRate = function() {
-    return this._paramUpRate;
+Game_Actor.prototype.paramUpCost = function() {
+    return this._paramUpCost;
 }
 
 Game_Actor.prototype.alchemyParam = function() {
     return this._alchemyParam;
 }
 
+/*
 Game_Actor.prototype.levelUpParam = function(paramId) {
     switch (paramId){
         case 0: return this.calcLevelUpParam(paramId);
@@ -1772,7 +1774,7 @@ Game_Actor.prototype.levelUpParam = function(paramId) {
 }
 
 Game_Actor.prototype.calcLevelUpParam = function(paramId) {
-    const rate = this._paramUpRate[paramId];
+    const rate = this._paramUpCost[paramId];
     if (rate == 0) return 0;
     const border = (this.level-1) * rate / 100;
     let upParam = 0;
@@ -1787,6 +1789,7 @@ Game_Actor.prototype.calcLevelUpParam = function(paramId) {
     this._paramPlus[paramId] += upParam;
     return upParam;
 }
+*/
 
 Game_Actor.prototype.addStatePlus = function(id,value) {
     if (this._statePlus[id] == null){
@@ -2225,10 +2228,12 @@ Game_Actor.prototype.paramPlus = function(paramId) {
     if (paramId == 0){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.HP_BUFF_ADD));
         //value -= this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
+        value += this._tempParamPlus[0];
     }
     if (paramId == 1){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.MP_BUFF_ADD));
         //value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.MP_BUFF_ADD_SPECIAL));
+        value += this._tempParamPlus[1];
     }
     if (paramId == 2){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.ATK_BUFF_ADD));
@@ -2238,9 +2243,11 @@ Game_Actor.prototype.paramPlus = function(paramId) {
             value += this.def * this.getStateEffectTotal(berserkId);
         }
         //value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
+        value += this._tempParamPlus[2];
     }
     if (paramId == 3){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.DEF_BUFF_ADD));
+        value += this._tempParamPlus[3];
     }
     if (paramId == 6){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.AGI_BUFF_ADD));
@@ -2253,6 +2260,7 @@ Game_Actor.prototype.paramPlus = function(paramId) {
             }
             value += plusAccel;
         }
+        value += this._tempParamPlus[4];
     }
 
     return value;
@@ -2294,12 +2302,12 @@ Game_Actor.prototype.changeExp = function(exp, show) {
 
 Game_Actor.prototype.levelUp = function() {
     this._level++;
-    this._sp++;
+    this._sp += 10;
 };
 
 Game_Actor.prototype.levelDown = function() {
     this._level--;
-    this._sp--;
+    this._sp -= 10;
 };
 
 Game_Actor.prototype.findNewSkills = function(lastSkills) {

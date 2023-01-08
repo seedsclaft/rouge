@@ -4,7 +4,6 @@ class Tactics_CommandList extends Window_HorzCommand{
     }
 
     initialize(x, y, width, commandData){
-
         this._commandData = commandData;
         super.initialize(new Rectangle( x, y ,width , commandData.length * 40));
         this._cursorSprite.opacity = 0;
@@ -112,6 +111,7 @@ class Tactics_CommandList extends Window_HorzCommand{
         if (this._lastIndex != this.index()){
             this._lastIndex = this.index();
             this.refresh();
+            this.updateHelp();
         }
     }
 

@@ -15,8 +15,99 @@ class PopupStatus_ActorList extends Window_Selectable{
         this.addChild(this._actorSprite);
         this._actorListItem = new PopupStatus_ActorListItem(x,y,width,height);
         this.addChild(this._actorListItem);
+        this._actorListItem.setHandler('right',     this.statusUp.bind(this));
+        this._actorListItem.setHandler('left',     this.statusDown.bind(this));
+        this._actorListItem.setHandler('ok',     this.decideParam.bind(this));
+        this._actorListItem.setHandler('cancel',     this.cancelParam.bind(this));
 
         this._lvUpData = null;
+    }
+
+    changeStatus(){
+        this._actorListItem.select(0);
+        this._actorListItem.activate();
+    }
+
+    statusUp(){
+        this._actorListItem.activate();
+        let actor = this._data[this.index()];
+        if (actor){
+            const index = this._actorListItem.index();
+            const sp = actor._sp;
+            if (sp >= actor.paramUpCost()[index]){
+                actor._tempParamPlus[index] += 1;
+                actor._sp -= actor.paramUpCost()[index];
+                actor._useSp += actor.paramUpCost()[index];
+                let lvUpData = {
+                    lv:0,
+                    hp:actor._tempParamPlus[0],
+                    mp:actor._tempParamPlus[1],
+                    atk:actor._tempParamPlus[2],
+                    spd:actor._tempParamPlus[3],
+                    def:actor._tempParamPlus[4]
+                };
+                this._actorListItem.refresh(lvUpData);
+            }
+
+        }
+    }
+
+    statusDown(){
+        this._actorListItem.activate();
+        let actor = this._data[this.index()];
+        if (actor){
+            const index = this._actorListItem.index();
+            if (actor._tempParamPlus[index] > 0){
+                actor._tempParamPlus[index] -= 1;
+                actor._sp += actor.paramUpCost()[index];
+                actor._useSp -= actor.paramUpCost()[index];
+                let lvUpData = {
+                    lv:0,
+                    hp:actor._tempParamPlus[0],
+                    mp:actor._tempParamPlus[1],
+                    atk:actor._tempParamPlus[2],
+                    spd:actor._tempParamPlus[3],
+                    def:actor._tempParamPlus[4]
+                };
+                this._actorListItem.refresh(lvUpData);
+            }
+        }
+
+    }
+
+    decideParam(){
+        let actor = this._data[this.index()];
+        const mainText = TextManager.getText(12000).replace("/d",actor.name());
+        const subText = TextManager.getText(12010);
+        const text1 = TextManager.getDecideText();
+        const text2 = TextManager.getCancelText();
+        const _popup = PopupManager;
+        _popup.setPopup(mainText,{select:0,subText:subText});
+        _popup.setHandler(text1,'ok',() => {
+            actor._paramPlus[0] += actor._tempParamPlus[0];
+            actor._paramPlus[1] += actor._tempParamPlus[1];
+            actor._paramPlus[2] += actor._tempParamPlus[2];
+            actor._paramPlus[3] += actor._tempParamPlus[3];
+            actor._paramPlus[6] += actor._tempParamPlus[4];
+            actor._tempParamPlus = [0,0,0,0,0];
+            this._actorListItem.refresh();
+            this._actorListItem.select(-1);
+        });
+        _popup.setHandler(text2,'cancel',() => {
+            this._actorListItem.activate();
+        });
+        _popup.open();
+    }
+
+    cancelParam(){
+        let actor = this._data[this.index()];
+        actor._sp += actor._useSp;
+        actor._useSp = 0;
+        actor._tempParamPlus = [0,0,0,0,0];
+        this._actorListItem.refresh();
+        this._actorListItem.select(-1);
+        this.activate();
+        SceneManager._scene._keyMapWindow.refresh("actorInfo");
     }
 
     setData(data){

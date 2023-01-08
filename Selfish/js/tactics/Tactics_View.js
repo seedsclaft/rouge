@@ -55,10 +55,10 @@ class Tactics_View extends Scene_Base {
     }
 
     createObjectAfter(){
-
-        this.createHelpWindow();
-        this.createKeyMapWindow();
         PopupStatus_View.resetUp();
+        this.createHelpWindow();
+        this._commandList.setHelpWindow(this._helpWindow);
+        this.createKeyMapWindow();
         PopupStatus_View.close();
     }
 
@@ -68,44 +68,6 @@ class Tactics_View extends Scene_Base {
             this.addChild(this._keyMapWindow);
             //this._keyMapWindow.refresh('Tactics');
         }
-    }
-
-    createArrows(){
-        this._categoryRightButton = new Sprite_Button();
-        this._categoryRightButton.bitmap = ImageManager.loadSystem("minus");
-        this._categoryRightButton.x = 534;
-        this._categoryRightButton.y = 488;
-        this._categoryRightButton.setClickHandler(this.callPageArrow.bind(this,-1));
-        this.addChild(this._categoryRightButton);
-        const scale = 1;
-        this._categoryRightButton.scale.x = scale;
-        this._categoryRightButton.scale.y = scale;
-
-        this._categoryLeftButton = new Sprite_Button();
-        this._categoryLeftButton.bitmap = ImageManager.loadSystem("plus");
-        this._categoryLeftButton.x = 584;
-        this._categoryLeftButton.y = 488;
-        this._categoryLeftButton.setClickHandler(this.callPageArrow.bind(this,1));
-        this.addChild(this._categoryLeftButton);
-        this._categoryLeftButton.scale.x = scale;
-        this._categoryLeftButton.scale.y = scale;
-    }
-
-    callPageArrow(plus){
-        SoundManager.playCursor();
-        if( plus > 0){
-            this._statusWindow.cursorRight();
-        } else{
-            this._statusWindow.cursorLeft();
-        }
-        this._statusWindow.refresh();
-        this.refreshArrows();
-    }
-
-    refreshArrows(){
-        this._statusWindow.refresh();
-        this._categoryRightButton.visible = (this._statusWindow.index() != 0) && (this._statusWindow._data.length != 1);
-        this._categoryLeftButton.visible = (this._statusWindow.index() != (this._statusWindow._data.length-1)) && (this._statusWindow._data.length != 1);
     }
 
     start(){
@@ -329,6 +291,7 @@ class Tactics_View extends Scene_Base {
 
     commandSelectCancel(isEnable,selectedActorNameList){
         this._actorSelect.deactivate();
+        this._keyMapWindow.refresh("null");
         if (isEnable){
             const mainText = selectedActorNameList + TextManager.getText(10010).replace("/d",TextManager.getText(this._commandList.currentCommand().textId));
             const text1 = TextManager.getDecideText();
@@ -438,7 +401,7 @@ class Tactics_View extends Scene_Base {
             this.setCommand(TacticsCommand.EventEnd);
             return;
         }
-        if (Input.isTriggered("menu")){
+        if (!PopupStatus_View.busy() && Input.isTriggered("menu")){
             SceneManager.push(Scene_Save);
         }
     }

@@ -69,13 +69,12 @@ class Strategy_Model {
      
         lvUpData = {
             lv:lvUpData.lv - actor.level,
-            hp:actor.levelUpParam(0),
-            mp:actor.levelUpParam(1),
-            atk:actor.levelUpParam(2),
-            spd:actor.levelUpParam(6),
-            def:actor.levelUpParam(3)
+            hp:0,
+            mp:0,
+            atk:0,
+            spd:0,
+            def:0
         };
-        console.log(lvUpData)
         return lvUpData;
     }
 
