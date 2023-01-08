@@ -13,7 +13,6 @@ $dataCommonEvents = null;
 $dataSystem       = null;
 $dataMapInfos     = null;
 $dataMap          = null;
-$dataEventReadInfos     = null;
 $gameTemp         = null;
 $gameSystem       = null;
 $gameScreen       = null;
@@ -70,7 +69,6 @@ DataManager._databaseFiles = [
     { name: '$dataCommonEvents', src: 'CommonEvents.json' },
     { name: '$dataSystem',       src: 'System.json'       },
     { name: '$dataMapInfos',     src: 'MapInfos.json'     },
-    { name: '$dataEventReadInfos',     src: 'EventReadInfos.json'     }
 ];
 
 DataManager.loadDatabase = async function() {
@@ -79,9 +77,6 @@ DataManager.loadDatabase = async function() {
     const prefix = test ? "Test_" : "";
     for (const databaseFile of this._databaseFiles) {
         if (databaseFile.name == "$dataBgms"){
-            this.loadDataFile(databaseFile.name, databaseFile.src);
-        } else
-        if (databaseFile.name == "$dataEventReadInfos"){
             this.loadDataFile(databaseFile.name, databaseFile.src);
         } else{
             this.loadDataFile(databaseFile.name, prefix + databaseFile.src);

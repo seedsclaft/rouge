@@ -57,9 +57,7 @@ class Sprite_MapDock extends Sprite{
     }
 
     mapScaleChange(isScaleUp){
-        //if (isScaleUp == $gameSystem._minimapMode){
-            this._mapSprite.mapModeChange();
-        //}
+        this._mapSprite.mapModeChange();
     }
 
     createSprites(){

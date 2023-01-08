@@ -1,8 +1,8 @@
-class Presenter_Battle extends Presenter_Base{
+class Battle_Presenter extends Presenter_Base{
     constructor(view) {
         super();
         this._view = view;
-        this._model = new Model_Battle();
+        this._model = new Battle_Model();
     
         this.setEvent();
         this.setAnimationSkipEvent();

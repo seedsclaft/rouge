@@ -57,6 +57,7 @@ class Menu_StageList extends Window_Selectable{
     }
 
     drawTextEx(text, x, y, width){
+        text = TextManager.convertEscapeCharacters(text);
         const textState = this.createTextState(text, x, y, width);
         this.processAllText(textState);
         return textState.outputWidth;

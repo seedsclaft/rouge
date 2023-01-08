@@ -16,12 +16,12 @@ class Title_View extends Scene_Base{
         BackGroundManager.clearWeather();
         EventManager.resetup();
         EventManager.clearWeather();
+        this.createHelpWindow();
         this.createWindowLayer();
         this.createCommandWindow();
         this.createDebugWindow();
         this.createVersionSprite();
         this.createTitleSprite();
-        this.createHelpWindow();
         this.createMenuButton();
         this.createMenuSprite();
         this._menuPlate.visible = false;
@@ -69,12 +69,13 @@ class Title_View extends Scene_Base{
 
     createCommandWindow(){
         this._commandWindow = new Title_CommandList(640, 280, 400, 200);
-        this._commandWindow.setHandler('newGame',  this.commandNewGame.bind(this));
+        this._commandWindow.setHandler('newGame',  this.setCommand.bind(this,TitleCommand.NewGame));
         this._commandWindow.setHandler('continue', this.commandContinue.bind(this));
         this._commandWindow.setHandler('option', this.commandOptions.bind(this));
         if ($gameTemp.isPlaytest()){
             this._commandWindow.setHandler('shift', this.commandDebug.bind(this));
         }
+        this._commandWindow.setHelpWindow(this._helpWindow);
         this.addWindow(this._commandWindow);
     }
 
@@ -102,12 +103,11 @@ class Title_View extends Scene_Base{
     }
 
     createVersionSprite(){
-        const rectData = this.convertRect(0.8, 0.95, 0, 0);
         this._versionSprite = new Sprite();
-        this._versionSprite.x = rectData.x;
-        this._versionSprite.y = rectData.y;
-        this._versionSprite.scale.x = 0.75;
-        this._versionSprite.scale.y = 0.75;
+        this._versionSprite.x = 732;
+        this._versionSprite.y = 0;
+        this._versionSprite.scale.x = 0.66;
+        this._versionSprite.scale.y = 0.66;
         let bitmap = new Bitmap(320,128);
         bitmap.drawText(TextManager.getText(100300) + $gameDefine.gameVersion,0,0,320,64,"right")
         this._versionSprite.bitmap = bitmap;
@@ -135,19 +135,28 @@ class Title_View extends Scene_Base{
         this.addChild(this._backButton);
     }
 
-    commandNewGame(){
-        SoundManager.playOk();
-        DataManager.setupNewGame();
+    async commandNewGame(){
         this._commandWindow.hide();
         this._versionSprite.hide();
-        SceneManager.goto(Menu_View);
-        
         gsap.killTweensOf(BackGroundManager._backGroundView._backSprite2);
+
+        await this.setWait(2000);
+        this.setCommand(TitleCommand.NameInput);
     }
 
     commandContinue(){
         this._commandWindow.close();
         SceneManager.push(Scene_Load);
+    }
+
+    commandNameInput(){
+        const mainText = TextManager.getText(14050);
+        PopupInputManager.setInputPopup(mainText,null,0,null,14);
+        PopupInputManager.setHandler(TextManager.getText(840),'ok',() => {
+            this.setCommand(TitleCommand.NameInputEnd);
+            $gameSystem.setUserName(PopupInputManager.getInputText());
+        });
+        PopupInputManager.open();
     }
 
     onLoadSuccess(){
@@ -479,4 +488,6 @@ const TitleCommand = {
     DeployiOS : 106,
     OutputDeployAssetOnly : 107,
     OutputDeployAll : 108,
+    NameInput : 200,
+    NameInputEnd : 201
 }

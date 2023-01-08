@@ -73,5 +73,11 @@ class Title_CommandList extends Window_Command {
     _updateCursor(){
 
     }
+
+    updateHelp() {
+        if (this.currentData().symbol) {
+            this.setHelpWindowText(TextManager.getText( 5010 + 10 * this._index ));
+        }
+    };
 }
 Window_TitleCommand._lastCommandSymbol = null;

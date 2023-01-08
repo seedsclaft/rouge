@@ -1110,8 +1110,9 @@ Game_Battler.prototype.removeBuffState = function() {
         StateType.REDUCTOR,
     ]
     for (let i = 0; i < _buffState.length ; i++){
-        if (this.isStateAffected($gameStateInfo.getStateId( _buffState[i] ))){
-            this.removeState($gameStateInfo.getStateId( _buffState[i] ));
+        const state = $gameStateInfo.getStateId( _buffState[i] );
+        if (this.isStateAffected(state)){
+            this.removeState(state);
         }
     }
 };

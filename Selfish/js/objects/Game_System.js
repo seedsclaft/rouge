@@ -16,10 +16,8 @@ Object.defineProperties(Game_System.prototype, {
     
         //バックログ
         this._backLog = [];
-    
-        // ミニマップ大きさ
-        this._minimapMode = true;
 
+        this._userName = "";
     };
 })();
 
@@ -35,4 +33,8 @@ Game_System.prototype.onAfterLoad = function() {
 
 Game_System.prototype.windowPadding = function() {
     return 12;
+};
+
+Game_System.prototype.setUserName = function(userName) {
+    this._userName = userName;
 };

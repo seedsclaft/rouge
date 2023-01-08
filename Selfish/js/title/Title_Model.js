@@ -5,6 +5,10 @@ class Title_Model {
     titleBackGround(){
         return ["title","title2"];
     }
+    
+    menuBgm(){
+        return $gameBGM.getBgm('menu');
+    }
 
     outputDeproy(platform,basePath,targetPath,isWindows){
         const path = require('path');

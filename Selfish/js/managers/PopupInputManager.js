@@ -18,8 +18,7 @@ class PopupInputManager {
         }
         SceneManager._scene.addChild(this._window);
         this._window.initHandlers();
-        this._window.setMainText(mainText);
-        this._window.setSubText(subText);
+        this._window.setTextData(mainText,subText);
         this._window.select(select);
         this._editBox.setMaxLength(inputNumber);
         this._endCall = endCall;
@@ -124,12 +123,12 @@ class EditBoxImpl{
         tmpEdTxt.style.fontSize = 21 + 'px';
         tmpEdTxt.style.color = '#FFFFFF';
         tmpEdTxt.style.border = 0;
-        tmpEdTxt.style.background = 'transparent';
+        tmpEdTxt.style.background = 'rgba(60,60,60,0.5)';
         tmpEdTxt.style.width = width + 'px';
         tmpEdTxt.style.height = height + 'px';
         tmpEdTxt.style.active = 0;
         tmpEdTxt.style.outline = 'medium';
-        tmpEdTxt.style.padding = '0';
+        tmpEdTxt.style.padding = '5px';
         tmpEdTxt.style.textTransform = 'none';
         tmpEdTxt.style.display = 'none';
         tmpEdTxt.style.position = "absolute";
@@ -137,7 +136,8 @@ class EditBoxImpl{
         tmpEdTxt.style.left = "0px";
         tmpEdTxt.style['-moz-appearance'] = 'textfield';
         tmpEdTxt.style.fontFamily = $gameSystem.mainFontFace();
-        
+        tmpEdTxt.style.textShadow = "1px 1px 0 #000, -1px -1px 0 #000,-1px 1px 0 #000, 1px -1px 0 #000,0px 1px 0 #000,  0-1px 0 #000,-1px 0 0 #000, 1px 0 0 #000"
+        tmpEdTxt.style.textAlign = "center";
         document.body.appendChild(tmpEdTxt);
         tmpEdTxt.style.zIndex = 10;
 
@@ -219,9 +219,9 @@ class EditBoxImpl{
     _update () {
         if (this._maxLength){
             let width = this._maxLength * 22;
-            let left = (Graphics.width/2) - (width/5.5);
+            let left = (Graphics.width/2) - (width/2);
             this._setPosition(left,Graphics.height/2 - 48);
-            this._setSize(width,80);
+            this._setSize(width,40);
         }
     }
 }

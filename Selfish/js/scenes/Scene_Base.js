@@ -261,6 +261,15 @@ Scene_Base.prototype.createScreenSprite = function() {
     this.addChild(this._menuBack);
 }
 
+Scene_Base.prototype.setWait = function(num) {
+    return new Promise(resolve => {
+        const delayTime = num;
+        setTimeout(() => {
+            return resolve();
+        }, delayTime)
+    });
+};
+
 Scene_Boot.prototype.loadSystemImages = function() {
     ColorManager.loadWindowskin();
     ImageManager.loadSystem("IconSet");
@@ -293,8 +302,9 @@ Scene_Boot.prototype.start = async function() {
     
     BackGroundManager.init();
     EventManager.init();
-    Presenter_Loading.init();
+    Presenter_Fade.init();
     PopupInputManager.init();
+    Presenter_Loading.init();
 
     PopupStatus_View.initialize();
     

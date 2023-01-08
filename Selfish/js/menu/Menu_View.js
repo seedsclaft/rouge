@@ -61,6 +61,7 @@ class Menu_View extends Scene_Base{
         this._stageList.setStageData(data);
         this._stageList.select(0);
         this._stageList.activate();
+        this._helpWindow.setText(TextManager.getText(5040));
     }
 
     selectStage(){
@@ -74,6 +75,7 @@ class Menu_View extends Scene_Base{
         _popup.setPopup(mainText,{select:0,subText:null});
         _popup.setHandler(text1,'ok',() => {
             this._stageList.hide();
+            this._helpWindow.setText(TextManager.getText(5050));
             this.setCommand(MenuCommand.ActorSelect);
         });
         _popup.open();
@@ -90,6 +92,7 @@ class Menu_View extends Scene_Base{
                 PopupStatus_View.close();
                 this._stageList.activate();
                 this._stageList.show();
+                this._helpWindow.setText(TextManager.getText(5040));
         });
     }
 

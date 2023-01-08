@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Model_Battle
+// Battle_Model
 //
-class Model_Battle extends Model_Base {
+class Battle_Model extends Model_Base {
     constructor(){
         super();
         this.initMembers();

@@ -39,6 +39,10 @@ class Title_Presenter extends Presenter_Base{
             return this.commandNewGame();
             case TitleCommand.Continue:
             return this.commandContinue();
+            case TitleCommand.NameInput:
+            return this.commandNameInput();
+            case TitleCommand.NameInputEnd:
+            return this.commandNameInputEnd();
             case TitleCommand.Debug:
             return this.commandDebug();
             case TitleCommand.OutputEventFile:
@@ -90,12 +94,30 @@ class Title_Presenter extends Presenter_Base{
     }
 
     commandNewGame(){
+        SoundManager.playOk();
+        DataManager.setupNewGame();
+
+        AudioManager.stopBgm();
+        Presenter_Fade.fadein(0.5);
         this._view.commandNewGame();
+        
+        //SceneManager.goto(Menu_View);
     }
 
     commandContinue(){
         /*
         */
+    }
+
+    commandNameInput(){
+        FilterMzUtility.addFilter(FilterType.OldFilm);
+        AudioManager.playBgm(this._model.menuBgm());
+        this._view.commandNameInput();
+    }
+
+    commandNameInputEnd(){
+        Presenter_Fade.fadeout(0.5);
+        SceneManager.goto(Menu_View);
     }
 
     commandDebug(){
@@ -200,18 +222,5 @@ class Title_Presenter extends Presenter_Base{
 
     commandOutputDeployAll(){
         this._model.outputDeployAll();
-    }
-    
-    setWait (num) {
-        return new Promise(resolve => {
-            const delayTime = num
-            setTimeout(() => {
-              return resolve()
-            }, delayTime)
-          })
-    }
-    
-    update(){
-
     }
 }

@@ -6,7 +6,7 @@
 class Battle_View extends Scene_Base{
     constructor(){
         super();
-        this._presenter = new Presenter_Battle(this);
+        this._presenter = new Battle_Presenter(this);
     }
 
     create(){
