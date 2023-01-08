@@ -440,7 +440,6 @@ class Battle_View extends Scene_Base{
         this._skillWindow.activate();
         this._skillWindow.selectLast();
 
-        this.changeSkillIndex();
         //this._keyMapWindow.show();
         this._gridSpriteset.clearNextOrder();
         var actor = this._skillWindow.actor();
@@ -714,6 +713,14 @@ class Battle_View extends Scene_Base{
         this._layerBattleTroop.startAnimation(battler,59, false, 0,1,false,false);
         this._layerBattleTroop.setDamagePopup(battler,'hpDamage',Math.round((-1*value)));
         this._layerBattleParty.startAnimation(battler,59, false, 0,1,false,false);
+        this._layerBattleParty.setDamagePopup(battler,'hpDamage',Math.round((-1*value)));
+        this._recordWindow.addDamageText(battler,'hpDamage',Math.round((-1*value)));
+    }
+
+    slipBurn(battler,value){
+        this._layerBattleTroop.startAnimation(battler,3, false, 0,1,false,false);
+        this._layerBattleTroop.setDamagePopup(battler,'hpDamage',Math.round((-1*value)));
+        this._layerBattleParty.startAnimation(battler,3, false, 0,1,false,false);
         this._layerBattleParty.setDamagePopup(battler,'hpDamage',Math.round((-1*value)));
         this._recordWindow.addDamageText(battler,'hpDamage',Math.round((-1*value)));
     }

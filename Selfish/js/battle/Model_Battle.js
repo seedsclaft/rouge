@@ -121,8 +121,9 @@ class Model_Battle extends Model_Base {
         } else{
             this.eraseGuardState();
         }
+        const _guardId = $gameStateInfo.getStateId( StateType.GUARD );
         this._battleMembers.forEach(battler => {
-            if ((battler.isActor() && !isGuard) || battler.isEnemy()){
+            if (!battler.isStateAffected(_guardId)){
                 battler.gainDefineAp();
                 battler.updateStateTimes();
             }
@@ -335,24 +336,31 @@ class Model_Battle extends Model_Base {
         }
     }
 
-    createInterruptActionData(){
+    bindAttack(){
         const _battler = this.actionBattler();
-        const chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
-        if (_battler.isStateAffected(chainTargetId)){
+        const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
+        return _battler.isStateAffected(chainSelfId);
+    }
+
+    createBindActionData(){
+        const _battler = this.actionBattler();
+        const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
+        if (_battler.isStateAffected(chainSelfId)){
             const _bindBatllers = _battler._bindBatllers;
             if (_bindBatllers.length > 0){
                 _bindBatllers.forEach(bindBatllers => {
-                    let action = new Game_Action(bindBatllers);
+                    let action = new Game_Action(_battler);
                     action.setSkill(56);
-                    action.setTarget(_battler.index());
+                    action.setTarget(bindBatllers.index());
                     action.makeActionResult();
                     this._makeActionData.push(action);
-                    this.setActingBattler(bindBatllers,false);
+                    this.setActingBattler(_battler,false);
                 });
             }
         }
+    }
 
-        
+    createInterruptActionData(){
         const _battlers = this.actionBattlers();
         let action = this.currentAction();
         // timingがInterruptの固有を発動
@@ -641,7 +649,7 @@ class Model_Battle extends Model_Base {
         const results = this.currentAction().results();
         if (results){
             results.forEach(result => {
-                var removeStates = result.removedStateObjects();
+                const removeStates = result.removedStateObjects();
                 if (removeStates){
                     removeStates.forEach(state => {
                         if (state.id == $gameStateInfo.getStateId(StateType.POISON)){
@@ -657,10 +665,43 @@ class Model_Battle extends Model_Base {
         return (this.actionBattler() && this.actionBattler().getStateEffectTotal($gameStateInfo.getStateId(StateType.POISON)) > 0);
     }
 
+    needSlipBurn(){
+        // 火傷が解除される予定ならスリップしない
+        let flag = true;
+        const _action = this.currentAction();
+        if (!_action){
+            return false;
+        }
+        const results = this.currentAction().results();
+        if (results){
+            results.forEach(result => {
+                const removeStates = result.removedStateObjects();
+                if (removeStates){
+                    removeStates.forEach(state => {
+                        if (state.id == $gameStateInfo.getStateId(StateType.BURN)){
+                            flag = false;
+                        }
+                    });
+                }
+            });
+        }
+        if (flag == false){
+            return false;
+        }
+        return (this.actionBattler() && this.actionBattler().getStateEffectTotal($gameStateInfo.getStateId(StateType.BURN)) > 0);
+    }
+
     slipTurn(){
         let value = 0;
-        value = -1 * this.actionBattler().getStateEffectTotal($gameStateInfo.getStateId(StateType.POISON));
-        this.actionBattler().gainHp(value);
+        value += this.actionBattler().getStateEffectTotal($gameStateInfo.getStateId(StateType.POISON));
+        this.actionBattler().gainHp(value * -1);
+        return value;
+    }
+
+    slipBurn(){
+        let value = 0;
+        value += this.actionBattler().getStateEffectTotal($gameStateInfo.getStateId(StateType.BURN));
+        this.actionBattler().gainHp(value * -1);
         return value;
     }
 
@@ -668,13 +709,16 @@ class Model_Battle extends Model_Base {
         let popup = this.currentAction().popupData(this.getActingBattler());
         this.removeState();
         this.addState(popup);
-        this.bindRemoveSelf();
+        const _isRemove = this.bindRemoveSelf();
         this.bindRemoveTarget();
         this.removeCharge();
         this.bindState();
         this.selfSkill();
         this.wavySkill();
-        this.actionBattler().resetAp();
+        this.deleteBuff();
+        if (!_isRemove){
+            this.actionBattler().resetAp();
+        }
         return popup;
     }
 
@@ -756,28 +800,25 @@ class Model_Battle extends Model_Base {
         //const isChainPlus = _battler.isStateAffected(chainPlusId);
         if (action && _battler.isStateAffected(chainSelfId)){
             _battler.removeState(chainSelfId);
-            /*
             _battler._bindBatllers.forEach(target => {
                 // 拘束プラス所持者のみ行動値を初期化する
                 //if (isChainPlus){
                     //target.resetAp();
                 //}
                 target.removeState($gameStateInfo.getStateId(StateType.CHAIN_TARGET));
-                
             });
+            _battler._bindBatllers = [];
+            return true;
+            /*
             battler._bindBatllers = [];
             */
         }
+        return false;
     }
 
     bindRemoveTarget(){
-        const _battler = this.getActingBattler();
-        const chainTargetId = $gameStateInfo.getStateId(StateType.CHAIN_TARGET);
-        if (_battler.isStateAffected(chainTargetId)){
-            _battler.removeState(chainTargetId);
-            _battler._bindBatllers = [];
-        }
-        /*
+        let action = this.currentAction();
+        const chainSelfId = $gameStateInfo.getStateId(StateType.CHAIN_SELF);
         //相手の行動で拘束解除
         if (action){
             action.results().forEach(result => {
@@ -792,7 +833,6 @@ class Model_Battle extends Model_Base {
                 }
             });
         }
-        */
     }
 
     bindState(){
@@ -806,11 +846,10 @@ class Model_Battle extends Model_Base {
             if (!effects){
                 const data = $dataSkills[action.item().id];
                 _battler.addState($gameStateInfo.getStateId(StateType.CHAIN_SELF), data.stateTurns,data.stateEffect,false,_battler.battlerId());
+
+                _battler._bindBatllers = [];
                 action.results().forEach(result => {
-                    result.target._bindBatllers = [];
-                });
-                action.results().forEach(result => {
-                    result.target._bindBatllers.push(_battler);
+                    _battler._bindBatllers.push(result.target);
                 });
             }
         }
@@ -845,6 +884,23 @@ class Model_Battle extends Model_Base {
             }
         }
         */
+    }
+
+    deleteBuff(){
+        let action = this.currentAction();
+        let results = action.results();
+        const deleteBuffId = $gameStateInfo.getStateId(StateType.DELETE_BUFF);
+        results.forEach(result => {
+            let addStates = result.addedStateObjects();
+            if (addStates){
+                addStates.forEach(state => {
+                    if (state.id == deleteBuffId){
+                        result.target.removeBuffState();
+                    }
+                });
+            }
+        });
+
     }
 
     selfSkillEffect(skillId,actor,action){
@@ -1001,7 +1057,7 @@ class Model_Battle extends Model_Base {
                 if (subject.isStateAffected(reactStateId)){
                     subject._ap = 0.1; // チェインは0, リアクトは0.1
                 } else{
-                    subject.resetAp();
+                    //subject.resetAp();
                 }
             }
         }
@@ -1322,8 +1378,9 @@ class Model_Battle extends Model_Base {
     }
 
     addGuardState(){
+        const _guardAbleId = $gameStateInfo.getStateId( StateType.GUARDABLE );
         $gameParty.aliveMembers().forEach(member => {
-            if (member.canMove()){
+            if (member.canMove() && member.isStateAffected(_guardAbleId)){
                 member.addState($gameStateInfo.getStateId(StateType.GUARD));
             }
         });

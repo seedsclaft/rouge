@@ -66,6 +66,7 @@ const StateType = {
     DEATH :         "death",     //戦闘不能
     GUARD :         "guard",     //防御
     
+    BURN :        　"Burn",    //火傷
     POISON :        "poison",    //毒
     STUN :          "stun",      //スタン
     CURSE :         "curse",     //呪い
@@ -136,6 +137,9 @@ const StateType = {
     MP_DAMAGE :               "MpDamage",       //追加MPダメージ
     HP_CONSUME :               "HpConsume",       //Hp消費
     CHARGE :               "Charge",       //チャージ
+    DELETE_BUFF :               "DeleteBuff",       //反射ダメージ 
+    GUARDABLE :               "GuardAble",       //ガード可能
+    REDUCTOR :               "Reductor",       //反射ダメージ 
     /*
 
     PROVOCATION :             "provocation",    //狙われ率(増加)

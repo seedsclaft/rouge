@@ -551,6 +551,10 @@ Game_Action.prototype.makeResult = function(target,lastTarget) {
     result.used = this.testApply(target);
     // 命中判定
     result.missed = result.used && (Math.random() >= this.itemHit(target));
+    //リダクター
+    if (target.isStateAffected($gameStateInfo.getStateId(StateType.REDUCTOR))){
+        result.missed = false;
+    }
     if (this.isCertainHit()){
         result.missed = false;
     }
@@ -607,10 +611,10 @@ Game_Action.prototype.makeResult = function(target,lastTarget) {
     }
     this._results.push(result);
     // 反ダメージ判定
-    this.makeResultReDamage(result);
+    this.makeResultReDamage(result,lastTarget);
 };
 
-Game_Action.prototype.makeResultReDamage = function(result) {
+Game_Action.prototype.makeResultReDamage = function(result,lastTarget) {
     const redamageId = $gameStateInfo.getStateId(StateType.REDAMAGE);
     if (result.target.isStateAffected(redamageId)){
         if (result.isDead == false && result.hpDamage > 0 && result.isHit()){
@@ -618,6 +622,21 @@ Game_Action.prototype.makeResultReDamage = function(result) {
             const damage = Math.round( result.hpDamage * effect );
             if (damage > 0){
                 result.reDamage = damage;
+            }
+        }
+    }
+    const reductorId = $gameStateInfo.getStateId(StateType.REDUCTOR);
+    if (result.target.isStateAffected(reductorId)){
+        if (result.hpDamage > 0 && result.isHit()){
+            const effect = result.target.getStateEffect(reductorId);
+            const damage = Math.round( result.hpDamage * effect );
+            if (damage > 0){
+                result.reDamage = damage;
+                result.hpDamage = 0;
+                result.isDead = false; 
+            }
+            if (lastTarget){
+                result.target.removeState(reductorId);
             }
         }
     }
@@ -648,6 +667,7 @@ Game_Action.prototype.makeResultShield = function(result,target) {
         state._effect -= result.hpDamage;
         result.hpDamage -= shieldValue;
         result.hpDamage = Math.max(0,result.hpDamage);
+        console.log(state._effect)
         if (state._effect <= 0){
             target.removeState(damageShieldId);
         }

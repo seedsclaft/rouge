@@ -142,9 +142,15 @@ class Presenter_Battle extends Presenter_Base{
         const _actionBattler = this._model.actionBattler();
         if (_actionBattler.isActor()){
             this._model.claerAction();
-            if (!this._model.canInput()){        
-                const action = this._model.selectSkill($gameDefine.noActionSkillId);
-                this.commandAction();
+            if (!this._model.canInput()){
+                // 拘束攻撃
+                if (this._model.bindAttack()){
+                    this._model.createBindActionData();
+                    this.commandActionStart();
+                } else{
+                    this._model.selectSkill($gameDefine.noActionSkillId);
+                    this.commandAction();
+                } 
                 return;
             }
             const _battleSkill = this._model.battleSkill(_actionBattler);
@@ -186,6 +192,8 @@ class Presenter_Battle extends Presenter_Base{
     }
 
     async commandActionStart(){
+        this._view.clearStatePopup();
+        //this._view.clearDamagePopup();
         const actionBattler = this._model.getActingBattler();
         const action = this._model.currentAction();
         console.log(actionBattler,action)
@@ -271,9 +279,6 @@ class Presenter_Battle extends Presenter_Base{
                 } else{
                     this._view.setDamagePopup(target,'hpDamage',results[i].hpDamage,length,logRecord,logDamage);
                 }
-                if (results[i].reDamage){
-                    this._view.setDamagePopup(actionBattler,'hpDamage',results[i].reDamage,length,logRecord,logDamage);
-                }
             } else
             if (results[i].hpDamage < 0){
                 this._view.setDamagePopup(target,'hpHeal',results[i].hpDamage,length);
@@ -292,6 +297,9 @@ class Presenter_Battle extends Presenter_Base{
             } else
             if (results[i].vantageBlock){
                 this._view.setDamagePopup(target,'vantageBlock',$dataSkills[action.item().id],length);
+            }
+            if (results[i].reDamage){
+                this._view.setDamagePopup(actionBattler,'hpDamage',results[i].reDamage,length);
             }
             if (!target.isAlive()){
                 //target.performCollapse();
@@ -330,6 +338,7 @@ class Presenter_Battle extends Presenter_Base{
     async endTurnAction(){
         this.afterHealAction();
         this.slipTurnAction();
+        this.slipBurnAction();
         
         let actionBattler = this._model.getActingBattler();
         let action = this._model.currentAction();
@@ -548,6 +557,18 @@ class Presenter_Battle extends Presenter_Base{
         //this.endTurnAction();
     }
 
+    slipBurnAction(){
+        if (this._model.needSlipBurn()){
+            this._view.clearAnimation();
+            const _slipValue = this._model.slipBurn();
+            this._view.slipBurn(this._model.actionBattler(),_slipValue);
+            this.refreshStatus();
+            //this.setActionType(ActionType.POISON);
+            //return;
+        }
+        //this.endTurnAction();
+    }
+
 
     async victoryAction(){
         this._model.processVictory();
@@ -582,7 +603,7 @@ class Presenter_Battle extends Presenter_Base{
         } else{
             // 何もしない
             this._view.clearStatePopup();
-            this._view.clearDamagePopup();
+//            this._view.clearDamagePopup();
             battler.resetAp();
             this._view.startTurn();
             if (this._model.needSlipTurn()){

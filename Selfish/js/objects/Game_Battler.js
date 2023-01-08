@@ -849,10 +849,6 @@ Game_Battler.prototype.battleOrder = function() {
 };
 
 Game_Battler.prototype.resetAp = function() {
-    if (this.isStateAffected($gameStateInfo.getStateId(StateType.CHAIN_SELF))){
-        this._ap = 1;
-        return;
-    }
     this._ap = 500 - this.agi * 4;
 };
 
@@ -985,6 +981,9 @@ Game_Battler.prototype.refreshPassive = function() {
         if (stateEval != null){
             flag = eval(stateEval);
         }
+        if (this.isStateAffected($gameStateInfo.getStateId(StateType.DELETE_BUFF))){
+            flag = false;
+        }
         if (flag){
             const addSkills = this.addPassive(skill);
             addSkills.forEach(skill => {
@@ -1085,6 +1084,38 @@ Game_Battler.prototype.removeState = function(stateId,battlerId,slotId) {
         this.refresh();
     }
 };
+
+Game_Battler.prototype.removeBuffState = function() {
+    const _buffState = [
+        StateType.HP_BUFF_ADD,StateType.HP_BUFF_RATE,StateType.MP_BUFF_ADD,StateType.MP_BUFF_RATE,
+        StateType.ATK_BUFF_ADD,StateType.ATK_BUFF_RATE,StateType.DEF_BUFF_ADD,StateType.DEF_BUFF_RATE,
+        StateType.AGI_BUFF_ADD,StateType.AGI_BUFF_RATE,StateType.EVA_BUFF_RATE,StateType.CRITICAL_BUFF_ADD,StateType.CRITICAL_BUFF_RATE,
+        StateType.BATTLE_MP_BUFF_ADD,StateType.START_DASH,
+        StateType.DAMAGE_RATE,StateType.PHARMACOLOGY,
+        StateType.SHIELD,
+        StateType.BARRIER,
+        StateType.DAMAGE_DRAIN,
+        StateType.ACCEL,
+        StateType.BERSERK,
+        StateType.PENETRATE,
+        StateType.REDAMAGE,
+        StateType.COUNTER,
+        StateType.ATTACK_LENGHT,
+        StateType.ANTI_VACCINATION,
+        StateType.REGENE_HP,
+        StateType.DRAIN_HEAL,
+        StateType.MP_DAMAGE,
+        StateType.HP_CONSUME,
+        StateType.CHARGE,
+        StateType.REDUCTOR,
+    ]
+    for (let i = 0; i < _buffState.length ; i++){
+        if (this.isStateAffected($gameStateInfo.getStateId( _buffState[i] ))){
+            this.removeState($gameStateInfo.getStateId( _buffState[i] ));
+        }
+    }
+};
+
 
 Game_Battler.prototype.passiveSkills = function() {
     return [];
@@ -1422,7 +1453,7 @@ Game_Battler.prototype.gainDefineAp = function() {
     }
     //バインド制限
     if (this.isStateAffected($gameStateInfo.getStateId(StateType.CHAIN_TARGET))){
-        this._ap -= 1.5;
+        this._ap += 1.5;
         return;
     }
     //待ち伏せ
@@ -1430,7 +1461,7 @@ Game_Battler.prototype.gainDefineAp = function() {
         return;
     }
     if (this.isStateAffected($gameStateInfo.getStateId(StateType.CHAIN_SELF))){
-        this._ap += 1.5;
+        this._ap -= 1.5;
         return;
     }
     //鈍足
