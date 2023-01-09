@@ -7,7 +7,6 @@ class LocalizeUtility {
             "actorsName",
             "skillsName",
             "skillsDescription",
-            "mapinfosName",
             //"itemsName",
             "statesName",
             "statesMessage1",
@@ -21,7 +20,6 @@ class LocalizeUtility {
         textTemp['actorsName'] =        $dataActors.map(d => d != null ? d.name : null);
         textTemp['skillsName'] =        $dataSkills.map(d => d != null ? d.name : null);
         textTemp['skillsDescription'] = $dataSkills.map(d => d != null ? d.description : null);
-        textTemp['mapinfosName'] =      $dataMapInfos.map(d => d != null ? d.name : null);
         //textTemp['itemsName'] =         $dataItems.map(d => d != null ? d.name : null);
         textTemp['statesName'] =        $dataStates.map(d => d != null ? d.name : null);
         textTemp['statesMessage1'] =     $dataStates.map(d => d != null ? d.message1 : null);
@@ -45,7 +43,7 @@ class LocalizeUtility {
             }
             fs.writeFileSync(dirPath + filePath, data);
             //csv 
-            if (keyname == "quizQuestion" || keyname == "quizChoices" || keyname == "helpText"){
+            if (keyname == "helpText"){
 
             } else{
                 this.data2csv(textTemp[keyname],keyname);
@@ -82,14 +80,6 @@ class LocalizeUtility {
             //p = iconvlite.decode(Buffer.from(p), "utf-8");
             if (file.name == "systemtext.csv"){
                 this.outputSystemText(p);
-            } else 
-            if (file.name == "materialtext.csv"){
-                var outputname = file.name.replace("csv","");
-                this.outputMaterialTextData(p,outputname + "json");
-            } else 
-            if (file.name == "quiztext.csv"){
-                var outputname = file.name.replace("csv","");
-                this.outputQuizTextData(p,outputname + "json");
             } else 
             if (file.name == "tipstext.csv"){
                 var outputname = file.name.replace("csv","");
@@ -162,90 +152,6 @@ class LocalizeUtility {
         });
         jsonData = JsonEx.stringify(jsonData);
         this.outputJson('text/en/' + filename ,jsonData);
-    }
-
-    static outputMaterialTextData(csv,filename){
-        var materialTitle = [];
-        var materialText = [];
-        let dataArray = this.csvToJson(csv);
-        
-        for (var i = 0;i < 1000; i++){
-            var temp = _.find(dataArray,(data) => data[0] == i);
-            var tempText = "";
-            if (temp){
-                temp[2] = temp[2].replace(/\r/g, '');
-                temp[2] = temp[2].replace(/\c/g, ',');
-                temp[2] = temp[2].replace(/’/g, '`');
-                temp[2] = temp[2].replace(/”/g, '"');
-                temp[2] = temp[2].replace(/“/g, '"');
-                this.convertChar(temp[2]);
-                materialTitle.push(temp[2]);
-                for (var j = 3; j <= temp.length; j++){
-                    if (temp[j] && temp[j] != ""){
-                        tempText += temp[j];
-                        if (temp.length <= (temp.length+1)){
-                            if (temp[j+1] != "" && temp[j+1]){
-                                tempText += "\n";
-                            }
-                        }
-                    }
-                }
-                tempText = tempText.replace(/\c/g, ',');
-                tempText = tempText.replace(/\r/g, '');
-                tempText = tempText.replace(/’/g, '`');
-                tempText = tempText.replace(/”/g, '"');
-                tempText = tempText.replace(/“/g, '"');
-                this.convertChar(tempText);
-                materialText.push(tempText);
-            } else{
-                materialTitle.push("");
-                materialText.push("");
-            }
-        }
-        materialTitle = JSON.stringify(materialTitle);
-        materialText = JSON.stringify(materialText);
-        this.outputJson('text/en/' + "materialTitle.json" ,materialTitle);
-        this.outputJson('text/en/' + "materialText.json" ,materialText);
-    }
-
-    static outputQuizTextData(csv,filename){
-        var quizQuestion = [];
-        var quizChoices = [];
-        let dataArray = this.csvToJson(csv);
-        dataArray.forEach(data => {
-            data[0] = data[0].replace(/\r/g, '');
-            data[0] = data[0].replace(/\c/g, ',');
-            data[0] = data[0].replace(/’/g, '`');
-            data[0] = data[0].replace(/”/g, '"');
-            data[0] = data[0].replace(/“/g, '"');
-            this.convertChar(data[0]);
-            quizQuestion.push(data[0]);
-            data[2] = data[2].replace(/\r/g, '');
-            data[3] = data[3].replace(/\r/g, '');
-            data[4] = data[4].replace(/\r/g, '');
-            data[2] = data[2].replace(/\c/g, ',');
-            data[3] = data[3].replace(/\c/g, ',');
-            data[4] = data[4].replace(/\c/g, ',');
-            data[2] = data[2].replace(/’/g, '`');
-            data[3] = data[3].replace(/’/g, '`');
-            data[4] = data[4].replace(/’/g, '`');
-            data[2] = data[2].replace(/”/g, '"');
-            data[2] = data[2].replace(/“/g, '"');
-            data[3] = data[3].replace(/”/g, '"');
-            data[3] = data[3].replace(/“/g, '"');
-            data[4] = data[4].replace(/”/g, '"');
-            data[4] = data[4].replace(/“/g, '"');
-            this.convertChar(data[2]);
-            this.convertChar(data[3]);
-            this.convertChar(data[4]);
-            var choise = ([data[2],data[3],data[4]]);
-            quizChoices.push(choise);
-        });
-        quizQuestion = JSON.stringify(quizQuestion);
-        quizChoices = JSON.stringify(quizChoices);
-        
-        this.outputJson('text/en/' + "quizQuestion.json" ,quizQuestion);
-        this.outputJson('text/en/' + "quizChoices.json" ,quizChoices);
     }
 
     static outputTipsTextData(csv,filename){
@@ -706,19 +612,14 @@ class LocalizeUtility {
         $dataText['actorsName'] = await $gameText.huckTextData("actorsName");
         $dataText['skillsName'] = await $gameText.huckTextData("skillsName");
         $dataText['skillsDescription'] = await $gameText.huckTextData("skillsDescription");
-        $dataText['mapinfosName'] = await $gameText.huckTextData("mapinfosName");
         $dataText['statesName'] = await $gameText.huckTextData("statesName");
         $dataText['statesMessage1'] = await $gameText.huckTextData("statesMessage1");
         $dataText['systemElements'] = await $gameText.huckTextData("systemElements");
         $dataText['systemSkillTypes'] = await $gameText.huckTextData("systemSkillTypes");
         $dataText['troopsName'] = await $gameText.huckTextData("troopsName");
         $dataText['enemiesName'] = await $gameText.huckTextData("enemiesName");
-        $dataText['materialTitle'] = await $gameText.huckTextData("materialTitle");
-        $dataText['materialText'] = await $gameText.huckTextData("materialText");
         $dataText['tipsText'] = await $gameText.huckTextData("tipsText");
         $dataText['tipsHelpText'] = await $gameText.huckTextData("tipsHelpText");
-        $dataText['quizQuestion'] = await $gameText.huckTextData("quizQuestion");
-        $dataText['quizChoices'] = await $gameText.huckTextData("quizChoices");
         $dataText['helpText'] = await $gameText.huckTextData("helpText");
         var textdata = await $gameText.huckTextData("systemtext");
         if (textdata){
@@ -829,7 +730,7 @@ class LocalizeUtility {
         let allDirents = fs.readdirSync(path, { withFileTypes: true });
         allDirents.forEach(file => {
             let p = fs.readFileSync(path + "\\" + file.name);
-            if (file.name != "systemtext.json" && file.name != "quizChoices.json"){
+            if (file.name != "systemtext.json"){
                 p = JSON.parse(p)
                 p.forEach(text => {
                     if (text){

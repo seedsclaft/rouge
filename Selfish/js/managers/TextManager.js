@@ -338,21 +338,6 @@ TextManager.mapInfosName = function(n) {
     return $dataMapInfos[n].name;
 };
 
-
-TextManager.getMaterialTitle = function(n) {
-    if ($dataText != null){
-        return $dataText['materialTitle'][n];
-    }
-    return "";
-};
-
-TextManager.getMaterialText = function(n) {
-    if ($dataText != null){
-        return $dataText['materialText'][n];
-    }
-    return "";
-};
-
 TextManager.getTipsText = function(n) {
     if ($dataText != null){
         return $dataText['tipsText'][n];
@@ -363,20 +348,6 @@ TextManager.getTipsText = function(n) {
 TextManager.getTipsHelpText = function(n) {
     if ($dataText != null){
         return $dataText['tipsHelpText'][n];
-    }
-    return "";
-};
-
-TextManager.getQuizQuestion = function(n) {
-    if ($dataText != null){
-        return $dataText['quizQuestion'][n];
-    }
-    return "";
-};
-
-TextManager.getQuizChoices = function(n) {
-    if ($dataText != null){
-        return $dataText['quizChoices'][n];
     }
     return "";
 };
