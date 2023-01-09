@@ -81,7 +81,7 @@ Game_Search.prototype.initialize = function() {
     for (let i = 0;i < 20;i++){
         let data = {};
         data.enemy = enemy;
-        data.bossEnemy = i;
+        data.bossEnemy = i + 1;
         data.eventFlag = false;
         this._data.push(data);
     }

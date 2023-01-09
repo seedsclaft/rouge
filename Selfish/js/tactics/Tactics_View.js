@@ -97,24 +97,16 @@ class Tactics_View extends Scene_Base {
         */
     }
 
-    setAlchemyParam(apchemyParam){
-        if (this._alchemyParam == null){
-            this._alchemyParam = new Tactics_AlchemyParam(600,94,304,56);
-            this.addChild(this._alchemyParam);
-        }
-        this._alchemyParam.setData(apchemyParam);
-        this._alchemyParam.show();
-    }
 
     commandDecide(){
-        this.setCommand(TacticsCommand.CommandOk);
+        this.setCommand(TacticsCommand.DecideCommand);
     }
 
-    commandCommandOk(isEnable,selectedActorNameList,infoData){
+    commandDecideCommand(isEnable,selectedActorNameList,category){
         if (isEnable){
             this._actorSelect.activate();
-            this._actorSelect.select(0);
-            this._actorSpriteList.setInfoSprite(infoData);
+            this._actorSelect.smoothSelect(0);
+            this._actorSpriteList.setInfoSprite(category);
             this.refreshActorIndex();
         } else{
             const mainText = TextManager.getText(10000).replace("/d",selectedActorNameList);
@@ -153,19 +145,18 @@ class Tactics_View extends Scene_Base {
     setSelectActor(data){
         if (this._actorSelect == null){
             this._actorSelect = new Tactics_ActorSelect(0,0,2,2);
-            this._actorSelect.setHandler('ok',     this.setCommand.bind(this,TacticsCommand.SelectOk));
+            this._actorSelect.setHandler('ok',     this.setCommand.bind(this,TacticsCommand.SelectActor));
             this._actorSelect.setHandler('cancel', this.setCommand.bind(this,TacticsCommand.SelectCancel));
             this._actorSelect.setHandler('save',   this.setCommand.bind(this,TacticsCommand.SelectEnd));
             this._actorSelect.setHandler('index',  this.refreshActorIndex.bind(this));
             this.addChild(this._actorSelect);
         }
         this._actorSelect.setData(data);
-        //this._actorSelect.activate();
     }
 
     setMagicCategory(data){
         if (this._magicCategory == null){
-            this._magicCategory = new Tactics_MagicCategory(120,94,272,64);
+            this._magicCategory = new Tactics_MagicCategory(176,94,272,64);
             this.addChild(this._magicCategory);
         }
         this._magicCategory.setMagicCategory(data);
@@ -179,9 +170,9 @@ class Tactics_View extends Scene_Base {
 
     setAlchemyMagicList(data){
         if (this._alchemyMagicList == null){
-            this._alchemyMagicList = new Tactics_AlchemyMagicList(100,144,804,320);
-            this._alchemyMagicList.setHandler("ok", this.setCommand.bind(this,TacticsCommand.AlchemySelect));
-            this._alchemyMagicList.setHandler("cancel", this.setCommand.bind(this,TacticsCommand.DecideAlchemy));
+            this._alchemyMagicList = new Tactics_AlchemyMagicList(160,144,540 + 104,320);
+            this._alchemyMagicList.setHandler("ok", this.setCommand.bind(this,TacticsCommand.SelectAlchemy));
+            this._alchemyMagicList.setHandler("cancel", this.setCommand.bind(this,TacticsCommand.CancelAlchemy));
             this._alchemyMagicList.setHandler("pageup", this.changeCategory.bind(this,1));
             this._alchemyMagicList.setHandler("pagedown", this.changeCategory.bind(this,-1));
             this.addChild(this._alchemyMagicList);
@@ -206,21 +197,28 @@ class Tactics_View extends Scene_Base {
         }
     }
 
-    commandAlchemySelect(isSelected,isEnableResult,alchemyId){
-        if (isSelected){
-            this._alchemyMagicList.setRemove(alchemyId);
-            this._alchemyMagicList.activate();
-        } else
-        if (isEnableResult == 0){
-            this._alchemyMagicList.setSelected(alchemyId);
-            this._alchemyMagicList.activate();
+    commandSelectAlchemy(isEnableResult,actorId,alchemyId){
+        if (isEnableResult){
+            this._alchemyMagicList.deactivate();
+            const mainText = TextManager.actorName(actorId) + TextManager.getText(10030).replace("/d",TextManager.getSkillName(alchemyId));
+            const text1 = TextManager.getDecideText();
+            const text2 = TextManager.getCancelText();
+            const _popup = PopupManager;
+            _popup.setPopup(mainText,{select:0,subText:null});
+            _popup.setHandler(text1,'ok',() => {
+                this._magicCategory.hide();
+                this._alchemyMagicList.hide();
+                this._alchemyMagicList.deactivate();
+                this._actorSelect.activate();
+                this.setCommand(TacticsCommand.DecideAlchemy);
+            });
+            _popup.setHandler(text2,'cancel',() => {
+                this._magicCategory.show();
+                this._alchemyMagicList.show();
+                this._alchemyMagicList.activate();
+            });
+            _popup.open();
         } else{
-            let textId = 10040;
-            if (isEnableResult == 1){
-                textId = 10050;
-            } else{
-
-            }   
             const mainText = TextManager.getText(textId);
             const text1 = TextManager.getDecideText();
             const _popup = PopupManager;
@@ -230,6 +228,12 @@ class Tactics_View extends Scene_Base {
             });
             _popup.open();
         }
+    }
+
+    commandDecideAlchemy(){
+        this._actorSelect.activate();
+        this._actorSelect.smoothSelect(0);
+        this.refreshActorIndex();
     }
 
     setSearchList(data){
@@ -262,6 +266,11 @@ class Tactics_View extends Scene_Base {
         return this._searchList.item();
     }
 
+    commandSelectActor(actorIdList){
+        this._actorSelect.removeActorList(actorIdList);
+        this._actorSpriteList.removeActorList(actorIdList);
+    }
+
     commandSelectOk(isSelected,isEnable){
         if (isEnable){
             const _index = this._actorSelect.index();
@@ -285,8 +294,6 @@ class Tactics_View extends Scene_Base {
         this._actorSelect.setData(memberList);
         this._actorSpriteList.addActorList(actorIdList);
         this._actorSpriteList.deactivate();
-        if (this._alchemyParam) this._alchemyParam.hide();
-        if (this._alchemyMagicList) this._alchemyMagicList.clearSelect();
     }
 
     commandSelectCancel(isEnable,selectedActorNameList){
@@ -311,7 +318,6 @@ class Tactics_View extends Scene_Base {
         } else{
             this._commandList.activate();
             this._actorSpriteList.deactivate();
-            if (this._alchemyParam) this._alchemyParam.hide();
             if (this._searchList) this._searchList.hide();
             this._actorSpriteList.setInfoSprite([]);
         }
@@ -330,42 +336,27 @@ class Tactics_View extends Scene_Base {
         this._actorSpriteList.setInfoSprite([]);
     }
 
-    commandSelectAlchemy(){
+    commandShowAlchemy(){
         this._commandList.deactivate();
         this._alchemyMagicList.show();
         this._alchemyMagicList.activate();
         this._alchemyMagicList.select(0);
         this._magicCategory.show();
         this._magicCategory.select(0);
+        this._actorSelect.deactivate();
         this.refreshCategoryIndex();
     }
 
-    commandDecideAlchemy(isEnable,alchemyNameList){
-        if (isEnable && alchemyNameList != ""){
-            const mainText = TextManager.getText(10030).replace("/d",alchemyNameList);
-            const text1 = TextManager.getDecideText();
-            const text2 = TextManager.getCancelText();
-            const _popup = PopupManager;
-            _popup.setPopup(mainText,{select:0,subText:null});
-            _popup.setHandler(text1,'ok',() => {
-                this._commandList.activate();
-                this._alchemyMagicList.hide();
-                this._magicCategory.hide();
-                this._alchemyParam.hide();
-                this.setCommand(TacticsCommand.AlchemyEnd);
-            });
-            _popup.setHandler(text2,'cancel',() => {
-                this._commandList.activate();
-                this.setCommand(TacticsCommand.AlchemySelect);
-            });
-            _popup.open();
-        } else{
-            this._commandList.activate();
-            this._alchemyMagicList.hide();
-            this._magicCategory.hide();
-            this._alchemyParam.hide();
-            this.setCommand(TacticsCommand.SelectClear);
-        }
+    commandCancelAlchemy(){
+        const _index = this._actorSelect.index();
+        this._actorSpriteList.setSelectedIndex(_index,true);
+        this._alchemyMagicList.hide();
+        this._magicCategory.hide();
+        this._actorSelect.activate();
+    }
+
+    commandDecideAlchemy(){
+        this._actorSelect.activate();
     }
 
     commandCommandSearch(){
@@ -375,6 +366,7 @@ class Tactics_View extends Scene_Base {
     }
 
     commandCommandTurnend(){
+        this._actorSelect.deactivate();
         this._commandList.deactivate();
         const mainText = TextManager.getText(10020);
         const text1 = TextManager.getDecideText();
@@ -443,17 +435,17 @@ class Tactics_View extends Scene_Base {
 
 const TacticsCommand = {
     Start :0,
-    CommandOk :10,
+    DecideCommand :10,
     Train :11,
-    SelectOk :30,
+    SelectActor :30,
     SelectCancel :31,
     SelectClear :32,
     SelectEnd :33,
     DecideMember :51,
     TrainMagic :71,
-    AlchemySelect :81,
-    DecideAlchemy :82,
-    AlchemyEnd :83,
+    SelectAlchemy :81,
+    CancelAlchemy :82,
+    DecideAlchemy :83,
     SearchMember :91,
     Turnend :111,
     EventEnd : 200,

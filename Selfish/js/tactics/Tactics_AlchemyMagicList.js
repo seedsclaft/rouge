@@ -3,9 +3,8 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
         super(new Rectangle( x, y, width, height ));
         this._data = [];
         this._magicList = [];
-        this._selected = [];
         this._window = new Window_Base(new Rectangle(500,0,304,height ));
-        this.addChildAt(this._window,1)
+        //this.addChildAt(this._window,1)
     }
 
     setAlchemyMagic(data){
@@ -33,9 +32,6 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
             const rect = this.itemLineRect(index);
             this.resetTextColor();
             this.contents.fontSize = 21;
-            if (this._selected.contains(_alchemy.skill.id)){
-                this.drawBack(rect.x,rect.y-12,rect.width,this.itemHeight(),0xFFFFFF,64);
-            }
             this.drawText(TextManager.getSkillName(_alchemy.skill.id), rect.x, rect.y - 12,rect.width);
             const _textWidth = this.contents.measureTextWidth(TextManager.getSkillName(_alchemy.skill.id));
             this.contents.fontSize = 16;
@@ -44,26 +40,10 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
             //if (_alchemy.skill.stypeId == Game_BattlerBase.SKILL_TYPE_MAGIC){
             //    this.drawText(_alchemy.skill.mpCost, rect.x, rect.y - 12, rect.width - 296, "right");
             //}
-            this.drawItemDescription(_alchemy.skill,rect.x,rect.y,rect.width - 296);
-
+            this.drawItemDescription(_alchemy.skill,rect.x,rect.y,rect.width - 104);
             this.contents.fontSize = 18;
-            const _element = $dataSystem.elements;
-            if (_alchemy.needRank) {
-                let needIndex = 0;
-                _alchemy.needRank.forEach((rank,index) => {
-                    if (rank == 0){
-                        rank = "－";
-                        return;
-                    }
-                    this.drawIconMini($gameElement.data()[index].iconIndex,rect.x + 500 + 32 * needIndex , rect.y - 8);
-                    this.drawText(rank,28 + rect.x + 500 + 32 * needIndex, rect.y - 16,80,"left");
-                    needIndex++;
-                });
-            }
-            this.contents.fontSize = 16;
-            this.drawText(TextManager.getText(750) + " : " + _alchemy.skill.mpCost,500 + rect.x, rect.y + 14,rect.width,"left");
-            this.drawText(_alchemy.cost + TextManager.currencyUnit, rect.x, rect.y + 14,rect.width,"right");
-        
+            this.drawText("習得Cost", rect.width - 104 + 20, rect.y - 10,104,"center");
+            this.drawText(_alchemy.cost + TextManager.currencyUnit, rect.width - 104 - 4, rect.y + 18,104,"right");
         }
     }
 
@@ -86,19 +66,6 @@ class Tactics_AlchemyMagicList extends Window_Selectable{
     //_updateCursor(){
 
     //}
-    setSelected(id){
-        this._selected.push(id);
-        this.refresh();
-    }
-
-    setRemove(id){
-        this._selected = _.without(this._selected,id);
-        this.refresh();
-    }
-
-    clearSelect(){
-        this._selected = [];
-    }
 
     item(){
         return this._magicList.length > this.index() ? this._magicList[this.index()] : null;

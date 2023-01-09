@@ -179,7 +179,6 @@ Game_Party.prototype.initialize = function() {
     this._menuActorId = 0;
     this._actors = [];
     this.initAllItems();
-    this._learnedSkills = [];
     
     //スキルNew済みIDリスト
     this._newSkillIdList = [];
@@ -415,9 +414,6 @@ Game_Party.prototype.highestLevel = function() {
 
 Game_Party.prototype.addActor = function(actorId) {
     if (!this._actors.contains(actorId)) {
-        $gameActors.actor(actorId).skills().forEach(skill => {
-            $gameParty.addLearnSkill(skill.id);
-        });
         this._actors.push(actorId);
         $gamePlayer.refresh();
         $gameMap.requestRefresh();
@@ -633,12 +629,6 @@ Game_Party.prototype.removeBattleStates = function() {
 };
 
 Game_Party.prototype.requestMotionRefresh = function() {
-};
-
-Game_Party.prototype.addLearnSkill = function(skillId) {
-    if (!this._learnedSkills.includes(skillId)){
-        this._learnedSkills.push(skillId);
-    }
 };
 
 // バトル終了時のステータスにする

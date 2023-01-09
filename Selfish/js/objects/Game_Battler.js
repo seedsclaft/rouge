@@ -1624,6 +1624,7 @@ Game_Actor.prototype.initMembers = function() {
     this._sp = 0;
     this._useSp = 0;
     this._tempParamPlus = [0,0,0,0,0];
+    this._addParamPlus = [0,0,0,0,0];
 };
 
 Game_Actor.prototype.setup = function(actorId) {
@@ -1678,6 +1679,10 @@ Game_Actor.prototype.setPosition = function(position) {
 
 Game_Actor.prototype.paramUpCost = function() {
     return this._paramUpCost;
+}
+
+Game_Actor.prototype.calcParamUpCost = function(paramId) {
+    return this._paramUpCost[paramId] + Math.floor((this._addParamPlus[paramId] + this._tempParamPlus[paramId]) / 2);
 }
 
 Game_Actor.prototype.alchemyParam = function() {
@@ -1845,13 +1850,12 @@ Game_Actor.prototype.isMaxLevel = function() {
 };
 
 Game_Actor.prototype.initSkills = function() {
-    Debug.error("init skills");
     this._skills = [];
-    this.currentClass().learnings.forEach(function(learning) {
+    for (const learning of this.currentClass().learnings) {
         if (learning.level <= this._level) {
-            this.learnSkill(learning.skillId,true);
+            this.learnSkill(learning.skillId);
         }
-    }, this);
+    }
 };
 
 Game_Actor.prototype.initEquips = function(equips) {
@@ -2231,12 +2235,12 @@ Game_Actor.prototype.changeExp = function(exp, show) {
 
 Game_Actor.prototype.levelUp = function() {
     this._level++;
-    this._sp += 10;
+    this._sp += (10 + Math.floor(this._level / 5));
 };
 
 Game_Actor.prototype.levelDown = function() {
+    this._sp -= (10 + Math.floor(this._level / 5));
     this._level--;
-    this._sp -= 10;
 };
 
 Game_Actor.prototype.findNewSkills = function(lastSkills) {
@@ -2281,12 +2285,8 @@ Game_Actor.prototype.changeLevel = function(level, show) {
     this.changeExp(this.expForLevel(level), show);
 };
 
-Game_Actor.prototype.learnSkill = function(skillId,isParty = true) {
-    //0819 習得履歴追加
+Game_Actor.prototype.learnSkill = function(skillId) {
     if (!this.isLearnedSkill(skillId)) {
-        if (isParty){
-            $gameParty.addLearnSkill(skillId);
-        }
         this._skills.push(skillId);
         this._skills.sort(function(a, b) {
             return a - b;
@@ -2490,22 +2490,6 @@ Game_Actor.prototype.passiveSkills = function() {
         }
     });
     return skills;
-}
-
-Game_Actor.prototype.getReserveSkillData = function(elementId) {
-    if (elementId == 6){
-        return _.filter($gameParty._learnedSkills,(s) => (s != 0 && ($dataSkills[s].damage.elementId == elementId)));
-    }
-    const list = _.filter($gameParty._learnedSkills,(s) => {
-        if (s != 0 && (($dataSkills[s].damage.elementId == elementId))){
-            if ($dataSkills[s].stypeId == Game_BattlerBase.SKILL_TYPE_SPECIAL){
-                return false;
-            }
-            return true;
-        }
-        return false;
-    });
-    return list;
 }
 
 // 必要なアニメーションファイル

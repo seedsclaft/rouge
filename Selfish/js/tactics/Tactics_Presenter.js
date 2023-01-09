@@ -51,10 +51,10 @@ class Tactics_Presenter extends Presenter_Base{
         switch (_currentCommand){
             case TacticsCommand.Start:
                 return this.commandStart();
-            case TacticsCommand.CommandOk:
-                return this.commandCommandOk();
-            case TacticsCommand.SelectOk:
-                return this.commandSelectOk();
+            case TacticsCommand.DecideCommand:
+                return this.commandDecideCommand();
+            case TacticsCommand.SelectActor:
+                return this.commandSelectActor();
             case TacticsCommand.SelectCancel:
                 return this.commandSelectCancel();
             case TacticsCommand.SelectClear:
@@ -63,8 +63,10 @@ class Tactics_Presenter extends Presenter_Base{
                 return this.commandSelectEnd();
             case TacticsCommand.DecideMember:
                 return this.commandDecideMember();
-            case TacticsCommand.AlchemySelect:
-                return this.commandAlchemySelect();
+            case TacticsCommand.SelectAlchemy:
+                return this.commandSelectAlchemy();
+            case TacticsCommand.CancelAlchemy:
+                return this.commandCancelAlchemy();
             case TacticsCommand.DecideAlchemy:
                 return this.commandDecideAlchemy();
             case TacticsCommand.AlchemyEnd:
@@ -106,56 +108,60 @@ class Tactics_Presenter extends Presenter_Base{
         }
     }
 
-    commandCommandOk(){;
+    commandDecideCommand(){;
         const _category = this._view.selectCategory();
         const _selected = this._model.selectedData(_category);
-        if (_category == "turnend"){
-            this._view.commandCommandTurnend();
-            return;
-        } else
-        if (_category == "status"){
-            const _actorList = this._model.actorList();
-            PopupStatus_View.setData(_actorList,() => {
-                PopupStatus_View.close();
-                this.commandSelectCancel();
-            });
-            return;
-        } else
-        if (_category == "alchemy"){
-            this._view.setAlchemyParam(null);
+        switch (_category){
+            case "search":
+                if (_selected.length == 0){
+                    return this._view.commandCommandSearch();
+                }
+                break;
+            case "turnend":
+                return this._view.commandCommandTurnend();
+            case "status":
+                const _actorList = this._model.actorList();
+                PopupStatus_View.setData(_actorList,() => {
+                    PopupStatus_View.close();
+                    this.commandSelectCancel();
+                });
+                return;
         }
-        if (_category == "search" && _selected.length == 0){
-            this._view.commandCommandSearch();
+        if (this._model.decidedAll() && _selected.length == 0){
+            this._view.commandSelectCancel(false);
             return;
         }
-        const _info = this._model.infoData(_category);
-        this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category),_info);
+        this._view.commandDecideCommand(_selected.length == 0,this._model.selectedActorNameList(_category),_category);
    }
 
-    commandSelectOk(){
+    commandSelectActor(){
         const _actorId = this._view.selectActorId();
         const _category = this._view.selectCategory();
         const _isSelected = this._model.isSelectedActor(_category,_actorId);
-        
-        if (_isSelected){
-        } else{
-        }
-
-        
         const _needEnergy = this._model.needTrainEnergy(_category,_actorId);
         if (!_isSelected){
-            if (this._model.energy() >= _needEnergy){
+            if (_category == "search" || _category == "alchemy"){
                 this._model.addSelectData(_category,_actorId);
-                this._model.loseEnergy(_needEnergy);
-                this._view.changeEnergyValue(_needEnergy * -1);
                 this._view.commandSelectOk(_isSelected,true);
             } else{
-                this._view.commandSelectOk(_isSelected,false);
+                if (this._model.energy() >= _needEnergy){
+                    this._model.addSelectData(_category,_actorId);
+                    this._model.loseEnergy(_needEnergy);
+                    this._model.decidedMember(_category);
+                    this._view.changeEnergyValue(_needEnergy * -1);
+                    this._view.commandSelectActor([_actorId]);
+                    if (this._model.decidedAll()){
+                        this._view.commandDecideMember([]);
+                        this.commandSelectCancel();
+                    } else{
+                        this._view.commandDecideCommand(true,null,_category);
+                    }
+                } else{
+                    this._view.commandSelectOk(_isSelected,false);
+                }
             }
         } else{
             this._model.removeSelectData(_category,_actorId);
-            this._model.gainEnergy(_needEnergy);
-            this._view.changeEnergyValue(_needEnergy);  
             this._view.commandSelectOk(_isSelected,true);
         }
         if (_category == "search"){
@@ -163,13 +169,16 @@ class Tactics_Presenter extends Presenter_Base{
             this._model.setSearchId(_serach.id);
         }
         if (_category == "alchemy"){
-            const _alchemyParam = this._model.alchemyParam(_category);
-            this._view.setAlchemyParam(_alchemyParam);
+            this._view.commandShowAlchemy(this._model.alchemyMagicList());
         }
     }
 
     commandSelectCancel(){
         const _category = this._view.selectCategory();
+        if (_category == "alchemy"){
+            const _actorId = this._view.selectActorId();
+            this._model.removeSelectData(_category,_actorId);
+        }
         this._view.commandSelectCancel(this._model.selectedData(_category).length > 0,this._model.selectedActorNameList(_category));
     }
 
@@ -195,49 +204,47 @@ class Tactics_Presenter extends Presenter_Base{
         this._model.decidedMember(_category);
         this._view.commandDecideMember(this._model.selectedData(_category));
 
-        if (_category == "alchemy"){
-            this._view.commandSelectAlchemy(this._model.alchemyMagicList());
-        }
-
         if (this._model.decidedAll()){
             this._view.commandCommandTurnend();
         }
     }
     
-    commandAlchemySelect(){
-        const _category = this._view.selectCategory();
+    commandSelectAlchemy(){
         const _alchemy = this._view.selectAlchemy();
-        const _isSelected = this._model.checkSelectedAlchemy(_alchemy.skill.id);
-        let checkSelectAlchemy = false;
-        if (_isSelected){
-            this._model.removeAlchemy(_alchemy);
-            this._view.changeEnergyValue(_alchemy.cost);
-        } else
-        if (!_isSelected){
-            checkSelectAlchemy = this._model.checkSelectAlchemy(_category,_alchemy);
-            if (checkSelectAlchemy == 0){
-                this._model.addAlchemy(_alchemy);
-                this._view.changeEnergyValue(_alchemy.cost * -1);
-            }
+        const _isEnableAlchemy = this._model.isEnableAlchemy(_alchemy);
+        if (_isEnableAlchemy){
+            //this._model.addAlchemy(_alchemy);
+            //this._view.changeEnergyValue(_alchemy.cost * -1);
         }
-        const _alchemyParam = this._model.alchemyParam(_category);
-        this._view.setAlchemyParam(_alchemyParam);
-        this._view.commandAlchemySelect(_isSelected,checkSelectAlchemy,_alchemy.skill.id);
+        const _actorId = this._view.selectActorId();
+        this._view.commandSelectAlchemy(_isEnableAlchemy,_actorId,_alchemy.skill.id);
+    }
+
+    commandCancelAlchemy(){
+        this._view.commandCancelAlchemy();
     }
 
     commandDecideAlchemy(){
-        const _alchemyName = this._model.selectAlchemyName();
-        this._view.commandDecideAlchemy(_alchemyName != "",_alchemyName);
-    }
+        const _alchemy = this._view.selectAlchemy();
+        const _actorId = this._view.selectActorId();
+        this._model.addAlchemy(_actorId,_alchemy);
+        this._view.changeEnergyValue(_alchemy.cost * -1);
 
-    commandAlchemyEnd(){
-        this._model.setAlchemy();
+        const _category = this._view.selectCategory();
+        this._model.decidedMember(_category);
+        this._view.commandDecideMember(this._model.selectedData(_category));
+
+        if (this._model.decidedAll()){
+            this._view.commandCommandTurnend();
+        } else{
+            this._view.commandDecideCommand(true);
+        }
     }
 
     commandSearchMember(){;
         const _category = this._view.selectCategory();
         const _selected = this._model.selectedData(_category);
-        this._view.commandCommandOk(_selected.length == 0,this._model.selectedActorNameList(_category));
+        this._view.commandDecideCommand(_selected.length == 0,this._model.selectedActorNameList(_category));
     }
 
     commandTurnend(){

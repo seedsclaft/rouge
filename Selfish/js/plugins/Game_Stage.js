@@ -100,7 +100,7 @@ Game_Stage.prototype.initialize = function() {
     this._stageId = 0;
     this._turns = 0;
     this._selectedData = {};
-    this._alchemyData = [];
+    this._alchemyData = {};
     this._searchId = 0;
     this._readEvent = [];
 }
@@ -146,7 +146,7 @@ Game_Stage.prototype.clearSelect = function(){
     Object.keys(this._selectedData).forEach(key => {
         this._selectedData[key] = [];
     });
-    this._alchemyData = [];
+    this._alchemyData = {};
     this._searchId = 0;
 }
 

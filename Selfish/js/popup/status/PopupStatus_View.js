@@ -161,7 +161,6 @@ class PopupStatus_View  {
     static changeSkill(){
         const _actor = this._listWindow.item();
         this._magicList.setActor(_actor);
-        const _magic = $gameParty._learnedSkills.map(a => $dataSkills[a]);
         this._magicList.setMagic(_actor.skills());
         this._magicList.show();
         this._magicList.activate();

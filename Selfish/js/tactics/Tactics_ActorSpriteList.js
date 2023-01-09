@@ -51,14 +51,38 @@ class Tactics_ActorSpriteList extends Sprite{
         });
     }
 
-    setInfoSprite(data){
+    setInfoSprite(category){
+        let info = [];
+        switch (category){
+            case "train":
+                this._data.forEach((member,index) => {
+                    if (this._actorSprites[index].opacity == 0){
+                        info.push("");
+                        return;
+                    }
+                    const a = $gameActors.actor(member.actorId());
+                    info.push(TextManager.getText(700) + "." + member.level + "\n" + TextManager.getText(740) + eval( $gameDefine.data().TrainCurrency) + TextManager.currencyUnit);
+                });
+                break;
+            case "recovery":
+                this._data.forEach((member,index) => {
+                    if (this._actorSprites[index].opacity == 0){
+                        info.push("");
+                        return;
+                    }
+                    const a = $gameActors.actor(member.actorId());
+                    info.push(TextManager.getText(500) + member.hp + TextManager.getText(710) + member.mhp + "\n" + TextManager.getText(740) + eval( $gameDefine.data().RecoveryCurrency) + TextManager.currencyUnit);
+                });
+                break;
+            }
+        
         this._infoSprites.forEach(sprite => {
             sprite.hide();
         });
-        if (!data){
+        if (!info){
             return;
         }
-        data.forEach((d,index) => {
+        info.forEach((d,index) => {
             let info = this._infoSprites[index];
             
             info.show();

@@ -1401,37 +1401,6 @@ class Battle_Model extends Model_Base {
     }
 
     selectActorSkillItems(index){
-        const element = this.actionBattler().slotElement(index);
-        let skills = this.actionBattler().getReserveSkillData(element);
-        //return _.chain(data).sortBy((d) => d).sortBy((d) => $dataSkills[d] && $dataSkills[d].damage.elementId == element).value();
-        
-        const actor = this.actionBattler();
-        let skillItemData = [];
-        skills.forEach(skillId => {
-            let skill = $dataSkills[skillId];
-            skillItemData.push(new Game_SlotSkill(
-                skillId,
-                {
-                    mpCost:actor.skillMpCost(skill),
-                    level:actor.skillLevel(skillId),
-                    lessLevel:actor.skillLevelWithoutSP(skillId),
-                    expRate:actor.getSkillExpPercent(skillId),
-                    expRateTotal:actor.getSkillExpPercentTotal(skillId),
-                    selected:_.find(actor.slotSkillIds(), (slotSkillId) => slotSkillId == skillId),
-                    elementId:[skill.damage.elementId,skill.damage.elementId,skill.damage.elementId],
-                    helpData:new Game_SkillHelp(actor,skillId)
-                })
-            )
-        });
-        skillItemData.push(new Game_SlotSkill(
-            $gameDefine.removeSkillId,
-            {
-                mpCost:-1,
-                elementId:[6,6,6],
-                helpData:new Game_SkillHelp(actor,$gameDefine.removeSkillId)
-            })
-        );
-        return skillItemData;
     }
 
     removeNewSkillId(item){

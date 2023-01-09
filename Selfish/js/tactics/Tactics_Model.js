@@ -13,26 +13,33 @@ class Tactics_Model {
 
 
         this._alchemyMagicList = [];
+        /*
         $gameAlchemy.data().forEach(alchemy => {
             this._alchemyMagicList.push(
                 {
                     skill:$dataSkills[alchemy.skill],
-                    needRank:alchemy.needRank,
                     cost:Number( alchemy.cost )
                 }
             )
         });
+        */
+        this._alchemyMagicList.push(
+            {
+                skill:$dataSkills[11],
+                cost:Number( 1 )
+            }
+        )
 
-        this._selectAlchemy = [];
+        this._selectAlchemy = {};
 
         this.actorList().forEach(actor => {
             ImageManager.loadFace(actor.faceName())
         });
 
-        this._usedAlchemyParam = [0,0,0,0,0];
 
         this._searchData = [];
         let searchdData = $gameSearch.data().filter(a => a.eventFlag == false);
+        console.log(searchdData)
         searchdData = _.shuffle(searchdData);
         const _stageData = $gameStageData.stageData($gameStage._stageId);
         for (let i = 0; i < 4 ;i ++){
@@ -101,45 +108,8 @@ class Tactics_Model {
         return this._alchemyMagicList;
     }
 
-    infoData(category){
-        let info = [];
-        switch (category){
-            case "train":
-                this._members.forEach(member => {
-                    const a = $gameActors.actor(member.actorId());
-                    info.push(TextManager.getText(700) + "." + member.level + "\n" + TextManager.getText(740) + eval( $gameDefine.data().TrainCurrency) + TextManager.currencyUnit);
-                });
-                break;
-            case "recovery":
-                this._members.forEach(member => {
-                    const a = $gameActors.actor(member.actorId());
-                    info.push(TextManager.getText(500) + member.hp + TextManager.getText(710) + member.mhp + "\n" + TextManager.getText(740) + eval( $gameDefine.data().RecoveryCurrency) + TextManager.currencyUnit);
-                });
-                break;
-            }
-        return info;
-    }
-
-    alchemyParam(category){
-        let alchemyParam = [0,0,0,0,0];
-        let actors = this._selectedData[category].map(a => $gameActors.actor(a));
-        actors.forEach(actor => {
-            actor.alchemyParam().forEach((param,index) => {
-                alchemyParam[index] += param;
-            });
-        });
-        this._usedAlchemyParam.forEach((used,index) => {
-            alchemyParam[index] -= used;
-        });
-        return alchemyParam;
-    }
-
     searchList(){
         return this._searchData;//$gameSearch.data().filter(a => a.eventFlag == false);
-    }
-
-    selectAlchemy(){
-        return this._selectAlchemy;
     }
     
     turnInfo(){
@@ -165,6 +135,7 @@ class Tactics_Model {
     selectedData(category){
         return this._selectedData[category];
     }
+
     needTrainEnergy(category,actorId){
         let a = $gameActors.actor(actorId);
         switch (category){
@@ -175,6 +146,7 @@ class Tactics_Model {
         }
         return 0;
     }
+    
     needEnergy(category,selected){
         let cost = 0;
         switch (category){
@@ -184,37 +156,23 @@ class Tactics_Model {
                 });
                 return cost;
             case "alchemy":
-                this._selectAlchemy.forEach(alchemyId => {
-                    let alchemy = this._alchemyMagicList.find(a => a.skill.id == alchemyId);
-                    if (alchemy){
-                        cost += alchemy.cost;
+                selected.forEach(selectId => {
+                    if (this._selectAlchemy[selectId]){
+                        cost += this._selectAlchemy[selectId].cost;
                     }
+                });
+                return cost;
+            case "recovery":
+                selected.forEach(selectId => {
+                    cost += this.needTrainEnergy(category,selectId);
                 });
                 return cost;
         }
         return 0;
     }
 
-    checkSelectAlchemy(category,alchemy){
-        let result = 0;
-        const _cost = alchemy.cost;
-        const _needRank = alchemy.needRank;
-        const _alchemyParam = this.alchemyParam(category);
-        _alchemyParam.forEach((alchemyParam,index) => {
-            if (_needRank[index] > alchemyParam){
-                result = 1;
-            }
-        });
-        if (result == 0){
-            if (_cost > this.energy()){
-                result = 2;
-            };
-        }
-        return result;
-    }
-
-    checkSelectedAlchemy(_alchemy){
-        return this._selectAlchemy.find(a => a == _alchemy);
+    isEnableAlchemy(alchemy){
+        return alchemy.cost <= this.energy();
     }
 
     selectedActorNameList(category){
@@ -226,6 +184,7 @@ class Tactics_Model {
     }
 
     addSelectData(category,actorId){
+        console.error(this._selectedData[category])
         this._selectedData[category].push(actorId);
     }
 
@@ -238,15 +197,16 @@ class Tactics_Model {
         const selectIds = this._selectedData[category];
         for (let i = 0;i < selectIds.length;i++){
             let member = this._selectedMembers.find(a => a.actorId() == selectIds[i]);
-            this._members.push(member);
-            this._selectedMembers = _.without(this._selectedMembers,member);
-            members.push(member);
+            if (member){
+                this._members.push(member);
+                this._selectedMembers = _.without(this._selectedMembers,member);
+                members.push(member);
+            }
         }
         this._members = this.positionSelectData(this._members);
         this._selectedData[category] = [];
         if (category == "alchemy"){
-            this._selectAlchemy = [];
-            this._usedAlchemyParam = [0,0,0,0,0];
+            this._selectAlchemy = {};
         }
         return members;
     }
@@ -256,36 +216,20 @@ class Tactics_Model {
         const selectIds = this._selectedData[category];
         for (let i = 0;i < selectIds.length;i++){
             let member = this._members.find(a => a.actorId() == selectIds[i]);
-            this._selectedMembers.push(member);
-            this._members = _.without(this._members,member);
-            members.push(member);
+            if (member){
+                this._selectedMembers.push(member);
+                this._members = _.without(this._members,member);
+                members.push(member);
+            }
         }
         this._members = this.positionSelectData(this._members);
         return members;
     }
 
-    addAlchemy(alchemy){
+    addAlchemy(actorId,alchemy){
         this.loseEnergy(alchemy.cost);
-        alchemy.needRank.forEach((need,index) => {
-            this._usedAlchemyParam[index] += need;
-        });
-        this._selectAlchemy.push(alchemy.skill.id);
-    }
-
-    removeAlchemy(alchemy){
-        this.gainEnergy(alchemy.cost);
-        alchemy.needRank.forEach((need,index) => {
-            this._usedAlchemyParam[index] -= need;
-        });
-        this._selectAlchemy = _.without(this._selectAlchemy,alchemy.skill.id);
-    }
-
-    selectAlchemyName(){
-        return this._selectAlchemy.map(a => $dataSkills[a].name).join(",");
-    }
-
-    setAlchemy(){
-        $gameStage.setAlchemy(this._selectAlchemy);
+        if (!this._selectAlchemy[actorId]) this._selectAlchemy[actorId] = {};
+        this._selectAlchemy[actorId] = {skillId: alchemy.skill.id,cost:alchemy.cost};
     }
 
     setSearchId(serachId){
@@ -297,6 +241,7 @@ class Tactics_Model {
     }
 
     turnend(){
+        $gameStage.setAlchemy(this._selectAlchemy);
         $gameStage.setSelectedData(this._selectedData);
     }
 }

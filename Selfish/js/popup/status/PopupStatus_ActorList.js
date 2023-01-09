@@ -34,10 +34,10 @@ class PopupStatus_ActorList extends Window_Selectable{
         if (actor){
             const index = this._actorListItem.index();
             const sp = actor._sp;
-            if (sp >= actor.paramUpCost()[index]){
+            if (sp >= actor.calcParamUpCost(index)){
                 actor._tempParamPlus[index] += 1;
-                actor._sp -= actor.paramUpCost()[index];
-                actor._useSp += actor.paramUpCost()[index];
+                actor._sp -= actor.calcParamUpCost(index);
+                actor._useSp += actor.calcParamUpCost(index);
                 let lvUpData = {
                     lv:0,
                     hp:actor._tempParamPlus[0],
@@ -58,9 +58,9 @@ class PopupStatus_ActorList extends Window_Selectable{
         if (actor){
             const index = this._actorListItem.index();
             if (actor._tempParamPlus[index] > 0){
+                actor._sp += actor.calcParamUpCost(index);
+                actor._useSp -= actor.calcParamUpCost(index);
                 actor._tempParamPlus[index] -= 1;
-                actor._sp += actor.paramUpCost()[index];
-                actor._useSp -= actor.paramUpCost()[index];
                 let lvUpData = {
                     lv:0,
                     hp:actor._tempParamPlus[0],
@@ -89,6 +89,11 @@ class PopupStatus_ActorList extends Window_Selectable{
             actor._paramPlus[2] += actor._tempParamPlus[2];
             actor._paramPlus[3] += actor._tempParamPlus[3];
             actor._paramPlus[6] += actor._tempParamPlus[4];
+            actor._addParamPlus[0] += actor._tempParamPlus[0];
+            actor._addParamPlus[1] += actor._tempParamPlus[1];
+            actor._addParamPlus[2] += actor._tempParamPlus[2];
+            actor._addParamPlus[3] += actor._tempParamPlus[3];
+            actor._addParamPlus[4] += actor._tempParamPlus[4];
             actor._tempParamPlus = [0,0,0,0,0];
             this._actorListItem.refresh();
             this._actorListItem.select(-1);

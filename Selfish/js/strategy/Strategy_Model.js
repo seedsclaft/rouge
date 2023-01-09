@@ -79,9 +79,6 @@ class Strategy_Model {
     }
 
     alchemy(){
-        $gameStage.alchemyData().forEach(alchemyId => {
-            $gameParty.addLearnSkill(alchemyId);
-        });
     }
 
     alchemyNameList(){

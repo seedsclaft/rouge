@@ -125,10 +125,9 @@ class PopupStatus_ActorListItem extends Window_Selectable{
                 this.changeTextColor(_normalColor);
             }
         }
-        let paramUpCost = this._actor.paramUpCost();
-        paramUpCost.forEach((rate,index) => {
-            this.drawText(rate,x + 144,y + _lineHeight * index,120,"right");
-        });
+        for (let i = 0;i < 5;i++){
+            this.drawText(this._actor.calcParamUpCost(i),x + 144,y + _lineHeight * i,120,"right");
+        }
         this.resetFontSettings();
     }
 
