@@ -145,9 +145,6 @@ DataManager.createSkillDataPlus = function() {
                 element.stateEval = json.stateEval ? String(json.stateEval) : null;
                 element.timing = json.timing ? String(json.timing) : null;
                 element.selfSkill = json.selfSkill ? Number(json.selfSkill) : 0;
-                element.nextLevel = json.nextLevel ? (json.nextLevel).split(",").map(num => Number(num)) : [];
-                element.nextExp = json.nextExp ? Number(json.nextExp) : 0;
-                element.passiveType = json.passiveType ? json.passiveType : "";
                 element.effect = json.effect ? Number(json.effect) : 0;
                 element.animation = json.animation ? Number(json.animation) : 0;
                 element.features = json.features ? json.features : [];
@@ -182,21 +179,6 @@ DataManager.createEnemyDataPlus = function() {
 }
 
 DataManager.createClassDataPlus = function() {
-    $dataClasses.forEach(classData => {
-        if (classData){
-            classData.learnings.forEach(learning => {
-                const skillId = learning.skillId;
-                let awake;
-                if (learning.note != ""){
-                    const data = JSON.parse(learning.note);
-                    awake = {timing:Number(data.timing),type:Number(data.type),skillId:skillId,level:learning.level,skill:data.skill,value:data.value };
-                } else{
-                    awake = {type:0,skillId:skillId,level:learning.level};
-                }
-                learning.awake = awake;
-            });
-        }
-    });
 }
 
 
@@ -283,22 +265,6 @@ DataManager.loadParticleFile = function(src,resolve) {
     xhr.onload = function() {
         if (xhr.status < 400) {
             resolve(JSON.parse(xhr.responseText))
-        }
-    };
-    xhr.onerror = this._mapLoader || function() {
-        DataManager._errorUrl = DataManager._errorUrl || url;
-    };
-    xhr.send();
-};
-
-DataManager.loadStageSequenceData = function(resolve) {
-    let xhr = new XMLHttpRequest();
-    const url = 'data/Map001.json';
-    xhr.open('GET', url);
-    xhr.overrideMimeType('application/json');
-    xhr.onload = function() {
-        if (xhr.status < 400) {
-            resolve(JSON.parse(xhr.responseText));
         }
     };
     xhr.onerror = this._mapLoader || function() {
@@ -490,9 +456,6 @@ DataManager.makeSaveContents = function() {
     contents.saveImage    = CriateSpriteManager._saveImage;
     return contents;
 };
-
-
-
 
 DataManager.checkUpdate = async function() {
     // バージョンチェック

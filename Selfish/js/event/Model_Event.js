@@ -121,6 +121,7 @@ class Model_Event extends Model_Base {
         }
         fs.writeFileSync(dirPath + filePath, data);
         */
+       /*
         console.log(eventReadInfo)
         if (eventReadInfo){
             var data = JSON.stringify(eventReadInfo);
@@ -132,6 +133,7 @@ class Model_Event extends Model_Base {
             }
             fs.writeFileSync(dirPath + filePath, data);
         }
+        */
     }
 
     localFileDirectoryPath () {

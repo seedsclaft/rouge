@@ -874,6 +874,7 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
     }
     
     baseValue += subject.damageRate();
+    let atkValue = subject.atk;
     let defValue = target.def;
     const berserkId = $gameStateInfo.getStateId(StateType.BERSERK);
     if (target.isStateAffected(berserkId)){
@@ -881,13 +882,16 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
     }
     const penetrateId = $gameStateInfo.getStateId(StateType.PENETRATE);
     if (this.subject().isStateAffected(penetrateId)){
-        defValue = 0;
+        defValue *= 1 - this.subject().getStateEffectTotal(penetrateId);
     }
-    baseValue = Math.max(0, baseValue * 0.01 * subject.atk - defValue);
+    const turtleId = $gameStateInfo.getStateId(StateType.TURTLE);
+    if (this.subject().isStateAffected(turtleId)){
+        atkValue = 0;
+    }
+    baseValue = Math.max(0,(baseValue * 0.01 * atkValue) * (1 - defValue * 0.01));
     console.log(baseValue)
     let elementValue = this.calcElementRate(target);
     let value = baseValue * elementValue;
-    console.log(value)
     if (this.isMagical()) {
         value *= target.pdr;
     }
@@ -956,11 +960,8 @@ Game_Action.prototype.applyVariance = function(damage, variance) {
 Game_Action.prototype.applyGuard = function(damage, target) {
     const penetrateId = $gameStateInfo.getStateId(StateType.PENETRATE);
     if (damage > 0 && target.isGuard() && !this.subject().isStateAffected(penetrateId)){
-        const ironwillId = $gameStateInfo.getStateId(StateType.IRON_WILL);
-        if (target && target.isStateAffected(ironwillId)){
-            damage -= target.getStateEffectTotal(ironwillId);
-        }
-        return Math.max(damage - (target.def * 1.5),1);
+        const _effect = target.getStateEffectTotal($gameStateInfo.getStateId(StateType.GUARDABLE));
+        return Math.max(damage * (_effect),1);
     }
     return damage;
 };
@@ -1151,7 +1152,10 @@ Game_Action.prototype.itemEffectAddNormalState = function(result, effect) {
         // バリア判定
         const barrierId = $gameStateInfo.getStateId(StateType.BARRIER);
         if (result.target.isStateAffected(barrierId)){
-            result.barriered = true;
+            let rate = result.target.getStateEffectTotal(barrierId);
+            if (Math.random() < rate){
+                result.barriered = true;
+            }
         }
         result.pushResistedState(effect.dataId);
         return;

@@ -861,13 +861,6 @@ class Battle_View extends Scene_Base{
     }
 
     passiveSkillsStatePopup(battlers){
-        battlers.forEach(battler => {
-            battler.passiveSkills().forEach(passiveData => {
-                if (battler.isEnablePasiveSkill(passiveData)){
-                    this.startStatePopup(battler,PopupTextType.AddState,TextManager.getSkillName(passiveData.skill.id));
-                }
-            });
-        });
     }
 
     startStatePopup(target,type,value){

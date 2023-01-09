@@ -14,9 +14,6 @@
  * @param id
  * @type number
  * 
- * @param phase
- * @type number
- * 
  * @param enemy
  * @type enemy[]
  * 
@@ -76,6 +73,19 @@ Game_Search.prototype.initialize = function() {
         data.eventFlag = Boolean(data.eventFlag && data.eventFlag == "true");
         this._data.push(data);
     });
+    // 野良データ作成
+    let enemy = []
+    for (let i = 0;i < 20;i++){
+        enemy.push(i+1);
+    }
+    for (let i = 0;i < 20;i++){
+        let data = {};
+        data.enemy = enemy;
+        data.bossEnemy = i;
+        data.eventFlag = false;
+        this._data.push(data);
+    }
+    
 };
 
 Game_Search.prototype.data = function() {

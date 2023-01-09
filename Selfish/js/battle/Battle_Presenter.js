@@ -679,19 +679,6 @@ class Battle_Presenter extends Presenter_Base{
         SceneManager.push(Menu_View);
     }
 
-    commandSkillOk(){
-        let battler = this._view._skillWindow.actor();
-        const item = this._view._skillWindow.item();
-        const skill = battler.getSkillData(item.skillId,battler.skillLevel(item.skillId));
-        let action = battler.action(0);
-        action.setSkill(skill.id);
-        battler.setLastBattleSkillId(item.skillId);
-        const isForOpponent = action.isForOpponent();
-        const nextAp = this._model.nextAp();
-    
-        this._view.onSelectAction(battler,action,isForOpponent,nextAp);
-    }
-
 
 
     commandLimitBreak(){

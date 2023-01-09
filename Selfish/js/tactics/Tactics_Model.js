@@ -30,6 +30,20 @@ class Tactics_Model {
         });
 
         this._usedAlchemyParam = [0,0,0,0,0];
+
+        this._searchData = [];
+        let searchdData = $gameSearch.data().filter(a => a.eventFlag == false);
+        searchdData = _.shuffle(searchdData);
+        const _stageData = $gameStageData.stageData($gameStage._stageId);
+        for (let i = 0; i < 4 ;i ++){
+            let rank = $gameParty.enemyRank() + (i * 2);
+            searchdData[i].pt = rank;
+            searchdData[i].enemyNum = Math.floor( (_stageData.turns - $gameStage.turns()) / 6) + 1;
+            searchdData[i].lvMin = rank;
+            searchdData[i].lvMax = rank;
+            searchdData[i].bossLv = rank;
+            this._searchData.push(searchdData[i]);
+        }
     }
 
     eventCheck(){
@@ -121,7 +135,7 @@ class Tactics_Model {
     }
 
     searchList(){
-        return $gameSearch.data().filter(a => a.eventFlag == false);
+        return this._searchData;//$gameSearch.data().filter(a => a.eventFlag == false);
     }
 
     selectAlchemy(){

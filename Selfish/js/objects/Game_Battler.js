@@ -1495,83 +1495,6 @@ Game_Battler.prototype.initMp = function() {
     return value;
 };
 
-Game_Battler.prototype.getSkillLvByCount = function(skillId,count) {
-    const nextExp = $gameSkillExp.getData($dataSkills[skillId].nextExp);
-    if (nextExp == null){
-        return 1;
-    }
-    let lv = 1;
-    if (nextExp){
-        for (let i = 1;i < nextExp.length;i++){
-            if (nextExp[i] <= count){
-                lv += 1;
-            }
-        }
-    }
-    return lv;
-}
-
-Game_Battler.prototype.getSkillLvTotal = function(skillId) {
-    const count = this.getSkillCountTotal(skillId);
-    return this.getSkillLvByCount(skillId,count);
-}
-
-Game_Battler.prototype.getSkillLv = function(skillId) { 
-    const count = this.getSkillCount(skillId);
-    return this.getSkillLvByCount(skillId,count);
-}
-
-Game_Battler.prototype.getSkillCountTotal = function(id) { 
-    return this.getSkillCount(id) + this.getSkillSpCount(id);
-}
-
-Game_Battler.prototype.getSkillCount = function(id) { 
-    let count = 0;
-    return count;
-}
-
-Game_Battler.prototype.getSkillSpCount = function(id) { 
-    let count = 0;
-    return count;
-}
-
-Game_Battler.prototype.getSkillExpPercent = function(skillId) { 
-    return 0 / 1;
-}
-
-Game_Battler.prototype.getSkillExpPercentTotal = function(skillId) { 
-
-    return 0 / 1;
-}
-
-Game_Battler.prototype.isEnablePasiveSkill = function(skillData) {
-    let flag = false;
-        switch (skillData.skill.passiveType){
-            case 'dying':
-                flag = this.isDying();
-                break;
-            case 'hpunderhalf':
-                flag = this.isUnderHalf();
-                break;
-            case 'turnCount':
-                flag = this._turnCount == 1;
-                break;
-            case 'mpover3':
-                flag = this.mp >= 3;
-                break;
-            case 'losetype1':
-                flag = false;
-                break;
-            case 'startOnly':
-                flag = this._turnCount == 1;
-                break;
-            default:
-                flag = true;
-                break;
-    }
-    return flag;
-}
-
 Game_Battler.prototype.isStatusParamUp = function(paramId,current) {
     switch (paramId){
         case 0:
@@ -2233,6 +2156,7 @@ Game_Actor.prototype.paramPlus = function(paramId) {
     if (paramId == 1){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.MP_BUFF_ADD));
         //value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.MP_BUFF_ADD_SPECIAL));
+        
         value += this._tempParamPlus[1];
     }
     if (paramId == 2){
@@ -2247,6 +2171,11 @@ Game_Actor.prototype.paramPlus = function(paramId) {
     }
     if (paramId == 3){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.DEF_BUFF_ADD));
+        
+        const turtleId = $gameStateInfo.getStateId(StateType.TURTLE);
+        if (this.isStateAffected(turtleId)){
+            value += this.atk * this.getStateEffectTotal(turtleId);
+        }
         value += this._tempParamPlus[3];
     }
     if (paramId == 6){
@@ -2587,19 +2516,6 @@ Game_Actor.prototype.animationFiles = function() {
     return {animations:animations,sounds:sounds};
 };
 
-Game_Actor.prototype.getSkillData = function(skillId,skillLv) {
-    const nextLevel = $dataSkills[skillId].nextLevel;
-    if (nextLevel && nextLevel.length > 0){
-        let level = 0;
-        nextLevel.forEach(lv => {
-            if (skillLv > lv){
-                level += 1;
-            }
-        });
-        return $dataSkills[skillId+level];
-    }
-    return skillId > 0 ? $dataSkills[skillId] : null;
-}
 
 //-----------------------------------------------------------------------------
 // Game_Enemy

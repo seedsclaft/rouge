@@ -138,6 +138,7 @@ const StateType = {
     HP_CONSUME :               "HpConsume",       //Hp消費
     CHARGE :               "Charge",       //チャージ
     DELETE_BUFF :               "DeleteBuff",       //反射ダメージ 
+    TURTLE :               "Turtle",       //タートル 
     GUARDABLE :               "GuardAble",       //ガード可能
     REDUCTOR :               "Reductor",       //反射ダメージ 
     /*

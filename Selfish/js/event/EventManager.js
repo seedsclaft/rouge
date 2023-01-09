@@ -399,13 +399,6 @@ EventManager.clearWeatherLoad = function() {
 EventManager.setStage = async function(num){
 }
 
-EventManager.loadStageSequenceData = function(){
-    return new Promise(resolve => {
-        return DataManager.loadStageSequenceData(resolve);
-    });
-}
-
-
 EventManager.callSkip = function() {
     this._callSkip = true;
 }
