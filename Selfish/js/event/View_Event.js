@@ -2,7 +2,6 @@ class View_Event {
     constructor() {
         this._layer = new Sprite();
         this.createSpritePictureLayer();
-        this.createMapEventPicture();
         this.createWeather();
         this.createFadeSprite();
         this.createMessageWindow();
@@ -103,10 +102,6 @@ class View_Event {
         this._spritePictureLayer.children.forEach(child => {
             child.fadeOut(1);
         });
-    }
-
-    fadeoutMapPictures(){
-        this._mapEventPicture.fadeOut(0.5);
     }
 
     anglePicture(label,duration,angle){
@@ -318,38 +313,13 @@ class View_Event {
 
     }
 
-    createMapEventPicture(){
-        this._mapEventPicture = new Sprite_EventPicture("");
-        this._spritePictureLayer.addChild(this._mapEventPicture);
-    }
-
-    showMapPicture(fileName){
-        this._mapEventPicture.setup(fileName,Graphics.width / 2,376,1);
-        this._mapEventPicture.fadeOut(0);
-        this._mapEventPicture.fadeIn(0.5,0.2);
-    }
-
-    showFastMapPicture(fileName){
-        this._mapEventPicture.setup(fileName,Graphics.width / 2,376,1);
-        this._mapEventPicture.fadeIn(0);
-    }
-
-
-    resetMapPicture(){
-        this._mapEventPicture.resetMapPicture();
-    }
-
     clearPictures(){
         let length = this._spritePictureLayer.children.length - 1;
         for (let i = length; i >= 0; i--){
-            if (this._mapEventPicture != this._spritePictureLayer.children[i]){
-                this._spritePictureLayer.children[i].terminate();
-            }
+            this._spritePictureLayer.children[i].terminate();
         }
         
         this._spritePictureLayer.children = [];
-        this._spritePictureLayer.addChild(this._mapEventPicture);
-        this.resetMapPicture();
         this.messageClear();
     }
 
@@ -390,7 +360,6 @@ class View_Event {
     getEventMessage(sprite){
         return _.find(this._eventMessageWindow,(e) => e._sprite._pictureLabel == sprite._pictureLabel);
     }
-
 
     setMessageAssign(fileName,isAssign){
         const sprite = this.getEventPicture(fileName);
@@ -627,10 +596,6 @@ class View_Event {
         return this._messageWindow._choiceListWindow.index();
     }
 
-    skipQuiz(){
-        this._messageWindow._choiceListWindow.callOkHandler();
-    }
-
     async setWeather (type,x,y,start) {
         let ext = {}
         if (x != null && y != null) {
@@ -676,30 +641,6 @@ class View_Event {
         }
     }
 
-    stageTitle(no,x,y){
-        let sprite = new Sprite_StageTitle();
-        sprite.x = x;
-        sprite.y = y;
-        let stage = DataManager.getStageInfos(no);
-        sprite.setup(no,TextManager.getText(stage.nameId));
-        this._layer.addChild(sprite);
-    }
-
-    showMapName(text){
-        let sprite = new Sprite_MapName();
-        this._layer.addChild(sprite);
-        sprite.start(text);
-    }
-
-    hideStageTitle(){
-        this._layer.children.forEach(sprite => {
-            if (sprite instanceof Sprite_StageTitle){
-                gsap.killTweensOf(sprite);
-                sprite.terminate();
-            }
-        });
-    }
-
     changeActorFace(fileName,index){
         const sprite = this.getEventPicture(fileName);
         if (sprite){
@@ -734,9 +675,6 @@ class View_Event {
     }
 
     showNextStage(title,endCall){
-        let sprite = new Sprite_NextStage(title,endCall);
-        this._layer.addChild(sprite);
-        sprite.start();
     }
 
     pauseWeather(){
@@ -745,21 +683,6 @@ class View_Event {
 
     resumeWeather(){
         this._partcle.resume();
-    }
-
-    setTimeLine(x){
-        if (this._timeLine == null){
-            this._timeLine = new Sprite_TimeLine();
-            this._layer.addChild(this._timeLine);
-        }
-        this._timeLine.setup(x);
-    }
-
-    endTimeLine(){
-        if (this._timeLine != null){
-            this._timeLine.endTimeLine();
-            this._timeLine = null;
-        }
     }
 
     tintPicture(fileName,color){

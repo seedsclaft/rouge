@@ -1452,10 +1452,8 @@ class Battle_Model extends Model_Base {
     }
 
     setBeforeMembers(){
-        PopupLevelUpManager.setBeforeMembers($gameParty.battleMembers());
     }
     getChangeMembers(){
-        return PopupLevelUpManager.getChangeMembers($gameParty.battleMembers());
     }
 
     nextAp(){

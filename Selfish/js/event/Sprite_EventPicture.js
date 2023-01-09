@@ -431,16 +431,6 @@ class Sprite_EventPicture extends Sprite{
         this.destroy();
     }
 
-    resetMapPicture(){
-        this.resetAnim();
-        this.x = Graphics.width / 2;
-        this.y = 376;
-        this._z = 1;
-        this._mainSprite.scale.x = 1;
-        this._mainSprite.scale.y = 1;
-        this.setFacePosition();
-    }
-
     setFootSound(footSound){
     }
 

@@ -75,7 +75,6 @@ class Strategy_Presenter extends Presenter_Base{
     commandTrainStart(){
         const _selected = this._model.selectedMember();
         if (_selected.length > 0){
-            PopupLevelUpManager.init();
             this._view.commandTrainStart(_selected);
         } else{
             this._model.commandNext();

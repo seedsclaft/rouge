@@ -239,19 +239,6 @@ EventManager.clearPictures = function() {
     this._eventView.clearPictures();
 }
 
-// マップのイベントピクチャを設定
-EventManager.showMapPicture = function(fileName) {
-    this._eventView.showMapPicture(fileName);
-}
-
-EventManager.showFastMapPicture = function(fileName) {
-    this._eventView.showFastMapPicture(fileName);
-}
-
-
-EventManager.resetMapPicture = function(){
-    this._eventView.resetMapPicture();
-}
 
 // イベントピクチャを移動
 EventManager.movePicture = function(x, y, z, scaleX,scaleY, opacity,duration,delay) {
@@ -261,10 +248,6 @@ EventManager.movePicture = function(x, y, z, scaleX,scaleY, opacity,duration,del
 // イベントピクチャを一括フェードアウト
 EventManager.fadeoutPictures = function() {
     this._eventView.fadeoutPictures();
-}
-
-EventManager.fadeoutMapPictures = function() {
-    this._eventView.fadeoutMapPictures();
 }
 
 // イベントピクチャの顔変更
@@ -656,16 +639,6 @@ EventManager.enableWeather = function(enable) {
     this._eventView.enableWeather(enable);
 }
 
-EventManager.stageTitle = function(no,x,y) {
-    this._eventView.stageTitle(no,x,y);
-}
-
-EventManager.showMapName = function(text) {
-    if (!text){
-        text = $dataMap.displayName;
-    }
-    this._eventView.showMapName(text);
-}
 
 EventManager.changeActorFace = function(index) {
     this._eventView.changeActorFace(this._label,index); 
