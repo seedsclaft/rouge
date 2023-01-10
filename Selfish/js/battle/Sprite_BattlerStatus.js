@@ -19,7 +19,6 @@ class Sprite_BattlerStatus extends Sprite{
     
         this._statusMpSprite = null;
     
-        this._elementImage = ImageManager.loadSystem("IconSet");
 
     }
 
@@ -69,7 +68,7 @@ class Sprite_BattlerStatus extends Sprite{
         this.addChild(this._hpGaugeSprite);
         this._hpSprite = new Sprite();
         this.setHpBitmap(this._battler.hp);
-        this._hpSprite.x = -80;
+        this._hpSprite.x = -84;
         this._hpSprite.y = y - 32;
         this.addChild(this._hpSprite);
     }
@@ -77,9 +76,9 @@ class Sprite_BattlerStatus extends Sprite{
     setMp(){
         let gaugeWidth = 0;
         if (this._battler.isActor()){
-            gaugeWidth = this._battler.mmp * 5;
+            gaugeWidth = this._battler.mmp * 1.5;
         } else{
-            gaugeWidth = this._battler.mmp * 2;
+            gaugeWidth = this._battler.mmp;
         }
         const width = Math.floor( gaugeWidth );
         const height = 6;
@@ -101,7 +100,7 @@ class Sprite_BattlerStatus extends Sprite{
         this.addChild(this._mpGaugeSprite);
         this._mpSprite = new Sprite();
         this.setMpBitmap(this._battler.mp);
-        this._mpSprite.x = -6;
+        this._mpSprite.x = -84;
         this._mpSprite.y = y - 32;
 
         this.addChild(this._mpSprite);
@@ -429,11 +428,11 @@ class Sprite_BattlerStatus extends Sprite{
         }
         const _text = mp;
         if (this._battler.isStatusParamUp(1,mp)){
-            this._mpSprite.bitmap = this.createBitmapPlus(_text,18,'center');
+            this._mpSprite.bitmap = this.createBitmapPlus(_text,18,'right');
         } else if (this._battler.mp / this._battler.mmp < 0.25){
-            this._mpSprite.bitmap = this.createBitmapDying(_text,18,'center');
+            this._mpSprite.bitmap = this.createBitmapDying(_text,18,'right');
         } else{
-            this._mpSprite.bitmap = this.createBitmap(_text,18,'center');
+            this._mpSprite.bitmap = this.createBitmap(_text,18,'right');
         }
     }
     setTpBitmap(tp){
@@ -487,7 +486,6 @@ class Sprite_BattlerStatus extends Sprite{
             this._weakAnim.kill();
         }
         this._weakAnim = null;
-        this._elementImage = null;
         this._texture = null;
         this._lastHp = null;
         this._lastMHp = null;

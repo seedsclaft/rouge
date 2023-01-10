@@ -84,7 +84,7 @@ Bitmap.prototype.drawLowerTriangle = function(x,y,w,h,color) {
     context.fill();
     //this._setDirty();
 };
-/*
+
 Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align,outline,hotOutline) {
     // [Note] Different browser makes different rendering with
     //   textBaseline == 'top'. So we use 'alphabetic' here.
@@ -115,7 +115,6 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align,out
     context.restore();
     this._baseTexture.update();
 };
-*/
 
 Bitmap.prototype._makeFontNameText = function() {
     const italic = this.fontItalic ? "Italic " : "";
@@ -413,6 +412,10 @@ Input._onKeyUp = function(event) {
     //}
 };
 
+Input._isEscapeCompatible = function(keyName) {
+    return keyName === "cancel";
+};
+
 TouchInput.isCancelled = function() {
     if (PopupInputManager.busy()){
         PopupInputManager.setFocus();
@@ -537,4 +540,14 @@ Utils.isMobileDevice = function() {
     }
     const r = /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini/i;
     return !!navigator.userAgent.match(r);
+};
+
+Window.prototype._createFrameSprite = function() {
+    this._frameSprite = new Sprite();
+    for (let i = 0; i < 8; i++) {
+        this._frameSprite.addChild(new Sprite());
+    }
+    //Windowフレームを削除
+    this._frameSprite.alpha = 0;
+    this._container.addChild(this._frameSprite);
 };

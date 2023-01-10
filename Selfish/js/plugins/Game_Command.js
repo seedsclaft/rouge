@@ -74,3 +74,12 @@ Game_Command.prototype.menuCommand = function() {
 Game_Command.prototype.menuSubCommand = function() {
     return this._menuSubCommand;
 }
+
+const TacticsCommandType = {
+    Train:"train",
+    Alchemy:"alchemy",
+    Recovery:"recovery",
+    Search:"search",
+    Status:"status",
+    Turnend:"turnend",
+}

@@ -5,9 +5,9 @@
 class PopupStatus_MagicList extends Window_Selectable{
     constructor(x, y, width,height){
         super(new Rectangle( x, y, width, height ));
+        this._cursorSprite.opacity = 0;
         this._data = [];
         this._magicList = [];
-        this._selected = [];
         this._actor = null;
     }
 
@@ -38,15 +38,20 @@ class PopupStatus_MagicList extends Window_Selectable{
         const _magic = this._magicList[index];
         if (_magic){
             const rect = this.itemLineRect(index);
-            this.resetTextColor();
+            if (this.index() == index){
+                this.drawBack(rect.x - 16,rect.y - 12,rect.width + 32,this.itemHeight() - 2,this.cursorColor(),128);
+                this.resetTextColor();
+            }
             this.contents.fontSize = 21;
             this.changePaintOpacity(this._actor.isLearnedSkill(_magic.id));
             this.drawText(TextManager.getSkillName(_magic.id), rect.x, rect.y - 12,rect.width);
 
             const _textWidth = this.contents.measureTextWidth(TextManager.getSkillName(_magic.id));
             this.contents.fontSize = 16;
-            this.drawText("（" + _magic.mpCost + "）", rect.x + _textWidth, rect.y - 12, rect.width, "left");
-
+            if (_magic.mpCost > 0){
+                this.drawText(_magic.mpCost, rect.x, rect.y - 12, rect.width, "right");
+            }
+            
             this.drawItemDescription(_magic,rect.x, rect.y, rect.width);
         }
     }
@@ -57,9 +62,6 @@ class PopupStatus_MagicList extends Window_Selectable{
         return textState.outputWidth;
     }
 
-    updateHelp(){
-    }
-
     update(){
         super.update();
         if (this._lastIndex != this.index()){
@@ -68,11 +70,8 @@ class PopupStatus_MagicList extends Window_Selectable{
         }
     }
 
-    //_updateCursor(){
+    _updateCursor(){
 
-    //}
-    setSelected(id){
-        this._selected.push(id);
     }
 
     item(){

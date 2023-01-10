@@ -85,7 +85,7 @@ class Tactics_View extends Scene_Base {
 
     setCommandData(commandData){
         if (this._commandList != null) return;
-        this._commandList = new Tactics_CommandList(144,384,680,commandData);
+        this._commandList = new Tactics_CommandList(-16,448,960 + 24,commandData);
         commandData.forEach((command,index) => {
             this._commandList.setHandler(command.key, this.commandDecide.bind(this,index));
         });
@@ -130,13 +130,14 @@ class Tactics_View extends Scene_Base {
         if (this._turnInfo == null){
             this._turnInfo = new Sprite_TurnInfo();
             this.addChild(this._turnInfo);
+            this._turnInfo.x = 16;
         }
         this._turnInfo.setTurn(data);
     }
 
     setEnergyData(data){
         if (this._energyInfo == null){
-            this._energyInfo = new Tactics_EnergyInfo(40,8,320,64);
+            this._energyInfo = new Tactics_EnergyInfo(96,8,280,48);
             this.addChild(this._energyInfo);
         }
         this._energyInfo.setEnergy(data);
@@ -219,7 +220,7 @@ class Tactics_View extends Scene_Base {
             });
             _popup.open();
         } else{
-            const mainText = TextManager.getText(textId);
+            const mainText = TextManager.getText(10040);
             const text1 = TextManager.getDecideText();
             const _popup = PopupManager;
             _popup.setPopup(mainText,{select:0,subText:null});

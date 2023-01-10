@@ -112,14 +112,14 @@ class Tactics_Presenter extends Presenter_Base{
         const _category = this._view.selectCategory();
         const _selected = this._model.selectedData(_category);
         switch (_category){
-            case "search":
+            case TacticsCommandType.Search:
                 if (_selected.length == 0){
                     return this._view.commandCommandSearch();
                 }
                 break;
-            case "turnend":
+            case TacticsCommandType.Turnend:
                 return this._view.commandCommandTurnend();
-            case "status":
+            case TacticsCommandType.Status:
                 const _actorList = this._model.actorList();
                 PopupStatus_View.setData(_actorList,() => {
                     PopupStatus_View.close();
@@ -140,7 +140,7 @@ class Tactics_Presenter extends Presenter_Base{
         const _isSelected = this._model.isSelectedActor(_category,_actorId);
         const _needEnergy = this._model.needTrainEnergy(_category,_actorId);
         if (!_isSelected){
-            if (_category == "search" || _category == "alchemy"){
+            if (_category == TacticsCommandType.Search || _category == TacticsCommandType.Alchemy){
                 this._model.addSelectData(_category,_actorId);
                 this._view.commandSelectOk(_isSelected,true);
             } else{
@@ -164,18 +164,18 @@ class Tactics_Presenter extends Presenter_Base{
             this._model.removeSelectData(_category,_actorId);
             this._view.commandSelectOk(_isSelected,true);
         }
-        if (_category == "search"){
+        if (_category == TacticsCommandType.Search){
             const _serach = this._view.selectSearch();
-            this._model.setSearchId(_serach.id);
+            this._model.setSearchData(_serach);
         }
-        if (_category == "alchemy"){
+        if (_category == TacticsCommandType.Alchemy){
             this._view.commandShowAlchemy(this._model.alchemyMagicList());
         }
     }
 
     commandSelectCancel(){
         const _category = this._view.selectCategory();
-        if (_category == "alchemy"){
+        if (_category == TacticsCommandType.Alchemy){
             const _actorId = this._view.selectActorId();
             this._model.removeSelectData(_category,_actorId);
         }
@@ -253,7 +253,7 @@ class Tactics_Presenter extends Presenter_Base{
     }
 
     commandEventEnd(){
-        this._view.eventEnd();
+        SceneManager.goto(Tactics_View);
     }
 
     commandRefresh(){

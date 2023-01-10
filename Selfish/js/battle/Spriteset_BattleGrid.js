@@ -35,9 +35,9 @@ class Spriteset_BattleGrid extends Sprite{
         order.initialize();
         order.setBattler(member);
         if (member.isActor()){
-            order.x = 4;
+            order.x = 0;
         } else{
-            order.x = 96;
+            order.x = 100;
         }
         this._battleLayer.addChild(order);
         this._orderSprites.push(order);

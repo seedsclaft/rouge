@@ -97,6 +97,7 @@ class PopupStatus_ActorList extends Window_Selectable{
             actor._tempParamPlus = [0,0,0,0,0];
             this._actorListItem.refresh();
             this._actorListItem.select(-1);
+            this.activate();
         });
         _popup.setHandler(text2,'cancel',() => {
             this._actorListItem.activate();

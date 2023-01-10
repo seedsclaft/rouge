@@ -69,7 +69,7 @@ class Tactics_Model {
     }
 
     backGround(){
-        return ["stage1",null];
+        return ["274",null];
     }
 
     stageBgm(){
@@ -139,9 +139,9 @@ class Tactics_Model {
     needTrainEnergy(category,actorId){
         let a = $gameActors.actor(actorId);
         switch (category){
-            case "train":
+            case TacticsCommandType.Train:
                 return eval( $gameDefine.data().TrainCurrency);
-            case "recovery":
+            case TacticsCommandType.Recovery:
                 return eval( $gameDefine.data().RecoveryCurrency);
         }
         return 0;
@@ -150,19 +150,19 @@ class Tactics_Model {
     needEnergy(category,selected){
         let cost = 0;
         switch (category){
-            case "train":
+            case TacticsCommandType.Train:
                 selected.forEach(selectId => {
                     cost += this.needTrainEnergy(category,selectId);
                 });
                 return cost;
-            case "alchemy":
+            case TacticsCommandType.Alchemy:
                 selected.forEach(selectId => {
                     if (this._selectAlchemy[selectId]){
                         cost += this._selectAlchemy[selectId].cost;
                     }
                 });
                 return cost;
-            case "recovery":
+            case TacticsCommandType.Recovery:
                 selected.forEach(selectId => {
                     cost += this.needTrainEnergy(category,selectId);
                 });
@@ -205,7 +205,7 @@ class Tactics_Model {
         }
         this._members = this.positionSelectData(this._members);
         this._selectedData[category] = [];
-        if (category == "alchemy"){
+        if (category == TacticsCommandType.Alchemy){
             this._selectAlchemy = {};
         }
         return members;
@@ -232,8 +232,8 @@ class Tactics_Model {
         this._selectAlchemy[actorId] = {skillId: alchemy.skill.id,cost:alchemy.cost};
     }
 
-    setSearchId(serachId){
-        $gameStage.setSearchId(serachId);
+    setSearchData(serach){
+        $gameStage.setSearchData(serach);
     }
 
     decidedAll(){

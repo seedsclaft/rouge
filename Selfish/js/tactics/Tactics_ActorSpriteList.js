@@ -54,7 +54,7 @@ class Tactics_ActorSpriteList extends Sprite{
     setInfoSprite(category){
         let info = [];
         switch (category){
-            case "train":
+            case TacticsCommandType.Train:
                 this._data.forEach((member,index) => {
                     if (this._actorSprites[index].opacity == 0){
                         info.push("");
@@ -64,7 +64,7 @@ class Tactics_ActorSpriteList extends Sprite{
                     info.push(TextManager.getText(700) + "." + member.level + "\n" + TextManager.getText(740) + eval( $gameDefine.data().TrainCurrency) + TextManager.currencyUnit);
                 });
                 break;
-            case "recovery":
+            case TacticsCommandType.Recovery:
                 this._data.forEach((member,index) => {
                     if (this._actorSprites[index].opacity == 0){
                         info.push("");

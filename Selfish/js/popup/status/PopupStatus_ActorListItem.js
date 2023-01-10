@@ -5,7 +5,7 @@
 class PopupStatus_ActorListItem extends Window_Selectable{
     constructor(x, y, width,height){
         super(new Rectangle( x, y, width,height));
-        //this._cursorSprite.opacity = 0;
+        this._cursorSprite.opacity = 0;
         this._actor = null;
         this._faceSprite = new Sprite();
         this._faceSprite.x = 16;
@@ -49,7 +49,15 @@ class PopupStatus_ActorListItem extends Window_Selectable{
     }
 
     refresh(lvUpdate = null){
+        if (!this._actor){
+            return;
+        }
         this.createContents();
+        if (this.active){
+            const rect = this.itemRect(this.index());
+            this.drawBack(rect.x ,rect.y,rect.width,this.itemHeight(),this.cursorColor(),128);
+        
+        }
         this.updateFace(16,16);
         this.updateName(160,16);
         this.updateElement(160,(this.lineHeight()) + 16);
@@ -176,6 +184,14 @@ class PopupStatus_ActorListItem extends Window_Selectable{
         this.drawText(status,x,y,120);
     }
 
-    //_updateCursor(){
-    //}
+    update(){
+        super.update();
+        if (this._lastIndex != this.index()){
+            this._lastIndex = this.index();
+            this.refresh();
+        }
+    }
+
+    _updateCursor(){
+    }
 }

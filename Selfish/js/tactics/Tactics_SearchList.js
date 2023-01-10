@@ -38,7 +38,7 @@ class Tactics_SearchList extends Window_Selectable{
             }
             this.drawText(text, rect.x + 200, rect.y - 12,rect.width);
 
-            this.drawText("+" + _search.pt +" pt", rect.x + 200, rect.y + 16,rect.width);
+            this.drawText("+" + _search.pt +" " + TextManager.currencyUnit, rect.x + 200, rect.y + 16,rect.width);
         }
     }
 

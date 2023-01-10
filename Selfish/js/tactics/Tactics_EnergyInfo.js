@@ -1,11 +1,18 @@
 class Tactics_EnergyInfo extends Window_Base{
     constructor(x, y, width,height){
         super(x, y,width,height);
+        this.opacity = 0;
+        let ptBack = new Sprite();
+        ptBack.bitmap = ImageManager.loadSystem("gold");
+        ptBack.x = 8;
+        ptBack.y = 4;
+        ptBack.opacity = 164;
+        this.addChild(ptBack);
         this._sprite = new Sprite();
-        this._sprite.x = 96;
-        this._sprite.y = 12;
-        this._sprite.bitmap = new Bitmap(200,40);
-        this._sprite.bitmap.fontSize = 21;
+        this._sprite.x = 16;
+        this._sprite.y = 4;
+        this._sprite.bitmap = new Bitmap(160,40);
+        this._sprite.bitmap.fontSize = 19;
         this.addChild(this._sprite);
 
         this._value = 0;
@@ -18,7 +25,7 @@ class Tactics_EnergyInfo extends Window_Base{
     setEnergy(value){
         this._value = value;
         this._sprite.bitmap.clear();
-        this._sprite.bitmap.drawText(value + " pt",0,0,200,40,"right");
+        this._sprite.bitmap.drawText(value + " " + TextManager.currencyUnit,0,0,160,40,"right");
     }
 
     changeEnergy(value){
@@ -33,7 +40,7 @@ class Tactics_EnergyInfo extends Window_Base{
                 }
                 let _value = Math.floor(_current + (value * this._duration));
                 this._sprite.bitmap.clear();
-                this._sprite.bitmap.drawText(_value + " pt",0,0,200,40,"right");
+                this._sprite.bitmap.drawText(_value + " " + TextManager.currencyUnit,0,0,160,40,"right");
             }
         })
         this._value += value;

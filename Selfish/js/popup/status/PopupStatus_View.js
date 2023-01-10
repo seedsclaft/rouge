@@ -4,10 +4,6 @@ class PopupStatus_View  {
 
     static initialize(){
         this._listWindow = new PopupStatus_ActorList(584,56,344,416);
-        this._listWindow.setHandler('pageup',     this.changeActor.bind(this,-1));
-        this._listWindow.setHandler('pagedown',     this.changeActor.bind(this,1));
-        this._listWindow.setHandler('shift',     this.changeParam.bind(this));
-        this._listWindow.setHandler('menu',     this.changeSkill.bind(this));
         
         this._magicCategory = new Tactics_MagicCategory(40,102,272,64);
         
@@ -17,15 +13,11 @@ class PopupStatus_View  {
         this._magicList = new PopupStatus_MagicList(40,152,540,320);
         this._magicList.select(0);
         
-        
-        //this._magicList.setHandler("ok", this.commandMagicSelect.bind(this));
         this._magicList.setHandler("cancel", this.commandMagicCancel.bind(this));
-        //this._magicList.setHandler('shift',     this.changeResetSkill.bind(this,-1));
         this._magicList.setHandler("pageup", this.changeCategory.bind(this,1));
         this._magicList.setHandler("pagedown", this.changeCategory.bind(this,-1));
+        
             
-        this._spParam = new PopupStatus_SpParam(504 - 160,94,240,56);
-        this._spParam.hide();
         /*
         this._listWindow.setHandler('ok',     this.selectActor.bind(this));
         this._listWindow.setHandler('index',     this.changeSelectIndex.bind(this));
@@ -41,15 +33,11 @@ class PopupStatus_View  {
         if (this._magicCategory.parent){
             this._magicCategory.parent.removeChild(this._magicCategory);
         }
-        if (this._spParam.parent){
-            //this._spParam.parent.removeChild(this._spParam);
-        }
         if (this._magicList.parent){
             this._magicList.parent.removeChild(this._magicList);
         }
         SceneManager._scene.addChild(this._listWindow);
         SceneManager._scene.addChild(this._magicCategory);
-        //SceneManager._scene.addChild(this._spParam);
         SceneManager._scene.addChild(this._magicList);
     }
 
@@ -58,7 +46,13 @@ class PopupStatus_View  {
         this._listWindow.show();
         this._listWindow.activate();
         this._listWindow.selectLast();
+        this._listWindow._handlers = {};
+        this._listWindow.setHandler('shift',     this.changeParam.bind(this));
+        this._listWindow.setHandler('menu',     this.changeSkill.bind(this));
+        this._listWindow.setHandler('pageup',     this.changeActor.bind(this,-1));
+        this._listWindow.setHandler('pagedown',     this.changeActor.bind(this,1));
         this._listWindow.setHandler('cancel',     () => {if (cancelCall) cancelCall() });
+        
         SceneManager._scene._keyMapWindow.refresh("actorInfo");
     }
 
@@ -69,7 +63,10 @@ class PopupStatus_View  {
 
     static setLvupAfter(data,endCall){
         this._listWindow.setLvupAfter(data);
-        this._listWindow.setHandler('ok',     () => {if (endCall) endCall() });
+        this._listWindow._handlers = {};
+        this._listWindow.setHandler('cancel',     () => {if (endCall) endCall() });
+        this._listWindow.setHandler('shift',     this.changeParam.bind(this));
+        this._listWindow.setHandler('menu',     this.changeSkill.bind(this));
     }
 
     static setSelectData(data,okCall,cancelCall){
@@ -77,8 +74,10 @@ class PopupStatus_View  {
         this._listWindow.show();
         this._listWindow.activate();
         this._listWindow.selectLast();
+        this._listWindow._handlers = {};
         this._listWindow.setHandler('ok',     () => {if (okCall) okCall(this.selectedData()) });
         this._listWindow.setHandler('cancel',     () => {if (cancelCall) cancelCall() });
+    
     }
 
     static selectedData(){
@@ -111,47 +110,15 @@ class PopupStatus_View  {
         this._magicList.setCategory(_category);
     }
 
-    static commandMagicSelect(){
-        const _actor = this._listWindow.item();
-        const _magic = this._magicList.item();
-        if (_actor.isLearnedSkill(_magic.id)){
-            _actor._useSp += _magic.mpCost;
-            _actor.forgetSkill(_magic.id);
-        } else
-        if (_actor._useSp >= _magic.mpCost){
-            _actor._useSp -= _magic.mpCost;
-            _actor.learnSkill(_magic.id);
-            this._magicList.setSelected(_magic.id);
-        }
-        this._magicList.refresh();
-        this._magicList.activate();
-        this._spParam.setData(_actor);
-    }
 
     static commandMagicCancel(){
         this._magicList.hide();
         this._magicList.deactivate();
         this._magicCategory.hide();
         this._magicCategory.deactivate();
-        this._spParam.hide();
         this._listWindow.activate();
     }
 
-    static changeResetSkill(){        
-        const _actor = this._listWindow.item();
-        const mainText = TextManager.getText(12000).replace("/d",_actor.name());
-        const text1 = TextManager.getDecideText();
-        const text2 = TextManager.getCancelText();
-        const _popup = PopupManager;
-        _popup.setPopup(mainText,{select:0,subText:null});
-        _popup.setHandler(text1,'ok',() => {
-            this._magicList.activate();
-        });
-        _popup.setHandler(text2,'cancel',() => {
-            this._magicList.activate();
-        });
-        _popup.open();
-    }
 
     static changeParam(){
         this._listWindow.changeStatus();
@@ -166,8 +133,6 @@ class PopupStatus_View  {
         this._magicList.activate();
         //this._magicList.selectLast();
         this._magicCategory.show();
-        this._spParam.setData(_actor);
-        this._spParam.show();
         this.refreshCategoryIndex();
     }
 
@@ -182,11 +147,10 @@ class PopupStatus_View  {
         _scene.removeChild(this._listWindow);
         _scene.removeChild(this._magicCategory);
         _scene.removeChild(this._magicList);
-        _scene.removeChild(this._spParam);
     }
 
     static busy(){
-        return this._listWindow.active;
+        return this._listWindow.active || this._magicCategory.active || this._magicList.active;
     }
 }
 

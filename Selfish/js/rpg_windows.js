@@ -298,7 +298,7 @@ Window_Base.prototype.pendingColor = function() {
 Window_Base.prototype.drawItemName = function(item, x, y, width,isSelect) {
     if (!item) return;
     const iconBoxWidth = ImageManager.iconWidth;
-    this.drawIcon(item.iconIndex,x, y + 3);
+    this.drawElementIcon(item.damage.elementId - 1,x, y + 3);
     const isNew = _.find($gameParty._newSkillIdList,(s) => s == item.id);
     if (isNew){
         this.contents.fontSize = 12;
@@ -391,12 +391,12 @@ Window_Base.prototype.refreshDimmerBitmap = function() {
     }
 };
 
-Window_Base.prototype.drawIconMini = function(iconIndex, x, y) {
-    const bitmap = ImageManager.loadSystem("IconSet_075");
-    const pw = ImageManager.iconWidth * 0.75;
-    const ph = ImageManager.iconHeight  * 0.75;
-    const sx = (iconIndex % 16) * pw;
-    const sy = Math.floor(iconIndex / 16) * ph;
+Window_Base.prototype.drawElementIcon = function(elementId, x, y) {
+    const bitmap = ImageManager.loadSystem("ElementIcon");
+    const pw = ImageManager.iconWidth;
+    const ph = ImageManager.iconHeight;
+    const sx = (elementId % 5) * pw;
+    const sy = 0;
     this.contents.blt(bitmap, sx, sy, pw, ph, x, y);
 };
 

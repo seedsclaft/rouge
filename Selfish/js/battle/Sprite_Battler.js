@@ -283,7 +283,9 @@ Sprite_Actor.prototype.initMembers = function() {
 };
 
 Sprite_Actor.prototype.createBackSprite = function() {
-    this._backSprite = new Window_Base(new Rectangle( 0,0,240,80));
+    this._backSprite = new Window_Base(new Rectangle( 0,-8,240,96));
+    this._backSprite.opacity = 0;
+    this._backSprite.drawBackFadeRight(0,0,240,96,"rgba(0,0,0,128)",128);
     /*
     this._backSprite = new Sprite(new Bitmap(216 + 24,88));
     this._backSprite.x = 0;
@@ -405,7 +407,7 @@ Sprite_Actor.prototype.updateSelectionEffect = function() {
 };
 
 Sprite_Actor.prototype.damageOffsetX = function() {
-    return 0;
+    return 64;
 };
 
 Sprite_Actor.prototype.damageOffsetY = function() {
@@ -876,7 +878,7 @@ Sprite_Enemy.prototype.resetPosition = function(line) {
     this.x = this._homeX + this._offsetX;
     this.y = this._homeY + this._offsetY;
     if (line != null){
-        this.y += line * -80;
+        this.y += line * -0;
         this.scale.x = this.scale.y = 1.0 - line * 0.15;
         if (line > 0 && this._homeX > 480){
             this.x -= (this._homeX-480) * line * 0.2;

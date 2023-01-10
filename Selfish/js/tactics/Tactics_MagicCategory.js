@@ -1,6 +1,7 @@
 class Tactics_MagicCategory extends Window_Selectable{
     constructor(x, y, width,height){
         super(new Rectangle( x, y, width, height ));
+        this._cursorSprite.opacity = 0;
         this._data = [];
     }
 
@@ -29,7 +30,8 @@ class Tactics_MagicCategory extends Window_Selectable{
         const _category = this._data[index];
         if (_category){
             const rect = this.itemLineRect(index);
-            this.drawIcon(_category.iconIndex,rect.x , rect.y + 2);
+            this.changePaintOpacity(index == this.index());
+            this.drawElementIcon(index,rect.x , rect.y + 2);
         }
     }
 
@@ -44,9 +46,9 @@ class Tactics_MagicCategory extends Window_Selectable{
         }
     }
 
-    //_updateCursor(){
+    _updateCursor(){
 
-    //}
+    }
 
 
     terminate(){

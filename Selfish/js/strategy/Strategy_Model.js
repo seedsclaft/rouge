@@ -110,16 +110,14 @@ class Strategy_Model {
             $gameParty.addActor(actorId);
         });
         
-        const _searchId = $gameStage.searchId();
-        const _searchData = $gameSearch.getData(_searchId);
-
-
-
+        const _searchData = $gameStage.searchId();
         let troop = new Game_Troop();
         this.makeEncounterTroopId(_searchData.enemyNum);
         troop.setup(_searchData.enemyNum,$gameParty.enemyRank(),$gameParty.enemyRank()+2);
         troop.setupBoss(6,_searchData.bossEnemy,$gameParty.enemyRank()+_searchData.bossLv);
         $gameTroop = troop;
+
+        $gameStage.selectedData()[TacticsCommandType.Search] = [];
     }
 
     makeEncounterTroopId(enemyNum) {

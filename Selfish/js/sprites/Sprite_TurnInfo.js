@@ -3,7 +3,7 @@
 //
 
 class Sprite_TurnInfo extends Sprite{
-    constructor(turnNum){
+    constructor(){
         super();
         this.createBackground();
         this.createTurnInfo();
@@ -14,6 +14,7 @@ class Sprite_TurnInfo extends Sprite{
         background.bitmap = ImageManager.loadSystem("mainwindowD");
         background.x = 8;
         background.y = 8;
+        background.opacity = 164;
         this.addChild(background);
     }
 
@@ -27,10 +28,10 @@ class Sprite_TurnInfo extends Sprite{
         turn.y = 0;
         this.addChild(turn);
         this._turnSprite = new Sprite(new Bitmap(_width,_height));
-        this._turnSprite.bitmap.fontSize = 40;
+        this._turnSprite.bitmap.fontSize = 38;
         this._turnSprite.bitmap.drawText("",0,0,_width,_height,"center",true);
         this._turnSprite.x = 12;
-        this._turnSprite.y = 32;
+        this._turnSprite.y = 34;
         this.addChild(this._turnSprite);
         let turn3 = new Sprite(new Bitmap(_width,_height));
         turn3.bitmap.fontSize = 16;

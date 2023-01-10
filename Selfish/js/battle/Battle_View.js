@@ -559,7 +559,7 @@ class Battle_View extends Scene_Base{
         this._gridLineSprite = new Sprite();
         this._gridLineSprite.bitmap = ImageManager.loadSystem('gridLine');
         this._gridLineSprite.x = 88;
-        this._gridLineSprite.y = -48;
+        this._gridLineSprite.y = -12;
         this.addChild(this._gridLineSprite);
     }
 

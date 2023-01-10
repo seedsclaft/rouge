@@ -126,8 +126,8 @@ Game_Stage.prototype.searchId = function(){
     return this._searchId;
 }
 
-Game_Stage.prototype.setSearchId = function(searchId){
-    this._searchId = searchId;
+Game_Stage.prototype.setSearchData = function(search){
+    this._searchId = search;
 }
 
 Game_Stage.prototype.setAlchemy = function(alchemyData){
