@@ -100,9 +100,12 @@ Game_Stage.prototype.initialize = function() {
     this._stageId = 0;
     this._turns = 0;
     this._selectedData = {};
-    this._alchemyData = {};
-    this._searchId = 0;
+    this._alchemyData = null;
+    this._searchData = null;
     this._readEvent = [];
+
+    this._searchSelection = null;
+    this._getAlchemyMagic = {};
 }
 
 Game_Stage.prototype.setup = function(stageId){
@@ -112,6 +115,27 @@ Game_Stage.prototype.setup = function(stageId){
     this._stageId = stageId;
     this._turns = $gameStageData.stageData(stageId).turns;
     this._readEvent = [];
+    this._searchSelection = null;
+    this._getAlchemyMagic = {};
+}
+
+Game_Stage.prototype.gainAlchemyMagic = function(alchemyMagic,value){
+    if (this._getAlchemyMagic[alchemyMagic] != null){
+        this._getAlchemyMagic[alchemyMagic] = 0;
+    }
+    this._getAlchemyMagic[alchemyMagic] += value;
+}
+
+Game_Stage.prototype.getAlchemyMagic = function(){
+    return this._getAlchemyMagic;
+}
+
+Game_Stage.prototype.setSearchSelection = function(searchSelection){
+    this._searchSelection = searchSelection;
+}
+
+Game_Stage.prototype.searchSelection = function(){
+    return this._searchSelection;
 }
 
 Game_Stage.prototype.selectedData = function(){
@@ -122,12 +146,12 @@ Game_Stage.prototype.alchemyData = function(){
     return this._alchemyData;
 }
 
-Game_Stage.prototype.searchId = function(){
-    return this._searchId;
+Game_Stage.prototype.searchData = function(){
+    return this._searchData;
 }
 
 Game_Stage.prototype.setSearchData = function(search){
-    this._searchId = search;
+    this._searchData = search;
 }
 
 Game_Stage.prototype.setAlchemy = function(alchemyData){
@@ -146,8 +170,9 @@ Game_Stage.prototype.clearSelect = function(){
     Object.keys(this._selectedData).forEach(key => {
         this._selectedData[key] = [];
     });
-    this._alchemyData = {};
-    this._searchId = 0;
+    this._alchemyData = null;
+    this._searchData = null;
+    this._searchSelection = null;
 }
 
 Game_Stage.prototype.addReadEvent = function(eventName){

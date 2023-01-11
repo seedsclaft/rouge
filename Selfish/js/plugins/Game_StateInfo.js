@@ -81,6 +81,8 @@ const StateType = {
     ICE_RESIST:                "IceResist",      //氷耐性
     THUNDER_RESIST:                "ThunderResist",      //雷耐性
 
+    NUMINOUS :             "Numinous",   //神化
+
     FIRE_STATUS :            "FireStatus",   //炎適正
     THUNDER_STATUS :         "ThunderStatus",   //雷適正
     ICE_STATUS :             "IceStatus",   //氷適正
@@ -88,11 +90,6 @@ const StateType = {
     BLACK_STATUS :             "BlackStatus",   //黒適正
 
     
-    HP_UPPER_STATUS :            "HpUpperStatus",   //Hp成長補正
-    MP_UPPER_STATUS :            "MpUpperStatus",   //Mp成長補正
-    ATK_UPPER_STATUS :            "AtkUpperStatus",   //Atk成長補正
-    SPD_UPPER_STATUS :            "SpdUpperStatus",   //Spd成長補正
-    GRD_UPPER_STATUS :            "GrdUpperStatus",   //Grd成長補正
 
     HP_BUFF_ADD :       "hpbuffA",       //HPアップ(加算)
     HP_BUFF_RATE :      "hpbuffR",       //HPアップ(倍率)

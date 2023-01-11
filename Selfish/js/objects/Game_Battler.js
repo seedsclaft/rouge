@@ -43,6 +43,7 @@ Game_BattlerBase.SKILL_TYPE_MAGIC       = 1; //魔法スキル
 Game_BattlerBase.SKILL_TYPE_COMMON      = 0; //共通スキル
 Game_BattlerBase.SKILL_TYPE_PASSIVE     = 2; //パッシブスキル
 Game_BattlerBase.SKILL_TYPE_SPECIAL     = 3; //固有スキル
+Game_BattlerBase.SKILL_TYPE_GOD         = 4; //神化スキル
 
 Object.defineProperties(Game_BattlerBase.prototype, {
     // Hit Points
@@ -849,7 +850,7 @@ Game_Battler.prototype.battleOrder = function() {
 };
 
 Game_Battler.prototype.resetAp = function() {
-    this._ap = 500 - this.agi * 4;
+    this._ap = 400 - this.agi * 4;
 };
 
 Game_Battler.prototype.gainAddDamage = function(value) {
@@ -1304,7 +1305,7 @@ Game_Battler.prototype.gainSilentTp = function(value) {
 };
 
 Game_Battler.prototype.initTp = function() {
-    this.setTp(100);
+    this.setTp(50);
 };
 
 Game_Battler.prototype.clearTp = function() {
@@ -1682,7 +1683,7 @@ Game_Actor.prototype.paramUpCost = function() {
 }
 
 Game_Actor.prototype.calcParamUpCost = function(paramId) {
-    return this._paramUpCost[paramId] + Math.floor((this._addParamPlus[paramId] + this._tempParamPlus[paramId]) / 2);
+    return this._paramUpCost[paramId] + Math.floor((this._addParamPlus[paramId] + this._tempParamPlus[paramId]) / 5);
 }
 
 Game_Actor.prototype.alchemyParam = function() {
@@ -2151,6 +2152,7 @@ Game_Actor.prototype.paramPlus = function(paramId) {
             value += item.params[paramId];
         }
     }
+    const _numinous = this.getStateEffect($gameStateInfo.getStateId(StateType.NUMINOUS));
     
     if (paramId == 0){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.HP_BUFF_ADD));
@@ -2172,6 +2174,7 @@ Game_Actor.prototype.paramPlus = function(paramId) {
         }
         //value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.SELFISH));
         value += this._tempParamPlus[2];
+        value += _numinous;
     }
     if (paramId == 3){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.DEF_BUFF_ADD));
@@ -2181,6 +2184,7 @@ Game_Actor.prototype.paramPlus = function(paramId) {
             value += this.atk * this.getStateEffectTotal(turtleId);
         }
         value += this._tempParamPlus[3];
+        value += _numinous;
     }
     if (paramId == 6){
         value += this.getStateEffectTotal($gameStateInfo.getStateId(StateType.AGI_BUFF_ADD));
@@ -2194,6 +2198,7 @@ Game_Actor.prototype.paramPlus = function(paramId) {
             value += plusAccel;
         }
         value += this._tempParamPlus[4];
+        value += _numinous;
     }
 
     return value;

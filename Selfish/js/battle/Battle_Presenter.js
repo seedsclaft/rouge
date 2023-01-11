@@ -242,6 +242,8 @@ class Battle_Presenter extends Presenter_Base{
     async commandActionEnd(){
         let actionBattler = this._model.getActingBattler();
         let action = this._model.currentAction();
+        console.log(actionBattler)
+        console.log(action)
         let results = action.results();
         this._model.applyResultsData(action,results);
         this._view.refreshStatus();
@@ -625,9 +627,9 @@ class Battle_Presenter extends Presenter_Base{
         this._view.changeTpEffect(actorsList[0]);
         actorsList[1].forEach(actor => {
             this._view.displayTpMaxActor(actor);
-            this._view.startAnimation(actor,1315,false, 0,1, false,false);
+            this._view.startAnimationNoCheck(actor,40,false, 0,1, false,false);
             // 覚醒ボイス
-            SoundManager.playBattleVoice(actor.actorId(),BattleVoiceType.LimitBreak);
+            //SoundManager.playBattleVoice(actor.actorId(),BattleVoiceType.LimitBreak);
         });
     }
 

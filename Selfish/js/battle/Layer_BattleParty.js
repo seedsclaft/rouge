@@ -3,7 +3,6 @@ class Layer_BattleParty extends Sprite {
         super();
         this._actorSprites = [];
         this._checkAnimation = [];
-        this._mpAnimation = [];
         this.createActors(members);
     }
 
@@ -145,12 +144,6 @@ class Layer_BattleParty extends Sprite {
     }
 
     clearMpAnimation(){
-        this._mpAnimation.forEach(sprite => {
-            if (sprite){
-                this.removeChild(sprite);
-            }
-        });
-        this._mpAnimation = [];
     }
 
     isAnimationPlaying(){
@@ -163,7 +156,7 @@ class Layer_BattleParty extends Sprite {
     clearPlaying(){
         let destroyAnimations = [];
         this._checkAnimation.forEach(animation => {
-            animation.terminate();
+            animation.destroy();
             destroyAnimations.push(animation);
         });
         for (let i = destroyAnimations.length-1;i >= 0;i--){
@@ -233,11 +226,6 @@ class Layer_BattleParty extends Sprite {
     }
     
     terminate(){
-        for (let i = this._mpAnimation.length-1;i >= 0;i--){
-            this._mpAnimation[i].terminate();
-            this.removeChild(this._mpAnimation[i]);
-        }
-        this._mpAnimation = [];
         for (let i = this._actorSprites.length-1;i >= 0;i--){
             this._actorSprites[i].terminate();
             this.removeChild(this._actorSprites[i]);

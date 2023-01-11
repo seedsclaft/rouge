@@ -19,7 +19,6 @@ class Layer_BattleTroop extends Sprite{
             this.addChild(sprites[j]);
         }
         this._enemySprites = sprites;
-
         for (let j = 0; j < sprites.length; j++) {
             let battlerStatus = new Sprite_BattlerStatus();
             this.addChild(battlerStatus);
@@ -319,7 +318,7 @@ class Layer_BattleTroop extends Sprite{
     clearPlaying(){
         let destroyAnimations = [];
         this._checkAnimation.forEach(animation => {
-            animation.terminate();
+            animation.destroy();
             destroyAnimations.push(animation);
         });
         for (let i = destroyAnimations.length-1;i >= 0;i--){

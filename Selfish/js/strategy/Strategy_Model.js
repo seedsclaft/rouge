@@ -62,7 +62,6 @@ class Strategy_Model {
             spd:0,
             def:0
         };
-
         actor.levelUp();
         const _command = this.currentCommand();
         $gameStage.selectedData()[_command.key] = _.without($gameStage.selectedData()[_command.key],actor.actorId());
@@ -110,7 +109,7 @@ class Strategy_Model {
             $gameParty.addActor(actorId);
         });
         
-        const _searchData = $gameStage.searchId();
+        const _searchData = $gameStage.searchData();
         let troop = new Game_Troop();
         this.makeEncounterTroopId(_searchData.enemyNum);
         troop.setup(_searchData.enemyNum,$gameParty.enemyRank(),$gameParty.enemyRank()+2);

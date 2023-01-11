@@ -24,6 +24,9 @@ class Layer_BattlePicture extends Sprite{
     }
 
     refreshBattlerPicture(battler){
+        if (!battler && this._lastBattler){
+            battler = this._lastBattler;
+        }
         if (!battler.isActor()){
             return;
         }
@@ -36,6 +39,7 @@ class Layer_BattlePicture extends Sprite{
                 this.hideAnimation(sprite,_x);
             }
         });
+        this._lastBattler = battler;
     }
 
     hideBattlerPicture(){

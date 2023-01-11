@@ -51,24 +51,24 @@ class Sprite_BattlerStatus extends Sprite{
         }
         const width = Math.floor( gaugeWidth );
         const height = 6;
-        const x = 80 - width;
+        const x = 64;
         const y = 0;
         this._hpGaugeSpriteBack = new Sprite(new Bitmap(width,height));
         this._hpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
-        this._hpGaugeSpriteBack.pivot.x = 1;
+        this._hpGaugeSpriteBack.anchor.x = 1;
         this.addChild(this._hpGaugeSpriteBack);
         this._hpGaugeSpriteBack.x = x;
         this._hpGaugeSpriteBack.y = y;
         this._hpGaugeSprite = new Sprite(new Bitmap(width - 4,height - 2));
         this._hpGaugeSprite.bitmap.gradientFillRect(0, 0, width - 4, height - 2,$gameColor.getColor('hpgauge2'),$gameColor.getColor('hpgauge1'));
-        this._hpGaugeSprite.pivot.x = 1;
-        this._hpGaugeSprite.x = x + 2;
+        this._hpGaugeSprite.anchor.x = 1;
+        this._hpGaugeSprite.x = x - 2;
         this._hpGaugeSprite.y = y + 1;
         this._hpGaugeSprite.scale.x = this._battler.hp / this._battler.mhp;
         this.addChild(this._hpGaugeSprite);
         this._hpSprite = new Sprite();
         this.setHpBitmap(this._battler.hp);
-        this._hpSprite.x = -84;
+        this._hpSprite.x = -96;
         this._hpSprite.y = y - 32;
         this.addChild(this._hpSprite);
     }
@@ -82,25 +82,25 @@ class Sprite_BattlerStatus extends Sprite{
         }
         const width = Math.floor( gaugeWidth );
         const height = 6;
-        const x = 80 - width;
+        const x = 64;
         const y = -28;
         this._mpGaugeSpriteBack = new Sprite(new Bitmap(width,height));
         this._mpGaugeSpriteBack.bitmap.fillRect(0, 0, width, height ,$gameColor.getColor('gaugeback'));
-        this._mpGaugeSpriteBack.pivot.x = 1;
+        this._mpGaugeSpriteBack.anchor.x = 1;
         this.addChild(this._mpGaugeSpriteBack);
         this._mpGaugeSpriteBack.x = x;
         this._mpGaugeSpriteBack.y = y;
         
         this._mpGaugeSprite = new Sprite(new Bitmap(width - 4,height - 2));
         this._mpGaugeSprite.bitmap.gradientFillRect(0, 0, width - 4, height - 2,$gameColor.getColor('mpgauge2'),$gameColor.getColor('mpgauge1'));
-        this._mpGaugeSprite.pivot.x = 1;
-        this._mpGaugeSprite.x = x + 2;
+        this._mpGaugeSprite.anchor.x = 1;
+        this._mpGaugeSprite.x = x - 2;
         this._mpGaugeSprite.y = y + 1;
         this._mpGaugeSprite.scale.x = this._battler.mp / this._battler.mmp;
         this.addChild(this._mpGaugeSprite);
         this._mpSprite = new Sprite();
         this.setMpBitmap(this._battler.mp);
-        this._mpSprite.x = -84;
+        this._mpSprite.x = -96;
         this._mpSprite.y = y - 32;
 
         this.addChild(this._mpSprite);
@@ -251,7 +251,6 @@ class Sprite_BattlerStatus extends Sprite{
     }
 
     changeTpEffect(isGlow){
-        /*
         if (this._battler.isActor() == false){
             return;
         }
@@ -262,20 +261,18 @@ class Sprite_BattlerStatus extends Sprite{
             this._tpEffect.outerStrength = 1.5;
             this._tpEffect.innerStrength = 0.5;
             this._tpEffectTiming = false;
-            this._statusMpSprite.filters = [this._tpEffect];
+            //this._statusMpSprite.filters = [this._tpEffect];
         } else{
             if (this._tpEffect){
                 this._tpEffect.destroy();
             }
             this._tpEffect = null;
-            this._statusMpSprite.filters = [];
+            //this._statusMpSprite.filters = [];
         }
-        */
     }
 
     update(){
         super.update();
-        /*
         if (this._tpEffect){
             if (Graphics.frameCount % 6 == 0){
                 if (this._tpEffectTiming){
@@ -293,7 +290,6 @@ class Sprite_BattlerStatus extends Sprite{
                 }
             }
         }
-        */
         //if ($gameDefine.mobileMode){
             //this._infoSprite.visible = (this._stateIconSprite.states().length > 0);
         //}

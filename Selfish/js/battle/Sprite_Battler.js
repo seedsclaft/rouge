@@ -212,17 +212,14 @@ Sprite_Battler.prototype.setChainPopup = function() {
 }
 
 
-Sprite_Battler.prototype.startAnimation = function(animation, mirror, delay,scale,noSoundFlag) {
-    if (noSoundFlag === undefined){
-        noSoundFlag = false;
-    }
+Sprite_Battler.prototype.startAnimation = function(animation, mirror, delay,scale,noSoundFlag = false) {
     let sprite = new Sprite_Animation();
     sprite.targetObjects = this._effectTarget;
     sprite.setup([this._effectTarget], animation, mirror, delay,noSoundFlag);
     //0820 VXAce規格に合わせる
     if (scale == null){
-        sprite.scale.x = 1.5;
-        sprite.scale.y = 1.5;
+        sprite.scale.x = 1;
+        sprite.scale.y = 1;
     } else{ 
         sprite.scale.x = scale;
         sprite.scale.y = scale;
@@ -599,7 +596,7 @@ Sprite_Enemy.prototype.createStateSprite = function() {
 Sprite_Enemy.prototype.setBattler = function(battler) {
     Sprite_Battler.prototype.setBattler.call(this, battler);
     this._enemy = battler;
-    this.setHome(battler.screenX(), battler.screenY() + 64);
+    this.setHome(battler.screenX(), battler.screenY() + 96);
     this._setPosition = true;
     this._targetSprite.setEnemy(battler);
     let upscale = 1;
@@ -878,7 +875,7 @@ Sprite_Enemy.prototype.resetPosition = function(line) {
     this.x = this._homeX + this._offsetX;
     this.y = this._homeY + this._offsetY;
     if (line != null){
-        this.y += line * -0;
+        this.y += line * -40;
         this.scale.x = this.scale.y = 1.0 - line * 0.15;
         if (line > 0 && this._homeX > 480){
             this.x -= (this._homeX-480) * line * 0.2;

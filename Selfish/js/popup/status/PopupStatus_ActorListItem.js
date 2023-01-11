@@ -17,6 +17,8 @@ class PopupStatus_ActorListItem extends Window_Selectable{
 
     setActor(actor,lvUpdate){
         this._actor = actor;
+        console.log(actor)
+        console.log(lvUpdate)
         this.refresh(lvUpdate);
     }
     

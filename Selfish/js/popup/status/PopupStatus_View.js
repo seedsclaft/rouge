@@ -49,6 +49,8 @@ class PopupStatus_View  {
         this._listWindow._handlers = {};
         this._listWindow.setHandler('shift',     this.changeParam.bind(this));
         this._listWindow.setHandler('menu',     this.changeSkill.bind(this));
+        this._listWindow.setHandler('right',     this.changeActor.bind(this,-1));
+        this._listWindow.setHandler('left',     this.changeActor.bind(this,1));
         this._listWindow.setHandler('pageup',     this.changeActor.bind(this,-1));
         this._listWindow.setHandler('pagedown',     this.changeActor.bind(this,1));
         this._listWindow.setHandler('cancel',     () => {if (cancelCall) cancelCall() });
@@ -71,13 +73,18 @@ class PopupStatus_View  {
 
     static setSelectData(data,okCall,cancelCall){
         this._listWindow.setData(data);
-        this._listWindow.show();
-        this._listWindow.activate();
-        this._listWindow.selectLast();
         this._listWindow._handlers = {};
         this._listWindow.setHandler('ok',     () => {if (okCall) okCall(this.selectedData()) });
         this._listWindow.setHandler('cancel',     () => {if (cancelCall) cancelCall() });
     
+        this._listWindow.setHandler('menu',     this.changeSkill.bind(this));
+        this._listWindow.setHandler('right',     this.changeActor.bind(this,-1));
+        this._listWindow.setHandler('left',     this.changeActor.bind(this,1));
+        this._listWindow.setHandler('pageup',     this.changeActor.bind(this,-1));
+        this._listWindow.setHandler('pagedown',     this.changeActor.bind(this,1));
+        this._listWindow.show();
+        this._listWindow.activate();
+        this._listWindow.selectLast();
     }
 
     static selectedData(){

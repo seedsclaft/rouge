@@ -667,7 +667,6 @@ Game_Action.prototype.makeResultShield = function(result,target) {
         state._effect -= result.hpDamage;
         result.hpDamage -= shieldValue;
         result.hpDamage = Math.max(0,result.hpDamage);
-        console.log(state._effect)
         if (state._effect <= 0){
             target.removeState(damageShieldId);
         }
@@ -884,11 +883,17 @@ Game_Action.prototype.makeDamageValue = function(target, critical,isVariable = t
     if (this.subject().isStateAffected(penetrateId)){
         defValue *= 1 - this.subject().getStateEffectTotal(penetrateId);
     }
+    const damageShieldId = $gameStateInfo.getStateId(StateType.SHIELD);
+    if (target.isStateAffected(berserkId)){
+        defValue = 0;
+    }
     const turtleId = $gameStateInfo.getStateId(StateType.TURTLE);
     if (this.subject().isStateAffected(turtleId)){
         atkValue = 0;
     }
-    baseValue = Math.max(0,(baseValue * 0.01 * atkValue) * (1 - defValue * 0.01));
+    console.log(atkValue)
+    console.log((1 - defValue * 0.01))
+    baseValue = Math.max(0,(baseValue * 0.01 * atkValue * 0.5) * (1 - defValue * 0.01));
     console.log(baseValue)
     let elementValue = this.calcElementRate(target);
     let value = baseValue * elementValue;

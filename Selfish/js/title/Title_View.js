@@ -104,17 +104,29 @@ class Title_View extends Scene_Base{
 
     createVersionSprite(){
         this._versionSprite = new Sprite();
-        this._versionSprite.x = 12;
-        this._versionSprite.y = 0;
+        this._versionSprite.x = 732;
+        this._versionSprite.y = 464;
         this._versionSprite.scale.x = 0.66;
         this._versionSprite.scale.y = 0.66;
         let bitmap = new Bitmap(320,128);
-        bitmap.drawText(TextManager.getText(100300) + $gameDefine.gameVersion,0,0,320,64,"left")
+        bitmap.drawText(TextManager.getText(100300) + $gameDefine.gameVersion,0,0,320,64,"right")
         this._versionSprite.bitmap = bitmap;
         this.addChild(this._versionSprite);
     }
 
     createTitleSprite(){
+        this._titleSprite = new Sprite();
+        this._titleSprite.x = 24;
+        this._titleSprite.y = 144;
+        this._titleSprite.scale.x = 1;
+        this._titleSprite.scale.y = 1;
+        let bitmap = new Bitmap(480,240);
+        bitmap.fontSize = 64;
+        bitmap.drawText("Numinous",0,0,480,64,"right")
+        bitmap.fontSize = 20;
+        bitmap.drawText("Alchemists of a Demigod",-4,54,480,64,"right")
+        this._titleSprite.bitmap = bitmap;
+        this.addChild(this._titleSprite);
     }
 
     createHelpWindow(){

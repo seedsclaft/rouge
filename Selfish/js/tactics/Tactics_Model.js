@@ -1,6 +1,7 @@
 class Tactics_Model {
     constructor() {
         this._selectedData = $gameStage.selectedData();
+
         console.log(this._selectedData)
         let _actorList = $gameParty.members();
         _actorList = _.sortBy(_actorList,(a) => a.selectedIndex());
@@ -10,19 +11,24 @@ class Tactics_Model {
         });
         this._members = this.positionSelectData(_actorList);
         this._selectedMembers = [];
-
+        
+        Object.keys(this._selectedData).forEach(key => {
+            const selectIds = this._selectedData[key];
+            let members = [];
+            if (selectIds && selectIds.length > 0){
+                for (let i = 0;i < selectIds.length;i++){
+                    let member = this._members.find(a => a.actorId() == selectIds[i]);
+                    if (member){
+                        this._selectedMembers.push(member);
+                        this._members = _.without(this._members,member);
+                        members.push(member);
+                    }
+                }
+                this._members = this.positionSelectData(this._members);
+            }
+        });
 
         this._alchemyMagicList = [];
-        /*
-        $gameAlchemy.data().forEach(alchemy => {
-            this._alchemyMagicList.push(
-                {
-                    skill:$dataSkills[alchemy.skill],
-                    cost:Number( alchemy.cost )
-                }
-            )
-        });
-        */
         this._alchemyMagicList.push(
             {
                 skill:$dataSkills[11],
@@ -30,27 +36,33 @@ class Tactics_Model {
             }
         )
 
-        this._selectAlchemy = {};
+        if ($gameStage.alchemyData() == null){
+            this._selectAlchemy = {};
+        } else{
+            this._selectAlchemy = $gameStage.alchemyData();
+        }
 
         this.actorList().forEach(actor => {
             ImageManager.loadFace(actor.faceName())
         });
 
-
-        this._searchData = [];
-        let searchdData = $gameSearch.data().filter(a => a.eventFlag == false);
-        console.log(searchdData)
-        searchdData = _.shuffle(searchdData);
-        const _stageData = $gameStageData.stageData($gameStage._stageId);
-        for (let i = 0; i < 4 ;i ++){
-            let rank = $gameParty.enemyRank() + (i * 2);
-            searchdData[i].pt = rank;
-            searchdData[i].enemyNum = Math.floor( (_stageData.turns - $gameStage.turns()) / 6) + 1;
-            searchdData[i].lvMin = rank;
-            searchdData[i].lvMax = rank;
-            searchdData[i].bossLv = rank;
-            this._searchData.push(searchdData[i]);
+        if ($gameStage.turns() && $gameStage.searchSelection() == null){
+            let tempSearch = [];
+            let searchdData = $gameSearch.data().filter(a => a.eventFlag == false);
+            searchdData = _.shuffle(searchdData);
+            const _stageData = $gameStageData.stageData($gameStage._stageId);
+            for (let i = 0; i < 4 ;i ++){
+                let rank = $gameParty.enemyRank() + (i * 2);
+                searchdData[i].pt = rank;
+                searchdData[i].enemyNum = Math.floor( (_stageData.turns - $gameStage.turns()) / 6) + 1;
+                searchdData[i].lvMin = rank;
+                searchdData[i].lvMax = rank;
+                searchdData[i].bossLv = rank;
+                tempSearch.push(searchdData[i]);
+            }
+            $gameStage.setSearchSelection(tempSearch);
         }
+        this._searchData = $gameStage.searchSelection();
     }
 
     eventCheck(){
@@ -207,6 +219,7 @@ class Tactics_Model {
         this._selectedData[category] = [];
         if (category == TacticsCommandType.Alchemy){
             this._selectAlchemy = {};
+            $gameStage.setAlchemy(this._selectAlchemy);
         }
         return members;
     }
@@ -230,6 +243,7 @@ class Tactics_Model {
         this.loseEnergy(alchemy.cost);
         if (!this._selectAlchemy[actorId]) this._selectAlchemy[actorId] = {};
         this._selectAlchemy[actorId] = {skillId: alchemy.skill.id,cost:alchemy.cost};
+        $gameStage.setAlchemy(this._selectAlchemy);
     }
 
     setSearchData(serach){
@@ -241,7 +255,6 @@ class Tactics_Model {
     }
 
     turnend(){
-        $gameStage.setAlchemy(this._selectAlchemy);
         $gameStage.setSelectedData(this._selectedData);
     }
 }

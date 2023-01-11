@@ -47,7 +47,10 @@ class Battle_Model extends Model_Base {
         if (battler.isActor()){
             const skills = battler.skills().filter(a => a.occasion == 1);
             skills.forEach(skill => {
-                data.push({skill:skill,enable:battler.canUse(skill) && skill.stypeId == Game_BattlerBase.SKILL_TYPE_MAGIC,cost:battler.skillMpCost(skill) });
+                if (skill.stypeId == Game_BattlerBase.SKILL_TYPE_GOD && !battler.isStateAffected($gameStateInfo.getStateId(StateType.NUMINOUS))){
+                    return;
+                }
+                data.push({skill:skill,enable:battler.canUse(skill) && (skill.stypeId == Game_BattlerBase.SKILL_TYPE_MAGIC || skill.stypeId == Game_BattlerBase.SKILL_TYPE_GOD ),cost:battler.skillMpCost(skill) });
             });
         }
         return data;
@@ -380,6 +383,25 @@ class Battle_Model extends Model_Base {
                         let a = battler;
                         let pam = $gameParty.aliveMembers();
                         let r = action.results() != null ? action.results() : [];
+                        let alice = false;
+                        if (r){
+                            let target = {};
+                            r.forEach(res => {
+                                if (res.target.isEnemy()){
+                                    return;
+                                }
+                                if (target[res.target.actorId()] == null){
+                                    target[res.target.actorId()] = res.hpDamage;
+                                } else{
+                                    target[res.target.actorId()] += res.hpDamage;
+                                }
+                            });
+                            Object.keys(target).forEach(key => {
+                                if (target[key] >= $gameActors.actor( key ).hp){
+                                    alice = true;
+                                }
+                            });
+                        }
                         flag = eval(stateEval);
                     }
                     if (flag){
@@ -529,7 +551,7 @@ class Battle_Model extends Model_Base {
             if (battler.isActor()){
                 let skills = battler.skills().filter(a => a.occasion == 1);
                 skills.forEach(skill => {
-                    data.push({skill:skill,enable:battler._tp == 100 ,cost:battler.skillMpCost(skill) });
+                    data.push({skill:skill,enable:battler._tp == 50 ,cost:battler.skillMpCost(skill) });
                 });
             }
             data.forEach(skill => {
@@ -925,6 +947,10 @@ class Battle_Model extends Model_Base {
                 if (effect.code == Game_Action.EFFECT_ADD_STATE){
                     target.addState(effect.dataId,selfSkill.stateTurns,selfSkill.stateEffect,passive,actor.battlerId());
                 }
+                if (effect.code == Game_Action.EFFECT_REMOVE_STATE){
+                    target.removeState(effect.dataId);
+                }
+                /*
                 if (effect.code == Game_Action.EFFECT_GROW){
                     //target.addParam(effect.dataId, Math.floor(effect.value1));
                     // ステートに返還して付与
@@ -937,6 +963,7 @@ class Battle_Model extends Model_Base {
                 if (effect.code == Game_Action.EFFECT_RECOVER_HP){
                     action.itemEffectRecoverHp(target,effect);
                 }
+                */
             });
         });
         if (selfSkill.selfSkill){
@@ -1428,7 +1455,7 @@ class Battle_Model extends Model_Base {
         let list = [];
         let list2 = [];
         this._battleMembers.forEach(battler => {
-            if (battler.isActor() && battler.isTpMax()){
+            if (battler.isActor() && battler.isStateAffected($gameStateInfo.getStateId(StateType.NUMINOUS))){
                 list.push(battler);
                 if (!battler.isTpMaxed()){
                     list2.push(battler);
@@ -1462,7 +1489,7 @@ class Battle_Model extends Model_Base {
         if (action._item._itemId == $gameDefine.waitSkillId){
             ap = this.waitSkillChangeAp(this.actionBattler());
         } else{
-            ap = 500 - this.actionBattler().agi * 4;
+            ap = 400 - this.actionBattler().agi * 4;
         }
         return ap;
     }

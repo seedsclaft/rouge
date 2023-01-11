@@ -239,6 +239,11 @@ class Battle_View extends Scene_Base{
         this._layerBattleParty.startAnimation(battler,id,mirror, delay,scale,nosound,nocheck);
         this._layerBattleTroop.startAnimation(battler,id,mirror, delay,scale,nosound,nocheck);
     }
+    
+    startAnimationNoCheck(battler,id,mirror, delay,scale,nosound,nocheck){
+        this._layerBattleParty.startAnimation(battler,id,mirror, delay,scale,nosound,nocheck);
+        this._layerBattleTroop.startAnimation(battler,id,mirror, delay,scale,nosound,nocheck);
+    }
 
     startAnimationEffect(battler,id,mirror, delay,scale,nosound,nocheck){
         this._layerBattleParty.startAnimationEffect(this._spriteset,battler,id,mirror, delay,scale,nosound,nocheck);
@@ -442,8 +447,9 @@ class Battle_View extends Scene_Base{
 
         //this._keyMapWindow.show();
         //this._gridSpriteset.clearNextOrder();
-        var actor = this._skillWindow.actor();
-        this.layerBattlePicture().refreshBattlerPicture(actor);
+        var actor = this._actorWindow.actor();
+        console.log(actor)
+        this._layerBattlePicture.refreshBattlerPicture(actor);
     
         if (this._dockMenu){
             this._dockMenu.show();
@@ -490,7 +496,7 @@ class Battle_View extends Scene_Base{
         }
         this._enemyWindow.deactivate();
         const actor = this._skillWindow.actor();
-        this.layerBattlePicture().refreshBattlerPicture(actor);
+        this._layerBattlePicture.refreshBattlerPicture(actor);
         this._skillWindow.show();
         this._skillWindow.activate();
         this._skillWindow.showAnimation();
@@ -508,7 +514,7 @@ class Battle_View extends Scene_Base{
         TouchInput.clear();
         this.hideSkillCommandWindows();
         this._keyMapWindow.hide();
-        this.layerBattlePicture().hideBattlerPicture();
+        this._layerBattlePicture.hideBattlerPicture();
         this.setCommand({command: BattleCommand.SkillOk});
         if (this._dockMenu){
             this._dockMenu.showTypeChange(false);
@@ -786,9 +792,9 @@ class Battle_View extends Scene_Base{
         this._keyMapWindow.show();
     
         if (battler.isActor()){
-            this.layerBattlePicture().refreshBattlerPicture(battler);
+            this._layerBattlePicture.refreshBattlerPicture(battler);
         } else{
-            this.layerBattlePicture().hideBattlerPicture();
+            this._layerBattlePicture.hideBattlerPicture();
         }
         this._layerBattleTroop.analyseSelectMove(battler);
     
@@ -813,16 +819,16 @@ class Battle_View extends Scene_Base{
             this._keyMapWindow.refresh("battleStart");
             this._keyMapWindow.show();
             let battleTextId = 600500;
-            this.layerBattlePicture().hideBattlerPicture();
+            this._layerBattlePicture.hideBattlerPicture();
         } else {
             if (this._step == SceneBattleStep.SELECTENEMY || this._step == SceneBattleStep.SELECTACTOR){
                 this._keyMapWindow.hide();
                 var action = this._skillWindow.actor().currentAction();
                 this.onSelectAction(this._skillWindow.actor(),action,action.isForOpponent());
-                this.layerBattlePicture().hideBattlerPicture();
+                this._layerBattlePicture.hideBattlerPicture();
             } else
             if (this._step == SceneBattleStep.WAITNEXTTURN){
-                this.layerBattlePicture().hideBattlerPicture();
+                this._layerBattlePicture.hideBattlerPicture();
                 this.displayWaitNextTurn();
             } else{
                 this._gridSpriteset.setPhase("ap");
@@ -831,7 +837,7 @@ class Battle_View extends Scene_Base{
                 this._skillWindow.showAnimation();
                 this._skillWindow.selectLast();
                 this.changeSkillIndex();
-                this.layerBattlePicture().refreshBattlerPicture(this._skillWindow.actor());
+                this._layerBattlePicture.refreshBattlerPicture(this._skillWindow.actor());
             }
         }
         this._layerBattleTroop.resetEnemyOpacity();
@@ -929,7 +935,7 @@ class Battle_View extends Scene_Base{
     }
 
     startBreakAnimation(enemy){
-        this.layerBattlePicture().visible = false;
+        this._layerBattlePicture.visible = false;
         this._gridLineSprite.visible = false;
         this._gridSpriteset.visible = false;
         this._recordWindow.visible = false;
@@ -979,7 +985,7 @@ class Battle_View extends Scene_Base{
         this._layerBattleTroop.visible = false;
         this._keyMapWindow.hide();
         this._recordWindow.clear();
-        this.layerBattlePicture().hideBattlerPicture();
+        this._layerBattlePicture.hideBattlerPicture();
     }
 
     eventEnd(){

@@ -28,6 +28,10 @@ class PopupStatus_ActorList extends Window_Selectable{
         this._actorListItem.activate();
     }
 
+    maxCols(){
+        return this._data != null ? this._data.length : 0;
+    }
+
     statusUp(){
         this._actorListItem.activate();
         let actor = this._data[this.index()];
@@ -97,6 +101,8 @@ class PopupStatus_ActorList extends Window_Selectable{
             actor._tempParamPlus = [0,0,0,0,0];
             this._actorListItem.refresh();
             this._actorListItem.select(-1);
+            this._actorListItem.deactivate();
+            actor._useSp = 0;
             this.activate();
         });
         _popup.setHandler(text2,'cancel',() => {
@@ -113,6 +119,7 @@ class PopupStatus_ActorList extends Window_Selectable{
         this._actorListItem.refresh();
         this._actorListItem.select(-1);
         this.activate();
+        this._actorListItem.deactivate();
         SceneManager._scene._keyMapWindow.refresh("actorInfo");
     }
 
@@ -120,6 +127,7 @@ class PopupStatus_ActorList extends Window_Selectable{
         this._lvUpData = null;
         this._data = data;
         this.refresh();
+        this.select(0);
     }
 
     selectActorId(actorId){

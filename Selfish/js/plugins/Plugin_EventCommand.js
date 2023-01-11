@@ -181,6 +181,8 @@
             troopData.members[i].enemyId = _searchData.enemy[i];
         }
         let troop = new Game_Troop();
+        console.log(_searchData.lvMin)
+        console.log(_plusEnemyLevel)
         troop.setup(_searchData.enemyNum,_searchData.lvMin + _plusEnemyLevel,_searchData.lvMax + _plusEnemyLevel);
         troop.setupBoss(6,_searchData.bossEnemy,_searchData.bossLv + _plusBossLevel);
         $gameTroop = troop;
